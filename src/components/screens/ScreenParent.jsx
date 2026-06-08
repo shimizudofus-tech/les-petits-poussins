@@ -4,17 +4,24 @@ import { SCREENS, useGame } from '../../context/GameContext'
 import {
   getExerciseContentStats,
   getExpectedAudioFiles,
+  getMaternellePetiteStats,
   getUsedImageKeys,
   PARENT_RETURN_SESSION_KEY,
 } from '../../utils/parentContentStats'
+import { CORRECTS_TO_UNLOCK, MAX_MATERNELLE_DIFFICULTY } from '../../utils/maternelleProgress'
 
-const CONTENT_LABELS = [
+const CP_LABELS = [
   { key: 'dictee', label: 'Dictée CP' },
   { key: 'lecture', label: 'Lecture CP' },
   { key: 'maths', label: 'Maths CP' },
-  { key: 'colors', label: 'Couleurs Maternelle' },
-  { key: 'shapes', label: 'Formes Maternelle' },
-  { key: 'counting', label: 'Compter Maternelle' },
+]
+
+const PETITE_LABELS = [
+  { key: 'coloring', label: 'Colorier' },
+  { key: 'colors', label: 'Couleurs' },
+  { key: 'shapes', label: 'Formes' },
+  { key: 'counting', label: 'Compter' },
+  { key: 'puzzles', label: 'Puzzle' },
 ]
 
 function getReturnScreen() {
@@ -28,6 +35,7 @@ function getReturnScreen() {
 export default function ScreenParent() {
   const { gameState, switchScreen, resetProgress } = useGame()
   const stats = getExerciseContentStats()
+  const petiteStats = getMaternellePetiteStats()
   const audioFiles = getExpectedAudioFiles()
   const imageKeys = getUsedImageKeys()
 
@@ -35,6 +43,7 @@ export default function ScreenParent() {
   const unlockedCount = Object.values(gameState.collection).filter((animal) => animal.unlocked).length
   const totalAnimals = Object.keys(gameState.collection).length
   const farmLevel = computeFarmLevel(gameState.farmUpgrades)
+  const petiteProgress = gameState.learningProgress?.maternelle?.petite ?? {}
 
   const handleBack = () => {
     switchScreen(getReturnScreen())
@@ -67,15 +76,45 @@ export default function ScreenParent() {
       </button>
 
       <section className="parent-card">
-        <h2 className="parent-card-title">Contenu pédagogique</h2>
+        <h2 className="parent-card-title">Contenu pédagogique — CP</h2>
         <ul className="parent-stat-list">
-          {CONTENT_LABELS.map(({ key, label }) => (
+          {CP_LABELS.map(({ key, label }) => (
             <li key={key} className="parent-stat-row">
               <span>{label}</span>
               <strong>{stats[key]}</strong>
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Maternelle — Petite Section</h2>
+        <ul className="parent-stat-list">
+          {PETITE_LABELS.map(({ key, label }) => (
+            <li key={key} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{petiteStats[key]}</strong>
+            </li>
+          ))}
+        </ul>
+        <h3 className="parent-card-subtitle mt-3">Progression enfant</h3>
+        <ul className="parent-stat-list">
+          {PETITE_LABELS.map(({ key, label }) => {
+            const prog = petiteProgress[key] ?? { unlockedDifficulty: 1, correctAnswers: 0 }
+            const atMax = prog.unlockedDifficulty >= MAX_MATERNELLE_DIFFICULTY
+            return (
+              <li key={`prog-${key}`} className="parent-stat-row">
+                <span>{label}</span>
+                <strong>
+                  Diff. {prog.unlockedDifficulty}/{MAX_MATERNELLE_DIFFICULTY}
+                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK}`}
+                </strong>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="parent-card-hint mt-2">Moyenne Section : à venir</p>
+        <p className="parent-card-hint">Grande Section : à venir</p>
       </section>
 
       <section className="parent-card">

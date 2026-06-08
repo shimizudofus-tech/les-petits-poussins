@@ -3,6 +3,7 @@ import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
 import { clampFarmUpgrades, DEFAULT_FARM_UPGRADES } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
 import { resolveScreen } from '../constants/screens'
+import { createDefaultLearningProgress, PETITE_ACTIVITIES } from './maternelleProgress'
 
 export const STORAGE_KEY = 'les-petits-poussins-game-state'
 
@@ -55,6 +56,38 @@ function mergeFarmUpgrades(saved, initial) {
   return clampFarmUpgrades(merged)
 }
 
+function mergeLearningProgress(saved, initial) {
+  const base = initial.learningProgress ?? createDefaultLearningProgress()
+  const savedMaternelle = saved?.maternelle ?? {}
+  const mergedPetite = { ...base.maternelle.petite }
+
+  for (const activity of PETITE_ACTIVITIES) {
+    mergedPetite[activity] = {
+      ...base.maternelle.petite[activity],
+      ...savedMaternelle.petite?.[activity],
+    }
+  }
+
+  return {
+    ...base,
+    maternelle: {
+      ...base.maternelle,
+      petite: mergedPetite,
+    },
+  }
+}
+
+function mergeCurrentSubject(saved, initial) {
+  const merged = { ...initial.currentSubject, ...saved.currentSubject }
+  if (!merged.petite && merged.mat) {
+    merged.petite = merged.mat === 'count' ? 'counting' : merged.mat
+  }
+  if (!merged.petite) {
+    merged.petite = initial.currentSubject.petite
+  }
+  return merged
+}
+
 export function loadGameState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -68,7 +101,9 @@ export function loadGameState() {
       ...saved,
       shop: initial.shop,
       collection: mergeCollection(saved.collection),
-      currentSubject: { ...initial.currentSubject, ...saved.currentSubject },
+      currentSubject: mergeCurrentSubject(saved, initial),
+      maternelleSection: saved.maternelleSection ?? initial.maternelleSection,
+      learningProgress: mergeLearningProgress(saved.learningProgress, initial),
       coloring: { ...initial.coloring, ...saved.coloring },
       dictee: { ...initial.dictee, ...saved.dictee },
       farmUpgrades: mergeFarmUpgrades(saved, initial),

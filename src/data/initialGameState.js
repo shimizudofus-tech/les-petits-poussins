@@ -2,6 +2,7 @@ import { SCREENS } from '../constants/screens'
 import { BUILDER_ICONS } from './builderAssets'
 import { CHICKEN_STAGE_ICONS } from './chickenAssets'
 import { DEFAULT_FARM_UPGRADES } from './farmUpgrades'
+import { createDefaultLearningProgress } from '../utils/maternelleProgress'
 
 export function createInitialGameState() {
   return {
@@ -13,6 +14,8 @@ export function createInitialGameState() {
     farmLayout: Array(9).fill(null),
     farmUpgrades: { ...DEFAULT_FARM_UPGRADES },
     currentScreen: SCREENS.TAMAGOTCHI,
+    maternelleSection: 'petite',
+    learningProgress: createDefaultLearningProgress(),
 
     collection: {
       chicken: {
@@ -98,7 +101,7 @@ export function createInitialGameState() {
       { id: 'hay', icon: BUILDER_ICONS.hay, price: 4, name: 'Blé' },
     ],
 
-    currentSubject: { mat: 'colors', cp: 'math' },
+    currentSubject: { petite: 'coloring', cp: 'math' },
     coloring: { currentColor: '#ef5350', drawn: false },
     dictee: { word: '', typed: [], scrambled: [] },
   }

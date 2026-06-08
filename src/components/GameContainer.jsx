@@ -4,7 +4,7 @@ import Toast from './Toast'
 import Modal from './Modal'
 import ScreenTamagotchi from './screens/ScreenTamagotchi'
 import ScreenLevelSelect from './screens/ScreenLevelSelect'
-import ScreenMinigameMaternelle from './screens/ScreenMinigameMaternelle'
+import ScreenMaternelleSection from './screens/ScreenMaternelleSection'
 import ScreenMinigameCP from './screens/ScreenMinigameCP'
 import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
@@ -55,7 +55,7 @@ export default function GameContainer() {
             <>
               {screen === SCREENS.TAMAGOTCHI && <ScreenTamagotchi />}
               {screen === SCREENS.LEVEL_SELECT && <ScreenLevelSelect />}
-              {screen === SCREENS.MINIGAME_MATERNELLE && <ScreenMinigameMaternelle />}
+              {screen === SCREENS.MATERNELLE_SECTION && <ScreenMaternelleSection />}
               {screen === SCREENS.MINIGAME_CP && <ScreenMinigameCP />}
               {screen === SCREENS.UPGRADE && <ScreenUpgrade />}
               {screen === SCREENS.COLLECTION && <ScreenCollection />}

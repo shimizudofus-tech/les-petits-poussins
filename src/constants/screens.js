@@ -1,7 +1,9 @@
 export const SCREENS = {
   TAMAGOTCHI: 'tamagotchi',
   LEVEL_SELECT: 'level-select',
+  /** @deprecated Migré vers MATERNELLE_SECTION */
   MINIGAME_MATERNELLE: 'minigame-maternelle',
+  MATERNELLE_SECTION: 'maternelle-section',
   MINIGAME_CP: 'minigame-cp',
   UPGRADE: 'upgrade',
   COLLECTION: 'collection',
@@ -16,6 +18,7 @@ export const SCREENS = {
 const LEGACY_SCREEN_MAP = {
   [SCREENS.BUILDER]: SCREENS.UPGRADE,
   [SCREENS.DEX]: SCREENS.COLLECTION,
+  [SCREENS.MINIGAME_MATERNELLE]: SCREENS.MATERNELLE_SECTION,
 }
 
 const VALID_SCREENS = new Set(Object.values(SCREENS))
