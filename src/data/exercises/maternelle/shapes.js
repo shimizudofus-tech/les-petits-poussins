@@ -31,4 +31,20 @@ export const maternelleShapeExercises = [
     name: 'Rectangle',
     difficulty: 1,
   },
+  {
+    id: 'mat-shape-etoile',
+    level: 'maternelle',
+    subject: 'shapes',
+    shapeId: 'star',
+    name: 'Étoile',
+    difficulty: 1,
+  },
+  {
+    id: 'mat-shape-coeur',
+    level: 'maternelle',
+    subject: 'shapes',
+    shapeId: 'heart',
+    name: 'Cœur',
+    difficulty: 1,
+  },
 ]

@@ -22,4 +22,13 @@ export const SHAPE_RENDERERS = {
   diamond: () => (
     <polygon points="26,4 48,26 26,48 4,26" fill="none" stroke="currentColor" strokeWidth="3" />
   ),
+  heart: () => (
+    <path
+      d="M26 42 C26 42 6 28 6 16 C6 8 14 4 20 8 C22 10 24 12 26 16 C28 12 30 10 32 8 C38 4 46 8 46 16 C46 28 26 42 26 42 Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinejoin="round"
+    />
+  ),
 }

@@ -1,4 +1,4 @@
-const COUNT_EMOJIS = ['🐔', '🌻', '🍎', '⭐', '🐮']
+const COUNT_EMOJIS = ['🐣', '🥚', '🌸', '🍎', '⭐']
 
 export const maternelleCountingExercises = []
 

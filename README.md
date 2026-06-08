@@ -22,6 +22,30 @@ Checkpoint fonctionnel validé — socle prêt pour l’ajout massif de contenu 
 
 Le legacy Builder (`farmLayout`, `ScreenBuilder`) est conservé pour compatibilité ; non exposé dans la navigation principale.
 
+## Pack Contenu 1
+
+Premier lot de contenu pédagogique data-driven (sans fichiers MP3 pour l’instant).
+
+| Matière | Fichier | Quantité |
+|---------|---------|----------|
+| Dictée CP | `cp/dictee.js` | **24** mots |
+| Lecture CP | `cp/lecture.js` | **12** phrases |
+| Maths CP | `cp/maths.js` | **32** exercices (12 additions, 10 soustractions, 10 comparaisons) |
+| Couleurs Maternelle | `maternelle/colors.js` | **9** couleurs |
+| Formes Maternelle | `maternelle/shapes.js` | **6** formes (cercle, carré, triangle, rectangle, étoile, cœur) |
+| Compter Maternelle | `maternelle/counting.js` | **25** exercices (1 à 5 × 5 visuels) |
+
+Les `audioKey` sont prêts pour les MP3 futurs dans `src/assets/audio/voix/`. Exemples :
+
+- `word: "bébé"` → `audioKey: "bebe"` → `bebe.mp3`
+- `word: "vélo"` → `audioKey: "velo"` → `velo.mp3`
+- `word: "école"` → `audioKey: "ecole"` → `ecole.mp3`
+- `word: "œuf"` → `audioKey: "oeuf"` → `oeuf.mp3`
+
+Si un MP3 est absent, le jeu continue sans crash (le bouton Écouter reste silencieux).
+
+Les compteurs du Mode Parent se mettent à jour automatiquement via `getExerciseContentStats()`.
+
 ## Prérequis
 
 - [Node.js](https://nodejs.org/) 18+
