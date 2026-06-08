@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Les Petits Poussins">
+  <defs>
+    <linearGradient id="sky" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#87CEEB"/>
+      <stop offset="100%" stop-color="#b3e5fc"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#81c784"/>
+      <stop offset="100%" stop-color="#66bb6a"/>
+    </linearGradient>
+    <linearGradient id="chick" x1="0.35" y1="0.15" x2="0.75" y2="0.95">
+      <stop offset="0%" stop-color="#fff59d"/>
+      <stop offset="100%" stop-color="#ffca28"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fond : ciel + herbe -->
+  <rect width="512" height="512" rx="96" fill="url(#sky)"/>
+  <path d="M0 290 Q128 262 256 278 T512 290 L512 512 L0 512 Z" fill="url(#grass)"/>
+  <ellipse cx="256" cy="290" rx="270" ry="22" fill="#4caf50" opacity="0.3"/>
+
+  <!-- Nuage discret -->
+  <g fill="#ffffff" opacity="0.8">
+    <ellipse cx="118" cy="96" rx="36" ry="22"/>
+    <ellipse cx="148" cy="88" rx="28" ry="18"/>
+    <ellipse cx="88" cy="88" rx="24" ry="16"/>
+  </g>
+
+  <!-- Poussin chibi (centre) -->
+  <g transform="translate(256 272)">
+    <!-- Pattes -->
+    <g stroke="#e65100" stroke-width="12" stroke-linecap="round">
+      <line x1="-32" y1="88" x2="-32" y2="112"/>
+      <line x1="32" y1="88" x2="32" y2="112"/>
+    </g>
+    <g fill="#ff8f00" stroke="#bf360c" stroke-width="7" stroke-linejoin="round">
+      <rect x="-50" y="112" width="36" height="12" rx="4"/>
+      <rect x="14" y="112" width="36" height="12" rx="4"/>
+    </g>
+
+    <!-- Ailes -->
+    <ellipse cx="-74" cy="20" rx="26" ry="36" fill="#ffca28" stroke="#8d6e3a" stroke-width="9"/>
+    <ellipse cx="74" cy="20" rx="26" ry="36" fill="#ffca28" stroke="#8d6e3a" stroke-width="9"/>
+
+    <!-- Corps -->
+    <circle cx="0" cy="14" r="98" fill="url(#chick)" stroke="#8d6e3a" stroke-width="11"/>
+
+    <!-- Houppe -->
+    <path d="M0 -88 C-12 -124 12 -124 0 -88 Z" fill="#ffca28" stroke="#8d6e3a" stroke-width="9" stroke-linejoin="round"/>
+
+    <!-- Yeux -->
+    <circle cx="-32" cy="0" r="20" fill="#3e2723"/>
+    <circle cx="32" cy="0" r="20" fill="#3e2723"/>
+    <circle cx="-26" cy="-6" r="7" fill="#ffffff"/>
+    <circle cx="38" cy="-6" r="7" fill="#ffffff"/>
+
+    <!-- Bec -->
+    <path d="M0 16 L-20 44 L20 44 Z" fill="#ff8f00" stroke="#bf360c" stroke-width="7" stroke-linejoin="round"/>
+
+    <!-- Joues -->
+    <circle cx="-60" cy="24" r="14" fill="#ff8a80" opacity="0.5"/>
+    <circle cx="60" cy="24" r="14" fill="#ff8a80" opacity="0.5"/>
+  </g>
+</svg>
