@@ -1,32 +1,56 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { pickMaternelleExercise } from '../../data/exercises'
-import { useGame } from '../../context/GameContext'
+import { SCREENS, useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
+import { playWord } from '../../utils/audioManager'
 import ExerciseUnavailable from './ExerciseUnavailable'
-import PetiteExerciseHeader from './PetiteExerciseHeader'
 import {
   PUZZLE_BOARD_HEIGHT,
   PUZZLE_BOARD_WIDTH,
+  PUZZLE_PIECE_SHAPE,
   getCellSize,
   getPieceBackgroundStyle,
+  getPuzzleUiConfig,
   isNearSlot,
+  resolveBoardMaxWidth,
   shufflePieces,
   slotKey,
 } from './puzzleUtils'
 
 const SNAP_RATIO = 0.42
+const MIN_TRAY_TOUCH_PX = 44
+
+function subscribeViewport(cb) {
+  window.addEventListener('resize', cb)
+  return () => window.removeEventListener('resize', cb)
+}
+
+function getViewportWidth() {
+  return window.innerWidth
+}
+
+function useViewportWidth() {
+  return useSyncExternalStore(subscribeViewport, getViewportWidth, () => 360)
+}
 
 function PuzzlePieceFace({ piece, puzzle, cellW, cellH, scale, className = '', style = {} }) {
   if (!piece) return null
-  const width = cellW * scale
-  const height = cellH * scale
   return (
     <div
-      className={`image-puzzle-piece ${className}`.trim()}
+      className={`puzzle-piece-face ${className}`.trim()}
+      data-piece-shape={PUZZLE_PIECE_SHAPE}
+      data-piece-col={piece.correctCol}
+      data-piece-row={piece.correctRow}
       style={{
-        width,
-        height,
-        ...getPieceBackgroundStyle(piece.correctCol, piece.correctRow, puzzle.cols, puzzle.rows, puzzle.image),
+        width: cellW * scale,
+        height: cellH * scale,
+        ...getPieceBackgroundStyle(
+          piece.correctCol,
+          piece.correctRow,
+          puzzle.cols,
+          puzzle.rows,
+          puzzle.image,
+        ),
         ...style,
       }}
     />
@@ -34,7 +58,7 @@ function PuzzlePieceFace({ piece, puzzle, cellW, cellH, scale, className = '', s
 }
 
 export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorrect }) {
-  const { gameState, setGameState, showFeedback } = useGame()
+  const { gameState, setGameState, showFeedback, switchScreen } = useGame()
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'puzzles')
   const boardRef = useRef(null)
   const dragRef = useRef(null)
@@ -46,18 +70,21 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
     [exerciseKey, maxDifficulty, section],
   )
 
-  const displayMaxWidth =
-    section === 'grande' && puzzle?.pieceCount >= 12
-      ? 300
-      : puzzle?.difficulty === 1
-        ? 320
-        : puzzle?.pieceCount <= 4
-          ? 300
-          : 280
-  const scale = puzzle ? Math.min(1, displayMaxWidth / PUZZLE_BOARD_WIDTH) : 1
-  const isEasyPuzzle = puzzle?.difficulty === 1
+  const viewportWidth = useViewportWidth()
+  const ui = useMemo(() => getPuzzleUiConfig(section, puzzle), [section, puzzle])
+  const boardMaxWidth = puzzle ? resolveBoardMaxWidth(ui.maxWidthCap, viewportWidth) : 0
+  const scale = puzzle ? boardMaxWidth / PUZZLE_BOARD_WIDTH : 1
   const { cellW, cellH } = puzzle ? getCellSize(puzzle) : { cellW: 0, cellH: 0 }
   const snapThreshold = Math.min(cellW, cellH) * SNAP_RATIO
+  const trayScale = useMemo(() => {
+    if (!puzzle) return 1
+    let ts = scale * ui.trayScaleFactor
+    const minDim = Math.min(cellW * ts, cellH * ts)
+    if (minDim < MIN_TRAY_TOUCH_PX) {
+      ts = MIN_TRAY_TOUCH_PX / Math.min(cellW, cellH)
+    }
+    return ts
+  }, [scale, ui.trayScaleFactor, cellW, cellH, puzzle])
 
   const [pieces, setPieces] = useState([])
   const [selectedId, setSelectedId] = useState(null)
@@ -83,6 +110,8 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
   const allPlaced = pieces.length > 0 && pieces.every((piece) => piece.placed)
   const trayPieces = pieces.filter((piece) => !piece.placed && piece.id !== draggingId)
   const placedPieces = pieces.filter((piece) => piece.placed)
+  const placedCount = placedPieces.length
+  const totalCount = puzzle.pieceCount
 
   const placePiece = (pieceId) => {
     setPieces((prev) =>
@@ -120,6 +149,7 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
 
     movedRef.current = false
     setDraggingId(pieceId)
+    setSelectedId(pieceId)
     setDragPos({ x: x - cellW / 2, y: y - cellH / 2 })
     dragRef.current = {
       pieceId,
@@ -179,44 +209,68 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
     onCorrect?.()
   }
 
+  const handleListen = () => {
+    if (puzzle.audioKey) playWord(puzzle.audioKey)
+  }
+
   const boardWidth = PUZZLE_BOARD_WIDTH * scale
   const boardHeight = PUZZLE_BOARD_HEIGHT * scale
 
   return (
-    <>
-      <PetiteExerciseHeader
-        instruction="Remets l'image"
-        parentHint={
-          isEasyPuzzle
-            ? `${puzzle.title} — glisse ou touche les 2 morceaux`
-            : `${puzzle.title} — glisse ou touche chaque morceau`
-        }
-        audioKey={puzzle.audioKey}
-        audioLabel={puzzle.title}
-      />
-
-      <div
-        className={`image-puzzle mx-auto w-full max-w-full ${isEasyPuzzle ? 'image-puzzle--easy' : ''}`}
-        style={{ maxWidth: boardWidth }}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
-        onTouchMove={handlePointerMove}
-        onTouchEnd={handlePointerUp}
-      >
-        <div
-          ref={boardRef}
-          className="image-puzzle-target relative overflow-hidden rounded-2xl border-4 border-[#e8b84b] shadow-[0_4px_12px_rgba(0,0,0,0.12)]"
-          style={{ width: boardWidth, height: boardHeight }}
+    <div
+      className={`puzzle-app puzzle-app--${section}`}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+      onTouchMove={handlePointerMove}
+      onTouchEnd={handlePointerUp}
+    >
+      <header className="puzzle-app-header">
+        <button
+          type="button"
+          className="puzzle-app-back"
+          onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
+          aria-label="Retour"
         >
+          ←
+        </button>
+        <div className="puzzle-app-title-wrap">
+          <h2 className="puzzle-app-title">🧩 {puzzle.title}</h2>
+          <p className="puzzle-app-progress">
+            {placedCount}/{totalCount}
+          </p>
+        </div>
+        <div className="puzzle-app-stars" aria-label={`${gameState.stars} étoiles`}>
+          ⭐ {gameState.stars}
+        </div>
+        {puzzle.audioKey ? (
+          <button
+            type="button"
+            className="puzzle-app-audio"
+            onClick={handleListen}
+            aria-label={`Écouter ${puzzle.title}`}
+          >
+            🔊
+          </button>
+        ) : null}
+      </header>
+
+      <div className="puzzle-app-body">
+        <div className="puzzle-app-stage">
+          <div
+            ref={boardRef}
+            className="puzzle-app-board"
+            style={{ width: boardWidth, height: boardHeight }}
+          >
           <img
             src={puzzle.image}
             alt=""
-            className="image-puzzle-guide pointer-events-none absolute inset-0 h-full w-full"
+            className="puzzle-app-guide"
+            style={{ opacity: ui.guideOpacity }}
             draggable={false}
           />
 
-          <div className="image-puzzle-grid absolute inset-0">
+          <div className="puzzle-app-grid">
             {Array.from({ length: puzzle.rows * puzzle.cols }).map((_, index) => {
               const col = index % puzzle.cols
               const row = Math.floor(index / puzzle.cols)
@@ -227,9 +281,9 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
                 <button
                   key={slotKey(col, row)}
                   type="button"
-                  className={`image-puzzle-slot ${occupied ? 'image-puzzle-slot--filled' : ''} ${
-                    selectedId && !occupied ? 'image-puzzle-slot--active' : ''
-                  }`}
+                  className={`puzzle-app-slot ${occupied ? 'puzzle-app-slot--filled' : ''} ${
+                    ui.easySlots ? 'puzzle-app-slot--easy' : ''
+                  } ${selectedId && !occupied ? 'puzzle-app-slot--active' : ''}`}
                   style={{
                     left: col * cellW * scale,
                     top: row * cellH * scale,
@@ -237,7 +291,7 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
                     height: cellH * scale,
                   }}
                   onClick={() => handleSlotTap(col, row)}
-                  aria-label={`Emplacement ${row + 1}-${col + 1}`}
+                  aria-label={`Case ${row + 1}-${col + 1}`}
                 />
               )
             })}
@@ -246,7 +300,7 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
           {placedPieces.map((piece) => (
             <div
               key={piece.id}
-              className="image-puzzle-piece-wrap image-puzzle-piece-wrap--placed absolute"
+              className="puzzle-app-piece-wrap puzzle-app-piece-wrap--placed"
               style={{
                 left: piece.correctCol * cellW * scale,
                 top: piece.correctRow * cellH * scale,
@@ -254,19 +308,24 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
                 height: cellH * scale,
               }}
             >
-              <PuzzlePieceFace piece={piece} puzzle={puzzle} cellW={cellW} cellH={cellH} scale={scale} />
+              <PuzzlePieceFace
+                piece={piece}
+                puzzle={puzzle}
+                cellW={cellW}
+                cellH={cellH}
+                scale={scale}
+              />
             </div>
           ))}
 
           {draggingId && (
             <div
-              className="image-puzzle-piece-wrap image-puzzle-piece-wrap--dragging absolute"
+              className="puzzle-app-piece-wrap puzzle-app-piece-wrap--dragging"
               style={{
                 left: dragPos.x * scale,
                 top: dragPos.y * scale,
                 width: cellW * scale,
                 height: cellH * scale,
-                zIndex: 20,
               }}
             >
               <PuzzlePieceFace
@@ -278,43 +337,67 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
               />
             </div>
           )}
+          </div>
         </div>
 
-        <div
-          className={`image-puzzle-tray mt-3 ${puzzle.pieceCount > 4 ? 'image-puzzle-tray--many' : ''}`}
-        >
-          {trayPieces.map((piece) => (
+        <div className="puzzle-app-footer">
+          <div className="puzzle-app-tray" aria-label="Pièces à placer">
+            <div className="puzzle-app-tray-scroll">
+              {allPlaced ? (
+                <p className="puzzle-app-tray-empty">Bravo, tout est placé !</p>
+              ) : (
+                trayPieces.map((piece) => (
+                  <button
+                    key={piece.id}
+                    type="button"
+                    className={`puzzle-app-tray-item ${
+                      selectedId === piece.id ? 'puzzle-app-tray-item--selected' : ''
+                    }`}
+                    style={{
+                      width: cellW * trayScale + 10,
+                      height: cellH * trayScale + 10,
+                    }}
+                    onPointerDown={(event) => handlePointerDown(piece.id, event)}
+                    onTouchStart={(event) => handlePointerDown(piece.id, event)}
+                    aria-label={`Pièce ${piece.trayIndex + 1}`}
+                    aria-pressed={selectedId === piece.id}
+                  >
+                    <PuzzlePieceFace
+                      piece={piece}
+                      puzzle={puzzle}
+                      cellW={cellW}
+                      cellH={cellH}
+                      scale={trayScale}
+                    />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="puzzle-app-actions">
             <button
-              key={piece.id}
               type="button"
-              className={`image-puzzle-tray-item ${
-                selectedId === piece.id ? 'image-puzzle-tray-item--selected' : ''
-              }`}
-              style={{ width: cellW * scale, height: cellH * scale }}
-              onPointerDown={(event) => handlePointerDown(piece.id, event)}
-              onTouchStart={(event) => handlePointerDown(piece.id, event)}
-              aria-label={`Morceau ${piece.trayIndex + 1}`}
-              aria-pressed={selectedId === piece.id}
+              onClick={resetPieces}
+              className="puzzle-app-btn puzzle-app-btn--reset"
+              aria-label="Mélanger les pièces"
             >
-              <PuzzlePieceFace piece={piece} puzzle={puzzle} cellW={cellW} cellH={cellH} scale={scale} />
+              <span className="puzzle-app-btn-icon" aria-hidden="true">
+                🔄
+              </span>
+              <span className="puzzle-app-btn-label">Mélanger</span>
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={handleValidate}
+              disabled={!allPlaced}
+              className="puzzle-app-btn puzzle-app-btn--finish"
+            >
+              ✅ Terminer
+            </button>
+          </div>
         </div>
       </div>
-
-      <div className="petite-actions mt-3 flex justify-center gap-3">
-        <button type="button" onClick={resetPieces} className="col-btn col-btn--petite reset">
-          🔄 Recommencer
-        </button>
-        <button
-          type="button"
-          onClick={handleValidate}
-          disabled={!allPlaced}
-          className="col-btn col-btn--petite validate disabled:opacity-50"
-        >
-          ✅ Terminer
-        </button>
-      </div>
-    </>
+    </div>
   )
 }
