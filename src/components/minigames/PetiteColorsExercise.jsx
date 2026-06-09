@@ -3,6 +3,7 @@ import { getMaternelleExercises, pickMaternelleExercise } from '../../data/exerc
 import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
+import PetiteExerciseHeader from './PetiteExerciseHeader'
 
 function buildQuiz(section, maxDifficulty) {
   const target = pickMaternelleExercise(section, 'colors', maxDifficulty)
@@ -50,9 +51,12 @@ export default function PetiteColorsExercise({ section = 'petite', onCorrect }) 
 
   return (
     <>
-      <div className="mb-3 text-center text-[1rem] font-extrabold text-[#5d3a00]">
-        Trouve <span className="text-[#e65100]">{target.name}</span> !
-      </div>
+      <PetiteExerciseHeader
+        instruction="Trouve la couleur"
+        parentHint={`Cherche : ${target.name}`}
+        audioKey={target.audioKey}
+        audioLabel={target.name}
+      />
       <div className="petite-color-choices flex flex-wrap justify-center gap-4">
         {options.map((choice) => (
           <button

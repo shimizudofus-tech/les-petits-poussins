@@ -1,8 +1,40 @@
-import { useGame } from '../context/GameContext'
+import { SCREENS, useGame } from '../context/GameContext'
 
 export default function Feedback() {
-  const { feedback } = useGame()
+  const { feedback, gameState } = useGame()
   if (!feedback) return null
+
+  const isPetiteChild =
+    gameState.currentScreen === SCREENS.MATERNELLE_SECTION &&
+    (gameState.maternelleSection ?? 'petite') === 'petite'
+
+  if (isPetiteChild) {
+    return (
+      <div className="feedback-overlay feedback-overlay--child">
+        <div
+          className={`feedback-content feedback-content--child ${
+            feedback.correct ? 'feedback-content--child-correct' : 'feedback-content--child-wrong'
+          }`}
+        >
+          {feedback.correct ? (
+            <>
+              <span className="feedback-child-star" aria-hidden="true">
+                ⭐
+              </span>
+              <span className="feedback-child-text">Bravo !</span>
+            </>
+          ) : (
+            <>
+              <span className="feedback-child-emoji" aria-hidden="true">
+                😊
+              </span>
+              <span className="feedback-child-text">Encore !</span>
+            </>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="feedback-overlay">

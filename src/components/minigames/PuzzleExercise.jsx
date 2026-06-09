@@ -3,6 +3,7 @@ import { pickMaternelleExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
+import PetiteExerciseHeader from './PetiteExerciseHeader'
 import {
   PUZZLE_BOARD_HEIGHT,
   PUZZLE_BOARD_WIDTH,
@@ -14,7 +15,6 @@ import {
 } from './puzzleUtils'
 
 const SNAP_RATIO = 0.42
-const MAX_DISPLAY_WIDTH = 300
 
 function PuzzlePieceFace({ piece, puzzle, cellW, cellH, scale, className = '', style = {} }) {
   if (!piece) return null
@@ -46,7 +46,10 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
     [exerciseKey, maxDifficulty, section],
   )
 
-  const scale = Math.min(1, MAX_DISPLAY_WIDTH / PUZZLE_BOARD_WIDTH)
+  const displayMaxWidth =
+    puzzle?.difficulty === 1 ? 320 : puzzle?.pieceCount <= 4 ? 300 : 280
+  const scale = puzzle ? Math.min(1, displayMaxWidth / PUZZLE_BOARD_WIDTH) : 1
+  const isEasyPuzzle = puzzle?.difficulty === 1
   const { cellW, cellH } = puzzle ? getCellSize(puzzle) : { cellW: 0, cellH: 0 }
   const snapThreshold = Math.min(cellW, cellH) * SNAP_RATIO
 
@@ -175,18 +178,19 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
 
   return (
     <>
-      <div className="mb-2 text-center text-[0.9rem] font-extrabold text-[#5d3a00]">
-        🧩 Puzzle : {puzzle.title}
-      </div>
-      <p className="mb-2 text-center text-[0.72rem] font-bold text-[#8d6e3a]">
-        Remets l&apos;image ensemble !
-      </p>
-      <p className="mb-2 text-center text-[0.65rem] font-bold text-[#a1887f]">
-        Glisse un morceau ou touche-le puis touche sa place
-      </p>
+      <PetiteExerciseHeader
+        instruction="Remets l'image"
+        parentHint={
+          isEasyPuzzle
+            ? `${puzzle.title} — glisse ou touche les 2 morceaux`
+            : `${puzzle.title} — glisse ou touche chaque morceau`
+        }
+        audioKey={puzzle.audioKey}
+        audioLabel={puzzle.title}
+      />
 
       <div
-        className="image-puzzle mx-auto w-full max-w-full"
+        className={`image-puzzle mx-auto w-full max-w-full ${isEasyPuzzle ? 'image-puzzle--easy' : ''}`}
         style={{ maxWidth: boardWidth }}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -292,17 +296,17 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
         </div>
       </div>
 
-      <div className="coloring-actions mt-3 flex justify-center gap-2.5">
-        <button type="button" onClick={resetPieces} className="col-btn reset">
+      <div className="petite-actions mt-3 flex justify-center gap-3">
+        <button type="button" onClick={resetPieces} className="col-btn col-btn--petite reset">
           🔄 Recommencer
         </button>
         <button
           type="button"
           onClick={handleValidate}
           disabled={!allPlaced}
-          className="col-btn validate disabled:opacity-50"
+          className="col-btn col-btn--petite validate disabled:opacity-50"
         >
-          ✅ Terminer (+2⭐)
+          ✅ Terminer
         </button>
       </div>
     </>

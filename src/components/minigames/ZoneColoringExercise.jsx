@@ -4,11 +4,13 @@ import { pickMaternelleExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
+import PetiteExerciseHeader from './PetiteExerciseHeader'
 
 export default function ZoneColoringExercise({ exerciseKey, section = 'petite', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'coloring')
   const [selectedColor, setSelectedColor] = useState(PALETTE_COLORS[0])
+  const [activeZone, setActiveZone] = useState(null)
 
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'coloring', maxDifficulty),
@@ -20,6 +22,7 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
 
   useEffect(() => {
     setZoneFills({})
+    setActiveZone(null)
   }, [exerciseKey, exercise?.id])
 
   const fills = useMemo(() => {
@@ -37,10 +40,12 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
 
   const handleZoneClick = (zoneId) => {
     setZoneFills((prev) => ({ ...prev, [zoneId]: selectedColor }))
+    setActiveZone(zoneId)
   }
 
   const handleReset = () => {
     setZoneFills({})
+    setActiveZone(null)
   }
 
   const handleFinish = () => {
@@ -51,29 +56,28 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
 
   return (
     <>
-      <div className="mb-1 text-center text-[0.9rem] font-extrabold text-[#5d3a00]">
-        🖍️ Colorie : {exercise.title}
-      </div>
-      <p className="mb-2 text-center text-[0.72rem] font-bold text-[#8d6e3a]">
-        Choisis une couleur, puis touche une zone !
-      </p>
+      <PetiteExerciseHeader
+        instruction="Colorie"
+        parentHint={`${exercise.title} — choisis une couleur, touche une zone`}
+        audioKey={exercise.audioKey}
+        audioLabel={exercise.title}
+      />
 
-      <div className="color-palette flex flex-wrap justify-center gap-2">
+      <div className="petite-palette flex flex-wrap justify-center gap-2.5">
         {PALETTE_COLORS.map((color) => (
           <button
             key={color}
             type="button"
             onClick={() => setSelectedColor(color)}
-            className={`color-swatch h-10 w-10 rounded-full border-[3px] shadow-[0_2px_6px_rgba(0,0,0,0.2)] transition-transform active:scale-90 ${
-              selectedColor === color
-                ? 'scale-110 border-white shadow-[0_0_0_3px_#ff8f00]'
-                : 'border-white/50'
+            className={`petite-palette-swatch ${
+              selectedColor === color ? 'petite-palette-swatch--selected' : ''
             }`}
             style={{
               background: color,
               borderColor: color === '#ffffff' && selectedColor !== color ? '#ccc' : undefined,
             }}
             aria-label={`Couleur ${color}`}
+            aria-pressed={selectedColor === color}
           />
         ))}
       </div>
@@ -94,7 +98,9 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
               strokeWidth={zone.strokeOnly ? 3 : 2}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="zone-coloring-zone cursor-pointer"
+              className={`zone-coloring-zone cursor-pointer ${
+                activeZone === zone.id ? 'zone-coloring-zone--active' : ''
+              }`}
               onClick={() => handleZoneClick(zone.id)}
               onKeyDown={(e) => e.key === 'Enter' && handleZoneClick(zone.id)}
               tabIndex={0}
@@ -105,12 +111,12 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
         </svg>
       </div>
 
-      <div className="coloring-actions mt-3 flex justify-center gap-2.5">
-        <button type="button" onClick={handleReset} className="col-btn reset">
+      <div className="petite-actions mt-3 flex justify-center gap-3">
+        <button type="button" onClick={handleReset} className="col-btn col-btn--petite reset">
           🗑️ Effacer
         </button>
-        <button type="button" onClick={handleFinish} className="col-btn validate">
-          ✅ Terminer (+2⭐)
+        <button type="button" onClick={handleFinish} className="col-btn col-btn--petite validate">
+          ✅ Terminer
         </button>
       </div>
     </>

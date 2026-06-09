@@ -5,6 +5,7 @@ import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/mate
 import { makeOpts } from '../../utils/exerciseUtils'
 import AnswerButtons from './AnswerButtons'
 import ExerciseUnavailable from './ExerciseUnavailable'
+import PetiteExerciseHeader from './PetiteExerciseHeader'
 
 export default function PetiteCountExercise({ section = 'petite', onCorrect }) {
   const { gameState, setGameState } = useGame()
@@ -21,6 +22,7 @@ export default function PetiteCountExercise({ section = 'petite', onCorrect }) {
       answer: source.count,
       scene: source.emoji.repeat(source.count),
       options: makeOpts(source.count, 1, maxAnswer, optionCount),
+      audioKey: source.emojiKey,
     }
   }, [section, maxDifficulty])
 
@@ -35,8 +37,12 @@ export default function PetiteCountExercise({ section = 'petite', onCorrect }) {
 
   return (
     <>
+      <PetiteExerciseHeader
+        instruction="Compte"
+        parentHint="Combien y en a-t-il ?"
+        audioKey={exercise.audioKey}
+      />
       <div className="chalkboard petite-chalkboard">
-        <div className="chalkboard-label">Combien y en a-t-il ?</div>
         <div className="count-scene petite-count-scene">{exercise.scene}</div>
       </div>
       <AnswerButtons
@@ -44,6 +50,7 @@ export default function PetiteCountExercise({ section = 'petite', onCorrect }) {
         correct={exercise.answer}
         onCorrect={handleCorrect}
         columns={exercise.options.length <= 2 ? 2 : 3}
+        variant="petite"
       />
     </>
   )

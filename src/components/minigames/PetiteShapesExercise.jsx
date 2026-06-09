@@ -4,6 +4,29 @@ import { SHAPE_RENDERERS } from '../../data/exercises/shapeRenderers'
 import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
+import PetiteExerciseHeader from './PetiteExerciseHeader'
+
+const SHAPE_AUDIO_BY_ID = {
+  circle: 'cercle',
+  square: 'carre',
+  triangle: 'triangle',
+  rectangle: 'rectangle',
+  star: 'etoile',
+  heart: 'coeur',
+}
+
+function resolveShapeAudioKey(shape) {
+  if (shape?.audioKey) return shape.audioKey
+  if (shape?.shapeId && SHAPE_AUDIO_BY_ID[shape.shapeId]) {
+    return SHAPE_AUDIO_BY_ID[shape.shapeId]
+  }
+  const fromName = shape?.name
+    ?.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+  return fromName || null
+}
 
 function buildShapeQuiz(section, maxDifficulty) {
   const target = pickMaternelleExercise(section, 'shapes', maxDifficulty)
@@ -39,6 +62,7 @@ export default function PetiteShapesExercise({ section = 'petite', onCorrect }) 
   }
 
   const { target, options } = quiz
+  const shapeAudioKey = resolveShapeAudioKey(target)
 
   const handleSelect = (shape) => {
     if (answered) return
@@ -54,9 +78,12 @@ export default function PetiteShapesExercise({ section = 'petite', onCorrect }) 
 
   return (
     <>
-      <div className="mb-2 text-center text-[0.95rem] font-extrabold text-[#5d3a00]">
-        👆 Trouve le <strong>{target.name}</strong> !
-      </div>
+      <PetiteExerciseHeader
+        instruction="Trouve la forme"
+        parentHint={`Cherche : ${target.name}`}
+        audioKey={shapeAudioKey}
+        audioLabel={target.name}
+      />
       <div className="shapes-row flex flex-wrap justify-center gap-4">
         {options.map((shape) => {
           const ShapeIcon = SHAPE_RENDERERS[shape.shapeId]
@@ -67,13 +94,13 @@ export default function PetiteShapesExercise({ section = 'petite', onCorrect }) 
               tabIndex={0}
               onClick={() => handleSelect(shape)}
               onKeyDown={(e) => e.key === 'Enter' && handleSelect(shape)}
-              className={`shape-item petite-shape-item flex cursor-pointer flex-col items-center gap-1 rounded-[16px] border-[3px] px-4 py-3 text-[0.8rem] font-extrabold text-[#5d3a00] ${
+              className={`shape-item petite-shape-item flex cursor-pointer flex-col items-center gap-2 rounded-[18px] border-[4px] px-5 py-4 text-[0.88rem] font-extrabold text-[#5d3a00] ${
                 selected === shape.name
                   ? 'selected border-[#ff8f00] bg-[rgba(255,224,130,0.85)]'
                   : 'border-transparent bg-white/80'
               }`}
             >
-              <svg className="shape-svg h-[60px] w-[60px] text-[#5d3a00]" viewBox="0 0 52 52">
+              <svg className="shape-svg h-[72px] w-[72px] text-[#5d3a00]" viewBox="0 0 52 52">
                 {ShapeIcon ? <ShapeIcon /> : null}
               </svg>
               <span>{shape.name}</span>

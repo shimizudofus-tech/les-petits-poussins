@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useGame } from '../../context/GameContext'
 
-export default function AnswerButtons({ options, correct, onCorrect, columns = 3 }) {
+export default function AnswerButtons({ options, correct, onCorrect, columns = 3, variant }) {
   const { showFeedback } = useGame()
   const [answeredIndex, setAnsweredIndex] = useState(null)
   const [answerCorrect, setAnswerCorrect] = useState(null)
 
-  const colsClass = columns === 4 ? 'cols-4' : 'cols-3'
+  const colsClass =
+    columns === 4 ? 'cols-4' : columns === 2 ? 'cols-2' : 'cols-3'
+  const gridClass = variant === 'petite' ? 'answers-grid--petite' : ''
 
   const handleClick = (index, value) => {
     if (answeredIndex !== null) return
@@ -18,7 +20,7 @@ export default function AnswerButtons({ options, correct, onCorrect, columns = 3
   }
 
   return (
-    <div className={`answers-grid ${colsClass}`}>
+    <div className={`answers-grid ${colsClass} ${gridClass}`.trim()}>
       {options.map((opt, index) => {
         const value = typeof opt === 'object' ? opt.value : opt
         const label = typeof opt === 'object' ? opt.label : opt
@@ -31,7 +33,7 @@ export default function AnswerButtons({ options, correct, onCorrect, columns = 3
             type="button"
             onClick={() => handleClick(index, value)}
             disabled={answeredIndex !== null}
-            className={`ans-btn ${stateClass}`}
+            className={`ans-btn ${variant === 'petite' ? 'ans-btn--petite' : ''} ${stateClass}`.trim()}
           >
             {label}
           </button>
