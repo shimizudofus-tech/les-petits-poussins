@@ -195,6 +195,10 @@ export default function ScreenParent() {
 
       <section className="parent-card">
         <h2 className="parent-card-title">Fichiers audio attendus</h2>
+        <p className="parent-card-hint">
+          Audio : les MP3 maison peuvent être ajoutés dans src/assets/audio/voix/. En attendant, le
+          jeu utilise une voix automatique du navigateur.
+        </p>
         <p className="parent-card-hint">{audioFiles.length} fichier(s) MP3 référencé(s)</p>
         <ul className="parent-detail-list">
           {audioFiles.map(({ audioKey, path }) => (
