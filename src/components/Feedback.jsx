@@ -6,7 +6,7 @@ export default function Feedback() {
 
   const isMaternelleChild =
     gameState.currentScreen === SCREENS.MATERNELLE_SECTION &&
-    ['petite', 'moyenne'].includes(gameState.maternelleSection ?? 'petite')
+    ['petite', 'moyenne', 'grande'].includes(gameState.maternelleSection ?? 'petite')
 
   if (isMaternelleChild) {
     return (

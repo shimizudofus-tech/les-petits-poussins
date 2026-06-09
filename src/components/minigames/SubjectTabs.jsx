@@ -1,6 +1,6 @@
 export default function SubjectTabs({ tabs, active, onSelect, variant }) {
   const wrapClass =
-    variant === 'petite' || variant === 'moyenne'
+    variant === 'petite' || variant === 'moyenne' || variant === 'grande'
       ? `subject-tabs subject-tabs--${variant}`
       : 'subject-tabs'
 
@@ -12,7 +12,7 @@ export default function SubjectTabs({ tabs, active, onSelect, variant }) {
           type="button"
           onClick={() => onSelect(id)}
           className={`stab flex-1 cursor-pointer rounded-t-[14px] border-none px-1 py-2.5 font-[Nunito,Arial,sans-serif] font-extrabold transition-[background,color] duration-150 ${
-            variant === 'petite' || variant === 'moyenne'
+            variant === 'petite' || variant === 'moyenne' || variant === 'grande'
               ? 'text-[0.68rem] leading-tight'
               : 'text-[0.8rem]'
           } ${

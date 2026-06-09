@@ -6,6 +6,7 @@ import { resolveScreen } from '../constants/screens'
 import {
   createDefaultLearningProgress,
   createSectionProgress,
+  GRANDE_ACTIVITIES,
   MOYENNE_ACTIVITIES,
   PETITE_ACTIVITIES,
 } from './maternelleProgress'
@@ -77,6 +78,8 @@ function mergeLearningProgress(saved, initial) {
   const savedMaternelle = saved?.maternelle ?? {}
   const defaultMoyenne =
     base.maternelle?.moyenne ?? createSectionProgress(MOYENNE_ACTIVITIES)
+  const defaultGrande =
+    base.maternelle?.grande ?? createSectionProgress(GRANDE_ACTIVITIES)
 
   return {
     ...base,
@@ -88,6 +91,7 @@ function mergeLearningProgress(saved, initial) {
         PETITE_ACTIVITIES,
       ),
       moyenne: mergeSectionProgress(savedMaternelle.moyenne, defaultMoyenne, MOYENNE_ACTIVITIES),
+      grande: mergeSectionProgress(savedMaternelle.grande, defaultGrande, GRANDE_ACTIVITIES),
     },
   }
 }

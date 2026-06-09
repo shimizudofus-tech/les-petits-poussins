@@ -4,6 +4,7 @@ import { SCREENS, useGame } from '../../context/GameContext'
 import {
   getExerciseContentStats,
   getExpectedAudioFiles,
+  getMaternelleGrandeStats,
   getMaternelleMoyenneStats,
   getMaternellePetiteStats,
   getUsedImageKeys,
@@ -33,6 +34,14 @@ const MOYENNE_LABELS = [
   { key: 'patterns', label: 'Suites' },
 ]
 
+const GRANDE_LABELS = [
+  { key: 'letters', label: 'Lettres' },
+  { key: 'sounds', label: 'Sons' },
+  { key: 'counting', label: 'Compter 10' },
+  { key: 'puzzles', label: 'Puzzle +' },
+  { key: 'logic', label: 'Logique' },
+]
+
 function getReturnScreen() {
   const saved = sessionStorage.getItem(PARENT_RETURN_SESSION_KEY)
   if (saved && Object.values(SCREENS).includes(saved)) {
@@ -46,6 +55,7 @@ export default function ScreenParent() {
   const stats = getExerciseContentStats()
   const petiteStats = getMaternellePetiteStats()
   const moyenneStats = getMaternelleMoyenneStats()
+  const grandeStats = getMaternelleGrandeStats()
   const audioFiles = getExpectedAudioFiles()
   const imageKeys = getUsedImageKeys()
 
@@ -55,6 +65,7 @@ export default function ScreenParent() {
   const farmLevel = computeFarmLevel(gameState.farmUpgrades)
   const petiteProgress = gameState.learningProgress?.maternelle?.petite ?? {}
   const moyenneProgress = gameState.learningProgress?.maternelle?.moyenne ?? {}
+  const grandeProgress = gameState.learningProgress?.maternelle?.grande ?? {}
 
   const handleBack = () => {
     switchScreen(getReturnScreen())
@@ -124,7 +135,6 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-        <p className="parent-card-hint mt-2">Grande Section : à venir</p>
       </section>
 
       <section className="parent-card">
@@ -153,7 +163,34 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-        <p className="parent-card-hint mt-2">Grande Section : à venir</p>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Maternelle — Grande Section</h2>
+        <ul className="parent-stat-list">
+          {GRANDE_LABELS.map(({ key, label }) => (
+            <li key={key} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{grandeStats[key]}</strong>
+            </li>
+          ))}
+        </ul>
+        <h3 className="parent-card-subtitle mt-3">Progression enfant</h3>
+        <ul className="parent-stat-list">
+          {GRANDE_LABELS.map(({ key, label }) => {
+            const prog = grandeProgress[key] ?? { unlockedDifficulty: 1, correctAnswers: 0 }
+            const atMax = prog.unlockedDifficulty >= MAX_MATERNELLE_DIFFICULTY
+            return (
+              <li key={`grd-prog-${key}`} className="parent-stat-row">
+                <span>{label}</span>
+                <strong>
+                  Diff. {prog.unlockedDifficulty}/{MAX_MATERNELLE_DIFFICULTY}
+                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK}`}
+                </strong>
+              </li>
+            )
+          })}
+        </ul>
       </section>
 
       <section className="parent-card">

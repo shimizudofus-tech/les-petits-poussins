@@ -4,7 +4,7 @@ export const PARENT_RETURN_SESSION_KEY = 'les-petits-poussins-parent-return'
 
 const AUDIO_PATH_PREFIX = 'src/assets/audio/voix'
 
-const SECTION_KEYS = ['petite', 'moyenne']
+const SECTION_KEYS = ['petite', 'moyenne', 'grande']
 
 function collectAllExercises() {
   const all = []
@@ -42,9 +42,20 @@ export function getMaternelleMoyenneStats() {
   }
 }
 
+export function getMaternelleGrandeStats() {
+  return {
+    letters: getMaternelleExercises('grande', 'letters').length,
+    sounds: getMaternelleExercises('grande', 'sounds').length,
+    counting: getMaternelleExercises('grande', 'counting').length,
+    puzzles: getMaternelleExercises('grande', 'puzzles').length,
+    logic: getMaternelleExercises('grande', 'logic').length,
+  }
+}
+
 export function getExerciseContentStats() {
   const petite = getMaternellePetiteStats()
   const moyenne = getMaternelleMoyenneStats()
+  const grande = getMaternelleGrandeStats()
   return {
     dictee: getExercises('cp', 'dictee').length,
     lecture: getExercises('cp', 'lecture').length,
@@ -54,6 +65,7 @@ export function getExerciseContentStats() {
     counting: petite.counting,
     petite,
     moyenne,
+    grande,
   }
 }
 

@@ -10,11 +10,16 @@ import MoyenneColorsExercise from '../minigames/MoyenneColorsExercise'
 import MoyenneShapesExercise from '../minigames/MoyenneShapesExercise'
 import MoyenneCountExercise from '../minigames/MoyenneCountExercise'
 import PatternExercise from '../minigames/PatternExercise'
+import GrandeLettersExercise from '../minigames/GrandeLettersExercise'
+import GrandeSoundsExercise from '../minigames/GrandeSoundsExercise'
+import GrandeCountExercise from '../minigames/GrandeCountExercise'
+import GrandeLogicExercise from '../minigames/GrandeLogicExercise'
 import { SCREENS, useGame } from '../../context/GameContext'
 
 const DEFAULT_SUBJECT = {
   petite: 'coloring',
   moyenne: 'colors',
+  grande: 'letters',
 }
 
 const SECTION_META = {
@@ -43,7 +48,13 @@ const SECTION_META = {
   grande: {
     icon: '🐔',
     title: 'Grande Section',
-    tabs: null,
+    tabs: [
+      { id: 'letters', label: '🔤 Lettres' },
+      { id: 'sounds', label: '👂 Sons' },
+      { id: 'counting', label: '🔢 Compter 10' },
+      { id: 'puzzles', label: '🧩 Puzzle +' },
+      { id: 'logic', label: '🧠 Logique' },
+    ],
   },
 }
 
@@ -64,8 +75,9 @@ export default function ScreenMaternelleSection() {
     setTimeout(() => setExerciseKey((k) => k + 1), 1800)
   }
 
-  const comingSoon = section === 'grande'
-  const tabVariant = section === 'petite' || section === 'moyenne' ? section : undefined
+  const comingSoon = false
+  const tabVariant =
+    section === 'petite' || section === 'moyenne' || section === 'grande' ? section : undefined
 
   const renderExercise = () => {
     if (section === 'petite') {
@@ -122,6 +134,31 @@ export default function ScreenMaternelleSection() {
       }
       if (subject === 'patterns') {
         return <PatternExercise key={exerciseKey} section={section} onCorrect={handleCorrect} />
+      }
+    }
+
+    if (section === 'grande') {
+      if (subject === 'letters') {
+        return <GrandeLettersExercise key={exerciseKey} section={section} onCorrect={handleCorrect} />
+      }
+      if (subject === 'sounds') {
+        return <GrandeSoundsExercise key={exerciseKey} section={section} onCorrect={handleCorrect} />
+      }
+      if (subject === 'counting') {
+        return <GrandeCountExercise key={exerciseKey} section={section} onCorrect={handleCorrect} />
+      }
+      if (subject === 'puzzles') {
+        return (
+          <PuzzleExercise
+            key={exerciseKey}
+            section={section}
+            exerciseKey={exerciseKey}
+            onCorrect={handleCorrect}
+          />
+        )
+      }
+      if (subject === 'logic') {
+        return <GrandeLogicExercise key={exerciseKey} section={section} onCorrect={handleCorrect} />
       }
     }
 

@@ -47,7 +47,13 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
   )
 
   const displayMaxWidth =
-    puzzle?.difficulty === 1 ? 320 : puzzle?.pieceCount <= 4 ? 300 : 280
+    section === 'grande' && puzzle?.pieceCount >= 12
+      ? 300
+      : puzzle?.difficulty === 1
+        ? 320
+        : puzzle?.pieceCount <= 4
+          ? 300
+          : 280
   const scale = puzzle ? Math.min(1, displayMaxWidth / PUZZLE_BOARD_WIDTH) : 1
   const isEasyPuzzle = puzzle?.difficulty === 1
   const { cellW, cellH } = puzzle ? getCellSize(puzzle) : { cellW: 0, cellH: 0 }

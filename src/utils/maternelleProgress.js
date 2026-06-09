@@ -4,9 +4,12 @@ export const PETITE_ACTIVITIES = ['coloring', 'colors', 'shapes', 'counting', 'p
 
 export const MOYENNE_ACTIVITIES = ['colors', 'shapes', 'counting', 'puzzles', 'patterns']
 
+export const GRANDE_ACTIVITIES = ['letters', 'sounds', 'counting', 'puzzles', 'logic']
+
 export const SECTION_ACTIVITIES = {
   petite: PETITE_ACTIVITIES,
   moyenne: MOYENNE_ACTIVITIES,
+  grande: GRANDE_ACTIVITIES,
 }
 
 export const CORRECTS_TO_UNLOCK = 5
@@ -26,6 +29,7 @@ export function createDefaultLearningProgress() {
     maternelle: {
       petite: createSectionProgress(PETITE_ACTIVITIES),
       moyenne: createSectionProgress(MOYENNE_ACTIVITIES),
+      grande: createSectionProgress(GRANDE_ACTIVITIES),
     },
   }
 }

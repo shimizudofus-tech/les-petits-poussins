@@ -25,7 +25,7 @@ const MATERNELLE_LEVELS = [
     icon: '🐔',
     title: 'Grande Section',
     subtitle: 'Grands · 5–6 ans',
-    badge: 'Bientôt',
+    badge: 'Préparer le CP',
     gradient: 'from-[#fff3e0] to-[#e3f2fd]',
     border: 'border-[#ffb74d]',
   },
@@ -42,7 +42,11 @@ export default function ScreenLevelSelect() {
         ...prev.currentSubject,
         [section]:
           prev.currentSubject?.[section] ??
-          (section === 'moyenne' ? 'colors' : section === 'petite' ? 'coloring' : 'colors'),
+          (section === 'grande'
+            ? 'letters'
+            : section === 'moyenne'
+              ? 'colors'
+              : 'coloring'),
       },
     }))
     switchScreen(SCREENS.MATERNELLE_SECTION)

@@ -11,6 +11,11 @@ import { moyenneShapeExercises } from './maternelle/moyenne/shapes'
 import { moyenneCountingExercises } from './maternelle/moyenne/counting'
 import { moyennePuzzleExercises } from './maternelle/moyenne/puzzles'
 import { moyennePatternExercises } from './maternelle/moyenne/patterns'
+import { grandeLetterExercises } from './maternelle/grande/letters'
+import { grandeSoundExercises } from './maternelle/grande/sounds'
+import { grandeCountingExercises } from './maternelle/grande/counting'
+import { grandePuzzleExercises } from './maternelle/grande/puzzles'
+import { grandeLogicExercises } from './maternelle/grande/logic'
 import { cpMathExercises } from './cp/maths'
 import { cpDicteeExercises } from './cp/dictee'
 import { cpLectureExercises } from './cp/lecture'
@@ -31,6 +36,14 @@ const maternelleMoyenneExercises = {
   patterns: moyennePatternExercises,
 }
 
+const maternelleGrandeExercises = {
+  letters: grandeLetterExercises,
+  sounds: grandeSoundExercises,
+  counting: grandeCountingExercises,
+  puzzles: grandePuzzleExercises,
+  logic: grandeLogicExercises,
+}
+
 /** @deprecated Ancien bloc Maternelle plat — conservé pour compatibilité */
 export const exercisesByLevel = {
   maternelle: {
@@ -39,6 +52,7 @@ export const exercisesByLevel = {
     counting: maternelleCountingExercises,
     petite: maternellePetiteExercises,
     moyenne: maternelleMoyenneExercises,
+    grande: maternelleGrandeExercises,
   },
   cp: {
     maths: cpMathExercises,
@@ -96,6 +110,12 @@ export {
   moyenneCountingExercises,
   moyennePuzzleExercises,
   moyennePatternExercises,
+  maternelleGrandeExercises,
+  grandeLetterExercises,
+  grandeSoundExercises,
+  grandeCountingExercises,
+  grandePuzzleExercises,
+  grandeLogicExercises,
   cpMathExercises,
   cpDicteeExercises,
   cpLectureExercises,
