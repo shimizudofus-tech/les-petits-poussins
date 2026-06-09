@@ -4,13 +4,15 @@ export const PARENT_RETURN_SESSION_KEY = 'les-petits-poussins-parent-return'
 
 const AUDIO_PATH_PREFIX = 'src/assets/audio/voix'
 
+const SECTION_KEYS = ['petite', 'moyenne']
+
 function collectAllExercises() {
   const all = []
   for (const subjects of Object.values(exercisesByLevel)) {
     for (const [key, value] of Object.entries(subjects)) {
-      if (key === 'petite' && value && typeof value === 'object') {
-        for (const petiteList of Object.values(value)) {
-          if (Array.isArray(petiteList)) all.push(...petiteList)
+      if (SECTION_KEYS.includes(key) && value && typeof value === 'object') {
+        for (const sectionList of Object.values(value)) {
+          if (Array.isArray(sectionList)) all.push(...sectionList)
         }
       } else if (Array.isArray(value)) {
         all.push(...value)
@@ -30,8 +32,19 @@ export function getMaternellePetiteStats() {
   }
 }
 
+export function getMaternelleMoyenneStats() {
+  return {
+    colors: getMaternelleExercises('moyenne', 'colors').length,
+    shapes: getMaternelleExercises('moyenne', 'shapes').length,
+    counting: getMaternelleExercises('moyenne', 'counting').length,
+    puzzles: getMaternelleExercises('moyenne', 'puzzles').length,
+    patterns: getMaternelleExercises('moyenne', 'patterns').length,
+  }
+}
+
 export function getExerciseContentStats() {
   const petite = getMaternellePetiteStats()
+  const moyenne = getMaternelleMoyenneStats()
   return {
     dictee: getExercises('cp', 'dictee').length,
     lecture: getExercises('cp', 'lecture').length,
@@ -40,6 +53,7 @@ export function getExerciseContentStats() {
     shapes: petite.shapes,
     counting: petite.counting,
     petite,
+    moyenne,
   }
 }
 

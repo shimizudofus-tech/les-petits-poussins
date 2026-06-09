@@ -2,6 +2,13 @@ export const MATERNELLE_SECTIONS = ['petite', 'moyenne', 'grande']
 
 export const PETITE_ACTIVITIES = ['coloring', 'colors', 'shapes', 'counting', 'puzzles']
 
+export const MOYENNE_ACTIVITIES = ['colors', 'shapes', 'counting', 'puzzles', 'patterns']
+
+export const SECTION_ACTIVITIES = {
+  petite: PETITE_ACTIVITIES,
+  moyenne: MOYENNE_ACTIVITIES,
+}
+
 export const CORRECTS_TO_UNLOCK = 5
 
 export const MAX_MATERNELLE_DIFFICULTY = 3
@@ -10,10 +17,15 @@ export function createActivityProgress() {
   return { unlockedDifficulty: 1, correctAnswers: 0 }
 }
 
+export function createSectionProgress(activities) {
+  return Object.fromEntries(activities.map((key) => [key, createActivityProgress()]))
+}
+
 export function createDefaultLearningProgress() {
   return {
     maternelle: {
-      petite: Object.fromEntries(PETITE_ACTIVITIES.map((key) => [key, createActivityProgress()])),
+      petite: createSectionProgress(PETITE_ACTIVITIES),
+      moyenne: createSectionProgress(MOYENNE_ACTIVITIES),
     },
   }
 }

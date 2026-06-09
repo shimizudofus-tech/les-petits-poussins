@@ -16,7 +16,7 @@ const MATERNELLE_LEVELS = [
     icon: '🐥',
     title: 'Moyenne Section',
     subtitle: 'Moyens · 4–5 ans',
-    badge: 'Bientôt',
+    badge: 'Associer & comparer',
     gradient: 'from-[#fff8e7] to-[#e8f5e9]',
     border: 'border-[#aed581]',
   },
@@ -40,7 +40,9 @@ export default function ScreenLevelSelect() {
       maternelleSection: section,
       currentSubject: {
         ...prev.currentSubject,
-        [section]: prev.currentSubject?.[section] ?? 'coloring',
+        [section]:
+          prev.currentSubject?.[section] ??
+          (section === 'moyenne' ? 'colors' : section === 'petite' ? 'coloring' : 'colors'),
       },
     }))
     switchScreen(SCREENS.MATERNELLE_SECTION)

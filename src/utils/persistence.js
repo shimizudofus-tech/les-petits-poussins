@@ -3,7 +3,12 @@ import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
 import { clampFarmUpgrades, DEFAULT_FARM_UPGRADES } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
 import { resolveScreen } from '../constants/screens'
-import { createDefaultLearningProgress, PETITE_ACTIVITIES } from './maternelleProgress'
+import {
+  createDefaultLearningProgress,
+  createSectionProgress,
+  MOYENNE_ACTIVITIES,
+  PETITE_ACTIVITIES,
+} from './maternelleProgress'
 
 export const STORAGE_KEY = 'les-petits-poussins-game-state'
 
@@ -56,23 +61,33 @@ function mergeFarmUpgrades(saved, initial) {
   return clampFarmUpgrades(merged)
 }
 
+function mergeSectionProgress(savedSection, defaultSection, activities) {
+  const merged = { ...defaultSection }
+  for (const activity of activities) {
+    merged[activity] = {
+      ...defaultSection[activity],
+      ...savedSection?.[activity],
+    }
+  }
+  return merged
+}
+
 function mergeLearningProgress(saved, initial) {
   const base = initial.learningProgress ?? createDefaultLearningProgress()
   const savedMaternelle = saved?.maternelle ?? {}
-  const mergedPetite = { ...base.maternelle.petite }
-
-  for (const activity of PETITE_ACTIVITIES) {
-    mergedPetite[activity] = {
-      ...base.maternelle.petite[activity],
-      ...savedMaternelle.petite?.[activity],
-    }
-  }
+  const defaultMoyenne =
+    base.maternelle?.moyenne ?? createSectionProgress(MOYENNE_ACTIVITIES)
 
   return {
     ...base,
     maternelle: {
       ...base.maternelle,
-      petite: mergedPetite,
+      petite: mergeSectionProgress(
+        savedMaternelle.petite,
+        base.maternelle.petite,
+        PETITE_ACTIVITIES,
+      ),
+      moyenne: mergeSectionProgress(savedMaternelle.moyenne, defaultMoyenne, MOYENNE_ACTIVITIES),
     },
   }
 }

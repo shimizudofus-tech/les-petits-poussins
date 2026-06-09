@@ -101,7 +101,7 @@ export function createInitialGameState() {
       { id: 'hay', icon: BUILDER_ICONS.hay, price: 4, name: 'Blé' },
     ],
 
-    currentSubject: { petite: 'coloring', cp: 'math' },
+    currentSubject: { petite: 'coloring', moyenne: 'colors', cp: 'math' },
     coloring: { currentColor: '#ef5350', drawn: false },
     dictee: { word: '', typed: [], scrambled: [] },
   }

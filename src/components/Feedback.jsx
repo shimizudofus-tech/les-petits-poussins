@@ -4,11 +4,11 @@ export default function Feedback() {
   const { feedback, gameState } = useGame()
   if (!feedback) return null
 
-  const isPetiteChild =
+  const isMaternelleChild =
     gameState.currentScreen === SCREENS.MATERNELLE_SECTION &&
-    (gameState.maternelleSection ?? 'petite') === 'petite'
+    ['petite', 'moyenne'].includes(gameState.maternelleSection ?? 'petite')
 
-  if (isPetiteChild) {
+  if (isMaternelleChild) {
     return (
       <div className="feedback-overlay feedback-overlay--child">
         <div

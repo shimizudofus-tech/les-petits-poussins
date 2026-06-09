@@ -4,6 +4,7 @@ import { SCREENS, useGame } from '../../context/GameContext'
 import {
   getExerciseContentStats,
   getExpectedAudioFiles,
+  getMaternelleMoyenneStats,
   getMaternellePetiteStats,
   getUsedImageKeys,
   PARENT_RETURN_SESSION_KEY,
@@ -24,6 +25,14 @@ const PETITE_LABELS = [
   { key: 'puzzles', label: 'Puzzle' },
 ]
 
+const MOYENNE_LABELS = [
+  { key: 'colors', label: 'Couleurs +' },
+  { key: 'shapes', label: 'Formes +' },
+  { key: 'counting', label: 'Compter' },
+  { key: 'puzzles', label: 'Puzzle' },
+  { key: 'patterns', label: 'Suites' },
+]
+
 function getReturnScreen() {
   const saved = sessionStorage.getItem(PARENT_RETURN_SESSION_KEY)
   if (saved && Object.values(SCREENS).includes(saved)) {
@@ -36,6 +45,7 @@ export default function ScreenParent() {
   const { gameState, switchScreen, resetProgress } = useGame()
   const stats = getExerciseContentStats()
   const petiteStats = getMaternellePetiteStats()
+  const moyenneStats = getMaternelleMoyenneStats()
   const audioFiles = getExpectedAudioFiles()
   const imageKeys = getUsedImageKeys()
 
@@ -44,6 +54,7 @@ export default function ScreenParent() {
   const totalAnimals = Object.keys(gameState.collection).length
   const farmLevel = computeFarmLevel(gameState.farmUpgrades)
   const petiteProgress = gameState.learningProgress?.maternelle?.petite ?? {}
+  const moyenneProgress = gameState.learningProgress?.maternelle?.moyenne ?? {}
 
   const handleBack = () => {
     switchScreen(getReturnScreen())
@@ -113,8 +124,36 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-        <p className="parent-card-hint mt-2">Moyenne Section : à venir</p>
-        <p className="parent-card-hint">Grande Section : à venir</p>
+        <p className="parent-card-hint mt-2">Grande Section : à venir</p>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Maternelle — Moyenne Section</h2>
+        <ul className="parent-stat-list">
+          {MOYENNE_LABELS.map(({ key, label }) => (
+            <li key={key} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{moyenneStats[key]}</strong>
+            </li>
+          ))}
+        </ul>
+        <h3 className="parent-card-subtitle mt-3">Progression enfant</h3>
+        <ul className="parent-stat-list">
+          {MOYENNE_LABELS.map(({ key, label }) => {
+            const prog = moyenneProgress[key] ?? { unlockedDifficulty: 1, correctAnswers: 0 }
+            const atMax = prog.unlockedDifficulty >= MAX_MATERNELLE_DIFFICULTY
+            return (
+              <li key={`moy-prog-${key}`} className="parent-stat-row">
+                <span>{label}</span>
+                <strong>
+                  Diff. {prog.unlockedDifficulty}/{MAX_MATERNELLE_DIFFICULTY}
+                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK}`}
+                </strong>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="parent-card-hint mt-2">Grande Section : à venir</p>
       </section>
 
       <section className="parent-card">
