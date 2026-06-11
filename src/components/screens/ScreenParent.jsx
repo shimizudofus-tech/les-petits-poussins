@@ -9,6 +9,7 @@ import {
   getMaternellePetiteStats,
   getUsedImageKeys,
   PARENT_RETURN_SESSION_KEY,
+  getPuzzleContentStats,
 } from '../../utils/parentContentStats'
 import { CORRECTS_TO_UNLOCK, MAX_MATERNELLE_DIFFICULTY } from '../../utils/maternelleProgress'
 import { playWord } from '../../utils/audioManager'
@@ -64,6 +65,7 @@ export default function ScreenParent() {
   const grandeStats = getMaternelleGrandeStats()
   const audioFiles = getExpectedAudioFiles()
   const imageKeys = getUsedImageKeys()
+  const puzzleStats = getPuzzleContentStats()
 
   const currentAnimal = gameState.collection[gameState.currentAnimalKey]
   const unlockedCount = Object.values(gameState.collection).filter((animal) => animal.unlocked).length
@@ -293,6 +295,43 @@ export default function ScreenParent() {
         >
           Voir les badges (enfant)
         </button>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Puzzles procéduraux</h2>
+        <ul className="parent-stat-list">
+          <li className="parent-stat-row">
+            <span>Puzzles procéduraux — Petite</span>
+            <strong>{puzzleStats.proceduralPetite}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Puzzles procéduraux — Moyenne</span>
+            <strong>{puzzleStats.proceduralMoyenne}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Puzzles procéduraux — Grande</span>
+            <strong>{puzzleStats.proceduralGrande}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Scènes procédurales uniques</span>
+            <strong>{puzzleStats.proceduralScenes}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Puzzles legacy (fallback)</span>
+            <strong>{puzzleStats.legacyAvailable}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Animaux</span>
+            <strong>{puzzleStats.animals}</strong>
+          </li>
+        </ul>
+        <p className="parent-tag-list">{puzzleStats.animalList.join(', ')}</p>
+        <p className="parent-card-hint mt-2">
+          Source : {puzzleStats.source} — Licence : {puzzleStats.license}
+        </p>
+        <p className="parent-card-hint">
+          Rotation principale : procédural uniquement. Legacy (Poussin, Fleur, Maison) si catalogue vide.
+        </p>
       </section>
 
       <section className="parent-card">

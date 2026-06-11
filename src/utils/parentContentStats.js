@@ -1,4 +1,5 @@
 import { exercisesByLevel, getExercises, getMaternelleExercises } from '../data/exercises'
+import { getPuzzleCatalogStats } from '../data/puzzles/puzzleCatalog'
 
 export const PARENT_RETURN_SESSION_KEY = 'les-petits-poussins-parent-return'
 
@@ -94,4 +95,19 @@ export function getUsedImageKeys() {
     }
   }
   return [...keys].sort()
+}
+
+export function getPuzzleContentStats() {
+  const catalog = getPuzzleCatalogStats()
+  return {
+    proceduralPetite: catalog.perSection.petite,
+    proceduralMoyenne: catalog.perSection.moyenne,
+    proceduralGrande: catalog.perSection.grande,
+    proceduralScenes: catalog.proceduralScenes,
+    legacyAvailable: 3,
+    animals: catalog.animals,
+    animalList: catalog.animalList,
+    source: catalog.source,
+    license: catalog.license,
+  }
 }

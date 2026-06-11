@@ -1,11 +1,13 @@
 import puzzlePoussin from '../../../../assets/images/puzzles/puzzle-poussin.svg'
 import puzzleFleur from '../../../../assets/images/puzzles/puzzle-fleur.svg'
 import puzzleMaison from '../../../../assets/images/puzzles/puzzle-maison.svg'
+import { buildProceduralPuzzleExercises } from '../../../puzzles/puzzleCatalog'
 
 export const PUZZLE_BOARD_WIDTH = 280
 export const PUZZLE_BOARD_HEIGHT = 180
 
-export const petitePuzzleExercises = [
+/** Anciens puzzles SVG — fallback uniquement (grilles legacy, hors rotation principale). */
+export const petiteLegacyPuzzleExercises = [
   {
     id: 'mat-petite-puzzle-poussin',
     section: 'petite',
@@ -19,6 +21,10 @@ export const petitePuzzleExercises = [
     difficulty: 1,
     audioKey: 'poussin',
     promptAudioKey: 'remets_image',
+    sourceType: 'asset',
+    license: 'original',
+    credit: 'Les Petits Poussins',
+    isLegacy: true,
   },
   {
     id: 'mat-petite-puzzle-fleur',
@@ -33,6 +39,10 @@ export const petitePuzzleExercises = [
     difficulty: 2,
     audioKey: 'fleur',
     promptAudioKey: 'remets_image',
+    sourceType: 'asset',
+    license: 'original',
+    credit: 'Les Petits Poussins',
+    isLegacy: true,
   },
   {
     id: 'mat-petite-puzzle-maison',
@@ -47,5 +57,14 @@ export const petitePuzzleExercises = [
     difficulty: 3,
     audioKey: 'maison',
     promptAudioKey: 'remets_image',
+    sourceType: 'asset',
+    license: 'original',
+    credit: 'Les Petits Poussins',
+    isLegacy: true,
   },
 ]
+
+export const petiteProceduralPuzzleExercises = buildProceduralPuzzleExercises('petite')
+
+/** Rotation principale — procédural uniquement. */
+export const petitePuzzleExercises = petiteProceduralPuzzleExercises

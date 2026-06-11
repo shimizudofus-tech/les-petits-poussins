@@ -46,6 +46,24 @@ Si un MP3 est absent, le jeu continue sans crash (le bouton Écouter reste silen
 
 Les compteurs du Mode Parent se mettent à jour automatiquement via `getExerciseContentStats()`.
 
+## Puzzles procéduraux
+
+Les puzzles Maternelle (Petite, Moyenne, Grande Section) utilisent un **catalogue procédural** (`src/data/puzzles/puzzleCatalog.js`) :
+
+- **30 scènes uniques** générées en SVG à la volée (`src/utils/puzzleSceneGenerator.js`)
+- **12 animaux** : poussin, poule, vache, cochon, mouton, chien, chat, lapin, canard, cheval, grenouille, poisson
+- **Aucune image externe** — tout est dessiné dans le projet (style chibi / ferme, 280×180)
+- Licence : **Original / projet Les Petits Poussins**
+- Les 3 anciens puzzles SVG (`puzzle-poussin`, `puzzle-fleur`, `puzzle-maison`) restent disponibles en mode `image` direct
+
+### Imports futurs (CC0 / Public Domain)
+
+Quand des images externes seront ajoutées, elles devront :
+
+- être **CC0** ou **Public Domain**
+- avoir leur **source** enregistrée (`sourceName`, `sourceUrl`, `license`) dans le catalogue
+- être placées dans `public/puzzles/imported/` (dossier prévu, pas encore utilisé en V1)
+
 ## Prérequis
 
 - [Node.js](https://nodejs.org/) 18+

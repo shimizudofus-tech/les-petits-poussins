@@ -1,11 +1,12 @@
 import puzzlePoussin from '../../../../assets/images/puzzles/puzzle-poussin.svg'
 import puzzleFleur from '../../../../assets/images/puzzles/puzzle-fleur.svg'
 import puzzleMaison from '../../../../assets/images/puzzles/puzzle-maison.svg'
+import { buildProceduralPuzzleExercises } from '../../../puzzles/puzzleCatalog'
 import { PUZZLE_BOARD_HEIGHT, PUZZLE_BOARD_WIDTH } from '../petite/puzzles'
 
 export { PUZZLE_BOARD_WIDTH, PUZZLE_BOARD_HEIGHT }
 
-export const grandePuzzleExercises = [
+export const grandeLegacyPuzzleExercises = [
   {
     id: 'mat-grande-puzzle-poussin',
     section: 'grande',
@@ -19,6 +20,10 @@ export const grandePuzzleExercises = [
     difficulty: 1,
     audioKey: 'poussin',
     promptAudioKey: 'remets_image',
+    sourceType: 'asset',
+    license: 'original',
+    credit: 'Les Petits Poussins',
+    isLegacy: true,
   },
   {
     id: 'mat-grande-puzzle-fleur',
@@ -33,6 +38,10 @@ export const grandePuzzleExercises = [
     difficulty: 2,
     audioKey: 'fleur',
     promptAudioKey: 'remets_image',
+    sourceType: 'asset',
+    license: 'original',
+    credit: 'Les Petits Poussins',
+    isLegacy: true,
   },
   {
     id: 'mat-grande-puzzle-maison',
@@ -47,5 +56,13 @@ export const grandePuzzleExercises = [
     difficulty: 3,
     audioKey: 'maison',
     promptAudioKey: 'remets_image',
+    sourceType: 'asset',
+    license: 'original',
+    credit: 'Les Petits Poussins',
+    isLegacy: true,
   },
 ]
+
+export const grandeProceduralPuzzleExercises = buildProceduralPuzzleExercises('grande')
+
+export const grandePuzzleExercises = grandeProceduralPuzzleExercises

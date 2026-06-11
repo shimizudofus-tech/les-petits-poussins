@@ -5,16 +5,16 @@ import { petiteColoringExercises } from './maternelle/petite/coloring'
 import { petiteColorRecognitionExercises } from './maternelle/petite/colors'
 import { petiteShapeExercises } from './maternelle/petite/shapes'
 import { petiteCountingExercises } from './maternelle/petite/counting'
-import { petitePuzzleExercises } from './maternelle/petite/puzzles'
+import { petitePuzzleExercises, petiteLegacyPuzzleExercises } from './maternelle/petite/puzzles'
 import { moyenneColorExercises } from './maternelle/moyenne/colors'
 import { moyenneShapeExercises } from './maternelle/moyenne/shapes'
 import { moyenneCountingExercises } from './maternelle/moyenne/counting'
-import { moyennePuzzleExercises } from './maternelle/moyenne/puzzles'
+import { moyennePuzzleExercises, moyenneLegacyPuzzleExercises } from './maternelle/moyenne/puzzles'
 import { moyennePatternExercises } from './maternelle/moyenne/patterns'
 import { grandeLetterExercises } from './maternelle/grande/letters'
 import { grandeSoundExercises } from './maternelle/grande/sounds'
 import { grandeCountingExercises } from './maternelle/grande/counting'
-import { grandePuzzleExercises } from './maternelle/grande/puzzles'
+import { grandePuzzleExercises, grandeLegacyPuzzleExercises } from './maternelle/grande/puzzles'
 import { grandeLogicExercises } from './maternelle/grande/logic'
 import { cpMathExercises } from './cp/maths'
 import { cpDicteeExercises } from './cp/dictee'
@@ -65,6 +65,15 @@ export function getMaternelleExercises(section, subject) {
   const sectionData = exercisesByLevel.maternelle?.[section]
   if (!sectionData || Array.isArray(sectionData)) return []
   return sectionData[subject] ?? []
+}
+
+export function getLegacyPuzzleExercises(section) {
+  const legacyBySection = {
+    petite: petiteLegacyPuzzleExercises,
+    moyenne: moyenneLegacyPuzzleExercises,
+    grande: grandeLegacyPuzzleExercises,
+  }
+  return legacyBySection[section] ?? []
 }
 
 export function getExercises(level, subject) {

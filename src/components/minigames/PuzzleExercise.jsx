@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { pickMaternelleExercise } from '../../data/exercises'
+import { getMaternelleExercises, getLegacyPuzzleExercises } from '../../data/exercises'
+import { pickPuzzleForSection } from '../../data/puzzles/puzzleCatalog'
 import { SCREENS, useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
+import { resolvePuzzleImage } from '../../utils/puzzleSceneGenerator'
 import { playWord } from '../../utils/audioManager'
 import ExerciseUnavailable from './ExerciseUnavailable'
 import {
@@ -64,11 +66,15 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
   const dragRef = useRef(null)
   const movedRef = useRef(false)
 
-  const puzzle = useMemo(
-    () => pickMaternelleExercise(section, 'puzzles', maxDifficulty),
+  const puzzle = useMemo(() => {
+    const procedural = getMaternelleExercises(section, 'puzzles')
+    const legacy = getLegacyPuzzleExercises(section)
+    const raw = pickPuzzleForSection(section, procedural, maxDifficulty, legacy)
+    if (!raw) return null
+    const image = resolvePuzzleImage(raw)
+    return { ...raw, image }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [exerciseKey, maxDifficulty, section],
-  )
+  }, [exerciseKey, maxDifficulty, section])
 
   const viewportWidth = useViewportWidth()
   const ui = useMemo(() => getPuzzleUiConfig(section, puzzle), [section, puzzle])
