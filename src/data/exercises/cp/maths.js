@@ -66,7 +66,7 @@ const subtractionExercises = subtractionPack.map(([a, b, answer]) => ({
   question: `${a} − ${b}`,
   answer,
   choices: fixedChoices(answer, [answer + 1, answer - 1, answer + 2, b, a - b + 1]),
-  difficulty: answer <= 3 ? 1 : 2,
+  difficulty: answer <= 3 ? 2 : 3,
 }))
 
 const comparisonExercises = comparisonPack.map(([left, right, answer], index) => ({
@@ -77,7 +77,7 @@ const comparisonExercises = comparisonPack.map(([left, right, answer], index) =>
   question: `${left} __ ${right} ?`,
   answer,
   choices: ['<', '=', '>'],
-  difficulty: 1,
+  difficulty: 3,
 }))
 
 export const cpMathExercises = [

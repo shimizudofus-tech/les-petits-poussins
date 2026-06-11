@@ -47,7 +47,7 @@ export const cpDicteeExercises = [
     displayWord: 'POULE',
     audioKey: 'poule',
     imageKey: 'poule',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-lune',
@@ -57,7 +57,7 @@ export const cpDicteeExercises = [
     displayWord: 'LUNE',
     audioKey: 'lune',
     imageKey: 'lune',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-soleil',
@@ -67,7 +67,7 @@ export const cpDicteeExercises = [
     displayWord: 'SOLEIL',
     audioKey: 'soleil',
     imageKey: 'soleil',
-    difficulty: 1,
+    difficulty: 3,
   },
   {
     id: 'cp-dictee-maison',
@@ -77,7 +77,7 @@ export const cpDicteeExercises = [
     displayWord: 'MAISON',
     audioKey: 'maison',
     imageKey: 'maison',
-    difficulty: 1,
+    difficulty: 3,
   },
   {
     id: 'cp-dictee-bebe',
@@ -87,7 +87,7 @@ export const cpDicteeExercises = [
     displayWord: 'BÉBÉ',
     audioKey: 'bebe',
     imageKey: 'bebe',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-velo',
@@ -97,7 +97,7 @@ export const cpDicteeExercises = [
     displayWord: 'VÉLO',
     audioKey: 'velo',
     imageKey: 'velo',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-ecole',
@@ -107,7 +107,7 @@ export const cpDicteeExercises = [
     displayWord: 'ÉCOLE',
     audioKey: 'ecole',
     imageKey: 'ecole',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-ami',
@@ -167,7 +167,7 @@ export const cpDicteeExercises = [
     displayWord: 'NID',
     audioKey: 'nid',
     imageKey: 'nid',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-oeuf',
@@ -177,7 +177,7 @@ export const cpDicteeExercises = [
     displayWord: 'ŒUF',
     audioKey: 'oeuf',
     imageKey: 'oeuf',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-arbre',
@@ -187,7 +187,7 @@ export const cpDicteeExercises = [
     displayWord: 'ARBRE',
     audioKey: 'arbre',
     imageKey: 'arbre',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-fleur',
@@ -197,7 +197,7 @@ export const cpDicteeExercises = [
     displayWord: 'FLEUR',
     audioKey: 'fleur',
     imageKey: 'fleur',
-    difficulty: 1,
+    difficulty: 2,
   },
   {
     id: 'cp-dictee-ferme',
@@ -207,7 +207,7 @@ export const cpDicteeExercises = [
     displayWord: 'FERME',
     audioKey: 'ferme',
     imageKey: 'ferme',
-    difficulty: 1,
+    difficulty: 3,
   },
   {
     id: 'cp-dictee-cochon',
@@ -217,7 +217,7 @@ export const cpDicteeExercises = [
     displayWord: 'COCHON',
     audioKey: 'cochon',
     imageKey: 'cochon',
-    difficulty: 1,
+    difficulty: 3,
   },
   {
     id: 'cp-dictee-vache',
@@ -227,7 +227,7 @@ export const cpDicteeExercises = [
     displayWord: 'VACHE',
     audioKey: 'vache',
     imageKey: 'vache',
-    difficulty: 1,
+    difficulty: 3,
   },
   {
     id: 'cp-dictee-mouton',
@@ -237,6 +237,6 @@ export const cpDicteeExercises = [
     displayWord: 'MOUTON',
     audioKey: 'mouton',
     imageKey: 'mouton',
-    difficulty: 1,
+    difficulty: 3,
   },
 ]

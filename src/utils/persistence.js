@@ -11,6 +11,7 @@ import {
   MOYENNE_ACTIVITIES,
   PETITE_ACTIVITIES,
 } from './maternelleProgress'
+import { createDefaultCpProgress, CP_SUBJECTS } from './cpProgress'
 import { mergeAchievements } from './achievements'
 
 export const STORAGE_KEY = 'les-petits-poussins-game-state'
@@ -75,6 +76,17 @@ function mergeSectionProgress(savedSection, defaultSection, activities) {
   return merged
 }
 
+function mergeCpProgress(savedCp, defaultCp) {
+  const merged = { ...defaultCp }
+  for (const subject of CP_SUBJECTS) {
+    merged[subject] = {
+      ...defaultCp[subject],
+      ...savedCp?.[subject],
+    }
+  }
+  return merged
+}
+
 function mergeLearningProgress(saved, initial) {
   const base = initial.learningProgress ?? createDefaultLearningProgress()
   const savedMaternelle = saved?.maternelle ?? {}
@@ -95,6 +107,7 @@ function mergeLearningProgress(saved, initial) {
       moyenne: mergeSectionProgress(savedMaternelle.moyenne, defaultMoyenne, MOYENNE_ACTIVITIES),
       grande: mergeSectionProgress(savedMaternelle.grande, defaultGrande, GRANDE_ACTIVITIES),
     },
+    cp: mergeCpProgress(saved?.cp, base.cp ?? createDefaultCpProgress()),
   }
 }
 

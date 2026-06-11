@@ -12,6 +12,13 @@ import {
   getPuzzleContentStats,
 } from '../../utils/parentContentStats'
 import { CORRECTS_TO_UNLOCK, MAX_MATERNELLE_DIFFICULTY } from '../../utils/maternelleProgress'
+import {
+  CORRECTS_TO_UNLOCK_CP,
+  CP_SUBJECTS,
+  CP_SUBJECT_LABELS,
+  MAX_CP_DIFFICULTY,
+  getCpActivityProgress,
+} from '../../utils/cpProgress'
 import { playWord } from '../../utils/audioManager'
 import { isMusicFileAvailable, startBackgroundMusic, stopBackgroundMusic } from '../../utils/music'
 import { BADGE_BY_ID } from '../../data/badges'
@@ -331,6 +338,30 @@ export default function ScreenParent() {
         </p>
         <p className="parent-card-hint">
           Rotation principale : procédural uniquement. Legacy (Poussin, Fleur, Maison) si catalogue vide.
+        </p>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Progression CP</h2>
+        <ul className="parent-stat-list">
+          {CP_SUBJECTS.map((key) => {
+            const prog = getCpActivityProgress(gameState.learningProgress, key)
+            const atMax = prog.unlockedDifficulty >= MAX_CP_DIFFICULTY
+            const label = CP_SUBJECT_LABELS[key] ?? key
+            return (
+              <li key={`cp-prog-${key}`} className="parent-stat-row">
+                <span>{label}</span>
+                <strong>
+                  Niveau {prog.unlockedDifficulty}/{MAX_CP_DIFFICULTY}
+                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_CP}`}
+                </strong>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="parent-card-hint mt-2">
+          Prochain palier : {CORRECTS_TO_UNLOCK_CP} bonnes réponses pour monter de niveau (max niveau 3).
+          Les erreurs ne font pas reculer.
         </p>
       </section>
 

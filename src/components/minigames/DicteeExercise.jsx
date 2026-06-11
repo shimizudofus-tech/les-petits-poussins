@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import { pickRandomExercise } from '../../data/exercises'
+import { pickCpExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
+import { getCpUnlockedDifficulty } from '../../utils/cpProgress'
 import { playWord } from '../../utils/audioManager'
 import ExerciseImageDisplay from './ExerciseImageDisplay'
 import ExerciseUnavailable from './ExerciseUnavailable'
@@ -19,9 +20,13 @@ function buildLetterPool(displayWord) {
   return pool.sort(() => Math.random() - 0.5)
 }
 
-export default function DicteeExercise({ onCorrect }) {
-  const { showFeedback, showToast } = useGame()
-  const source = useMemo(() => pickRandomExercise('cp', 'dictee'), [])
+export default function DicteeExercise({ onCorrect, exerciseKey = 0 }) {
+  const { gameState, showFeedback, showToast } = useGame()
+  const maxDifficulty = getCpUnlockedDifficulty(gameState.learningProgress, 'dictee')
+  const source = useMemo(
+    () => pickCpExercise('dictee', maxDifficulty),
+    [exerciseKey, maxDifficulty],
+  )
 
   const exercise = useMemo(() => {
     if (!source) return null

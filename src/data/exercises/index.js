@@ -103,6 +103,17 @@ export function pickRandomExercise(level, subject) {
   return list[Math.floor(Math.random() * list.length)]
 }
 
+export function pickCpExercise(subject, maxDifficulty = 3) {
+  const list = getExercises('cp', subject).filter(
+    (item) => (item.difficulty ?? 1) <= maxDifficulty,
+  )
+  if (!list.length) {
+    console.warn(`[exercises] Aucun exercice cp/${subject} (diff ≤ ${maxDifficulty})`)
+    return null
+  }
+  return list[Math.floor(Math.random() * list.length)]
+}
+
 export {
   maternelleColorExercises,
   maternelleShapeExercises,
