@@ -6,7 +6,10 @@ import {
   isValidFarmUpgradeKey,
 } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
+import { setVoiceDisabledHandler } from '../utils/audio'
 import { playError, playSuccess } from '../utils/audioManager'
+import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
+import { setMusicVolume, startBackgroundMusic, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
 import { checkEvolution } from '../utils/evolution'
 import { PARENT_RETURN_SESSION_KEY } from '../utils/parentContentStats'
 import { clearSavedGameState, loadGameState, saveGameState } from '../utils/persistence'
@@ -199,6 +202,18 @@ export function GameProvider({ children }) {
     [showModal, selectAnimal],
   )
 
+  const updateAudioSettings = useCallback((patch) => {
+    setGameState((prev) => {
+      const audioSettings = mergeAudioSettings({ ...prev.audioSettings, ...patch })
+      setActiveAudioSettings(audioSettings)
+      setMusicVolume(audioSettings.musicVolume)
+      if (!audioSettings.musicEnabled) {
+        stopBackgroundMusic()
+      }
+      return { ...prev, audioSettings }
+    })
+  }, [])
+
   const resetProgress = useCallback(() => {
     suppressPersistRef.current = true
     clearSavedGameState()
@@ -276,6 +291,21 @@ export function GameProvider({ children }) {
   }, [gameState])
 
   useEffect(() => {
+    const settings = mergeAudioSettings(gameState.audioSettings)
+    setActiveAudioSettings(settings)
+    setMusicVolume(settings.musicVolume)
+    if (!settings.musicEnabled) {
+      stopBackgroundMusic()
+    }
+  }, [gameState.audioSettings])
+
+  useEffect(() => {
+    setVoiceDisabledHandler(() => showToast('Voix désactivée', '#8d6e3a'))
+    unlockAudioOnFirstInteraction(() => getActiveAudioSettings())
+    return () => setVoiceDisabledHandler(null)
+  }, [showToast])
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setGameState((prev) => {
         if (prev.hunger <= 0) return prev
@@ -311,6 +341,7 @@ export function GameProvider({ children }) {
         upgradeFarmPart,
         selectAnimal,
         resetProgress,
+        updateAudioSettings,
         showToast,
         showModal,
         hideModal,

@@ -10,7 +10,7 @@ function pattern(id, sequence, answer, options, difficulty, patternType) {
     options,
     patternType,
     difficulty,
-    audioKey: null,
+    promptAudioKey: 'continue_suite',
   }
 }
 

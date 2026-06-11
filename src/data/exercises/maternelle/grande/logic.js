@@ -9,7 +9,7 @@ function oddOneOut(id, items, answer, options, difficulty) {
     answer,
     options,
     difficulty,
-    audioKey: null,
+    promptAudioKey: 'trouve_intrus',
   }
 }
 
@@ -25,7 +25,7 @@ function completeSequence(id, sequence, answer, options, difficulty, patternType
     options,
     patternType,
     difficulty,
-    audioKey: null,
+    promptAudioKey: 'continue_suite',
   }
 }
 

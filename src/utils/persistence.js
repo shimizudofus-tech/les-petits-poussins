@@ -2,6 +2,7 @@ import { resolveBuilderIcon } from '../data/builderAssets'
 import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
 import { clampFarmUpgrades, DEFAULT_FARM_UPGRADES } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
+import { mergeAudioSettings } from './audioSettings'
 import { resolveScreen } from '../constants/screens'
 import {
   createDefaultLearningProgress,
@@ -123,6 +124,7 @@ export function loadGameState() {
       currentSubject: mergeCurrentSubject(saved, initial),
       maternelleSection: saved.maternelleSection ?? initial.maternelleSection,
       learningProgress: mergeLearningProgress(saved.learningProgress, initial),
+      audioSettings: mergeAudioSettings(saved.audioSettings),
       coloring: { ...initial.coloring, ...saved.coloring },
       dictee: { ...initial.dictee, ...saved.dictee },
       farmUpgrades: mergeFarmUpgrades(saved, initial),

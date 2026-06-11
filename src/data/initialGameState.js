@@ -2,6 +2,7 @@ import { SCREENS } from '../constants/screens'
 import { BUILDER_ICONS } from './builderAssets'
 import { CHICKEN_STAGE_ICONS } from './chickenAssets'
 import { DEFAULT_FARM_UPGRADES } from './farmUpgrades'
+import { DEFAULT_AUDIO_SETTINGS } from '../utils/audioSettings'
 import { createDefaultLearningProgress } from '../utils/maternelleProgress'
 
 export function createInitialGameState() {
@@ -16,6 +17,7 @@ export function createInitialGameState() {
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',
     learningProgress: createDefaultLearningProgress(),
+    audioSettings: { ...DEFAULT_AUDIO_SETTINGS },
 
     collection: {
       chicken: {

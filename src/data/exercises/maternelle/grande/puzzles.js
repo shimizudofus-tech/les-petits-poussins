@@ -18,6 +18,7 @@ export const grandePuzzleExercises = [
     pieceCount: 6,
     difficulty: 1,
     audioKey: 'poussin',
+    promptAudioKey: 'remets_image',
   },
   {
     id: 'mat-grande-puzzle-fleur',
@@ -31,6 +32,7 @@ export const grandePuzzleExercises = [
     pieceCount: 8,
     difficulty: 2,
     audioKey: 'fleur',
+    promptAudioKey: 'remets_image',
   },
   {
     id: 'mat-grande-puzzle-maison',
@@ -44,5 +46,6 @@ export const grandePuzzleExercises = [
     pieceCount: 12,
     difficulty: 3,
     audioKey: 'maison',
+    promptAudioKey: 'remets_image',
   },
 ]

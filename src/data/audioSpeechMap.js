@@ -1,6 +1,6 @@
 /** Dictionnaire audioKey → texte parlé (fallback TTS navigateur). */
 export const AUDIO_SPEECH_MAP = {
-  // Couleurs
+  // Couleurs (cibles)
   rouge: 'rouge',
   bleu: 'bleu',
   jaune: 'jaune',
@@ -13,7 +13,7 @@ export const AUDIO_SPEECH_MAP = {
   marron: 'marron',
   gris: 'gris',
 
-  // Formes
+  // Formes (cibles)
   cercle: 'cercle',
   carre: 'carré',
   triangle: 'triangle',
@@ -22,12 +22,14 @@ export const AUDIO_SPEECH_MAP = {
   coeur: 'cœur',
   ovale: 'ovale',
   losange: 'losange',
+  rond: 'rond',
 
-  // Objets Maternelle
+  // Objets Maternelle (choix)
   pomme: 'pomme',
   banane: 'banane',
   herbe: 'herbe',
   ciel: 'ciel',
+  nuage: 'nuage',
   carotte: 'carotte',
   fleur: 'fleur',
   raisin: 'raisin',
@@ -40,6 +42,77 @@ export const AUDIO_SPEECH_MAP = {
   oeuf: 'œuf',
   maison: 'maison',
   ferme: 'ferme',
+  caillou: 'caillou',
+  ballon: 'ballon',
+  roue: 'roue',
+  fenetre: 'fenêtre',
+  cadeau: 'cadeau',
+  montagne: 'montagne',
+  tente: 'tente',
+
+  // Consignes couleurs
+  trouve_rouge: 'Trouve la couleur rouge',
+  trouve_bleu: 'Trouve la couleur bleue',
+  trouve_jaune: 'Trouve la couleur jaune',
+  trouve_vert: 'Trouve la couleur verte',
+  trouve_orange: 'Trouve la couleur orange',
+  trouve_rose: 'Trouve la couleur rose',
+  trouve_violet: 'Trouve la couleur violette',
+  trouve_noir: 'Trouve la couleur noire',
+  trouve_blanc: 'Trouve la couleur blanche',
+  trouve_marron: 'Trouve la couleur marron',
+  trouve_gris: "Trouve l'objet gris",
+  trouve_objet_rouge: "Trouve l'objet rouge",
+  trouve_objet_bleu: "Trouve l'objet bleu",
+  trouve_objet_jaune: "Trouve l'objet jaune",
+  trouve_objet_vert: "Trouve l'objet vert",
+  trouve_objet_orange: "Trouve l'objet orange",
+  trouve_objet_rose: "Trouve l'objet rose",
+  trouve_objet_violet: "Trouve l'objet violet",
+  trouve_objet_noir: "Trouve l'objet noir",
+  trouve_objet_blanc: "Trouve l'objet blanc",
+  trouve_objet_marron: "Trouve l'objet marron",
+  trouve_objet_gris: "Trouve l'objet gris",
+  quelle_couleur_pomme: 'Quelle est la couleur de la pomme ?',
+  quelle_couleur_banane: 'Quelle est la couleur de la banane ?',
+  quelle_couleur_herbe: "Quelle est la couleur de l'herbe ?",
+  quelle_couleur_ciel: 'Quelle est la couleur du ciel ?',
+  quelle_couleur_carotte: 'Quelle est la couleur de la carotte ?',
+  quelle_couleur_fleur: 'Quelle est la couleur de la fleur ?',
+  quelle_couleur_raisin: 'Quelle est la couleur du raisin ?',
+  quelle_couleur_mouton: 'Quelle est la couleur du mouton ?',
+  quelle_couleur_chat: 'Quelle est la couleur du chat ?',
+  quelle_couleur_soleil: 'Quelle est la couleur du soleil ?',
+  quelle_couleur_arbre: "Quelle est la couleur de l'arbre ?",
+  quelle_couleur_souris: 'Quelle est la couleur de la souris ?',
+  quelle_couleur_nuage: 'Quelle est la couleur du nuage ?',
+  quelle_couleur_caillou: 'Quelle est la couleur du caillou ?',
+
+  // Consignes formes
+  trouve_cercle: 'Trouve le cercle',
+  trouve_carre: 'Trouve le carré',
+  trouve_triangle: 'Trouve le triangle',
+  trouve_rectangle: 'Trouve le rectangle',
+  trouve_etoile: "Trouve l'étoile",
+  trouve_coeur: 'Trouve le cœur',
+  trouve_ovale: "Trouve l'ovale",
+  trouve_losange: 'Trouve le losange',
+
+  // Consignes comptage
+  compte: 'Compte',
+  compte_poussin: 'Compte les poussins',
+  compte_oeuf: 'Compte les œufs',
+  compte_fleur: 'Compte les fleurs',
+  compte_pomme: 'Compte les pommes',
+  compte_etoile: 'Compte les étoiles',
+  le_plus: 'Où y en a-t-il le plus ?',
+  le_moins: 'Où y en a-t-il le moins ?',
+
+  // Consignes générales
+  remets_image: "Remets l'image",
+  continue_suite: 'Continue la suite',
+  trouve_intrus: "Trouve l'intrus",
+  ecoute_et_trouve: 'Écoute et trouve',
 
   // Lettres Grande Section
   lettre_a: 'A',

@@ -5,6 +5,7 @@ import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
 import PetiteExerciseHeader from './PetiteExerciseHeader'
+import { promptKeyForShape } from '../../utils/audioPrompts'
 
 const SHAPE_AUDIO_BY_ID = {
   circle: 'cercle',
@@ -81,7 +82,7 @@ export default function PetiteShapesExercise({ section = 'petite', onCorrect }) 
       <PetiteExerciseHeader
         instruction="Trouve la forme"
         parentHint={`Cherche : ${target.name}`}
-        audioKey={shapeAudioKey}
+        audioKey={promptKeyForShape(shapeAudioKey)}
         audioLabel={target.name}
       />
       <div className="shapes-row flex flex-wrap justify-center gap-4">

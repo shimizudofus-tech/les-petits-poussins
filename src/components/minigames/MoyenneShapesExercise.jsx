@@ -5,6 +5,7 @@ import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
 import PetiteExerciseHeader from './PetiteExerciseHeader'
+import { promptKeyForShape } from '../../utils/audioPrompts'
 
 const SHAPE_AUDIO_BY_ID = {
   circle: 'cercle',
@@ -111,7 +112,7 @@ export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }
         <PetiteExerciseHeader
           instruction={instruction}
           parentHint={parentHint}
-          audioKey={audioKey}
+          audioKey={promptKeyForShape(audioKey)}
           audioLabel={exercise.name}
         />
         <div className="shapes-row flex flex-wrap justify-center gap-4">
@@ -143,7 +144,7 @@ export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }
       <PetiteExerciseHeader
         instruction={instruction}
         parentHint={parentHint}
-        audioKey={audioKey}
+        audioKey={promptKeyForShape(audioKey)}
         audioLabel={exercise.name}
       />
       {exercise.type === 'matchShape' && (

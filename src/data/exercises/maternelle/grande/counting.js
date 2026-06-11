@@ -17,7 +17,7 @@ function countExercise(id, emojiKey, count, difficulty) {
     emojiKey,
     count,
     difficulty,
-    audioKey: emojiKey,
+    audioKey: `compte_${emojiKey}`,
   }
 }
 
@@ -39,7 +39,7 @@ function compareExercise(id, groupA, groupB, compareType, difficulty) {
         ? 'A'
         : 'B',
     difficulty,
-    audioKey: groupA.emojiKey,
+    audioKey: compareType === 'more' ? 'le_plus' : 'le_moins',
   }
 }
 

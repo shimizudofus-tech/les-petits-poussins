@@ -2,7 +2,7 @@ import { exercisesByLevel, getExercises, getMaternelleExercises } from '../data/
 
 export const PARENT_RETURN_SESSION_KEY = 'les-petits-poussins-parent-return'
 
-const AUDIO_PATH_PREFIX = 'src/assets/audio/voix'
+const AUDIO_PATH_PREFIX = 'public/audio/voix'
 
 const SECTION_KEYS = ['petite', 'moyenne', 'grande']
 
@@ -72,6 +72,9 @@ export function getExerciseContentStats() {
 export function getExpectedAudioFiles() {
   const keys = new Set()
   for (const exercise of collectAllExercises()) {
+    if (exercise.promptAudioKey) {
+      keys.add(String(exercise.promptAudioKey).toLowerCase().trim())
+    }
     if (exercise.audioKey) {
       keys.add(String(exercise.audioKey).toLowerCase().trim())
     }

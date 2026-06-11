@@ -1,4 +1,7 @@
 import { AUDIO_SPEECH_MAP } from '../data/audioSpeechMap'
+import { resolvePromptSpeechText } from './audioPrompts'
+import { getActiveAudioSettings } from './audioSettings'
+import { duckMusic, restoreMusic } from './music'
 
 const DEFAULT_SPEECH_OPTIONS = {
   lang: 'fr-FR',
@@ -6,8 +9,20 @@ const DEFAULT_SPEECH_OPTIONS = {
   pitch: 1.05,
 }
 
-let voicesCache = null
+const MP3_TIMEOUT_MS = 2500
+
+let voicesCache = []
+let voicesListenerAttached = false
 let currentAudio = null
+let onVoiceDisabled = null
+
+export function setVoiceDisabledHandler(handler) {
+  onVoiceDisabled = handler
+}
+
+function devLog(...args) {
+  if (import.meta.env.DEV) console.info(...args)
+}
 
 function normalizeKey(audioKey) {
   return String(audioKey ?? '')
@@ -17,22 +32,36 @@ function normalizeKey(audioKey) {
     .replace(/[\u0300-\u036f]/g, '')
 }
 
-function getVoixUrl(filename) {
-  return new URL(`../assets/audio/voix/${filename}`, import.meta.url).href
+function getMp3Url(audioKey) {
+  return `/audio/voix/${normalizeKey(audioKey)}.mp3`
 }
 
-function refreshVoices() {
+export function loadVoices() {
   if (typeof window === 'undefined' || !window.speechSynthesis) return []
-  voicesCache = window.speechSynthesis.getVoices()
+
+  const synth = window.speechSynthesis
+  const voices = synth.getVoices()
+  if (voices.length) voicesCache = voices
+
+  if (!voicesListenerAttached) {
+    voicesListenerAttached = true
+    synth.addEventListener('voiceschanged', () => {
+      const next = synth.getVoices()
+      if (next.length) {
+        voicesCache = next
+        devLog('[audio] voices loaded', next.length)
+      }
+    })
+  }
+
   return voicesCache
 }
 
 function pickFrenchVoice() {
-  const voices = voicesCache?.length ? voicesCache : refreshVoices()
+  const voices = voicesCache.length ? voicesCache : loadVoices()
   return (
     voices.find((v) => v.lang === 'fr-FR') ??
     voices.find((v) => v.lang.startsWith('fr')) ??
-    voices[0] ??
     null
   )
 }
@@ -44,6 +73,9 @@ export function resolveSpeechText(audioKey) {
   if (AUDIO_SPEECH_MAP[key]) {
     return AUDIO_SPEECH_MAP[key]
   }
+
+  const promptText = resolvePromptSpeechText(key)
+  if (promptText) return promptText
 
   if (key.startsWith('lettre_')) {
     return key.replace('lettre_', '').toUpperCase()
@@ -68,75 +100,141 @@ export function stopAllAudio() {
   }
 }
 
+async function isMp3Available(url) {
+  try {
+    const response = await fetch(url, { method: 'HEAD' })
+    if (!response.ok) return false
+    const contentType = response.headers.get('content-type') ?? ''
+    return contentType.includes('audio')
+  } catch {
+    return false
+  }
+}
+
+function tryPlayMp3(url, volume = 1) {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio()
+    audio.volume = volume
+    let settled = false
+
+    const finish = (action) => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      action()
+    }
+
+    const onError = () => {
+      audio.pause()
+      if (currentAudio === audio) currentAudio = null
+      finish(() => reject(new Error('mp3 failed')))
+    }
+
+    const onCanPlay = () => {
+      currentAudio = audio
+      audio
+        .play()
+        .then(() => resolve(true))
+        .catch(onError)
+    }
+
+    audio.addEventListener('error', onError, { once: true })
+    audio.addEventListener('canplaythrough', onCanPlay, { once: true })
+    audio.addEventListener('ended', () => {
+      if (currentAudio === audio) currentAudio = null
+      restoreMusic()
+    })
+
+    const timer = setTimeout(() => {
+      if (!settled && audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) {
+        onError()
+      }
+    }, MP3_TIMEOUT_MS)
+
+    audio.src = url
+    audio.load()
+  })
+}
+
 export function speakFallback(text, options = {}) {
   if (!text || typeof window === 'undefined') return false
 
+  const settings = getActiveAudioSettings()
   const synth = window.speechSynthesis
   if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
-    console.log('[audio] speechSynthesis indisponible')
+    devLog('[audio] speechSynthesis unavailable')
     return false
   }
 
-  stopAllAudio()
+  loadVoices()
+  synth.cancel()
 
   const utterance = new SpeechSynthesisUtterance(text)
   const opts = { ...DEFAULT_SPEECH_OPTIONS, ...options }
   utterance.lang = opts.lang
   utterance.rate = opts.rate
   utterance.pitch = opts.pitch
+  utterance.volume = settings.voiceVolume
 
   const voice = pickFrenchVoice()
   if (voice) utterance.voice = voice
 
+  utterance.onend = () => restoreMusic()
+  utterance.onerror = () => restoreMusic()
+
   try {
+    duckMusic()
     synth.speak(utterance)
+    if (synth.paused) synth.resume()
     return true
   } catch {
-    console.log('[audio] speechSynthesis bloqué')
+    restoreMusic()
+    devLog('[audio] speechSynthesis unavailable')
     return false
   }
 }
 
-export function playWord(audioKey, options = {}) {
+export async function playWord(audioKey, options = {}) {
   const key = normalizeKey(audioKey)
-  if (!key) return
+  if (!key) return false
 
-  const fallbackText = resolveSpeechText(key)
-  const path = getVoixUrl(`${key}.mp3`)
+  const settings = getActiveAudioSettings()
+  if (!settings.voiceEnabled) {
+    devLog('[audio] voice disabled')
+    onVoiceDisabled?.()
+    return false
+  }
 
+  devLog('[audio] playWord', key)
+
+  const text = resolveSpeechText(key)
   stopAllAudio()
 
+  const url = getMp3Url(key)
+  devLog('[audio] try mp3', url)
+
   try {
-    const audio = new Audio(path)
-    currentAudio = audio
-
-    const useFallback = () => {
-      currentAudio = null
-      if (fallbackText) speakFallback(fallbackText, options)
-    }
-
-    audio.addEventListener('error', useFallback, { once: true })
-    audio.addEventListener('ended', () => {
-      currentAudio = null
-    })
-
-    audio.play().catch(useFallback)
+    const available = await isMp3Available(url)
+    if (!available) throw new Error('mp3 unavailable')
+    duckMusic()
+    await tryPlayMp3(url, settings.voiceVolume)
+    return true
   } catch {
-    if (fallbackText) speakFallback(fallbackText, options)
+    devLog('[audio] mp3 failed, fallback TTS', key)
+    if (!text) return false
+    devLog('[audio] speaking', key)
+    return speakFallback(text, options)
   }
 }
 
 export function playSuccess() {
-  playWord('bravo')
+  return playWord('bravo')
 }
 
 export function playError() {
-  playWord('oups')
+  return playWord('oups')
 }
 
-if (typeof window !== 'undefined' && window.speechSynthesis) {
-  window.speechSynthesis.onvoiceschanged = () => {
-    refreshVoices()
-  }
-  refreshVoices()
+if (typeof window !== 'undefined') {
+  loadVoices()
 }

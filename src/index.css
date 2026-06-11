@@ -2353,6 +2353,76 @@ body {
   margin-bottom: 8px;
 }
 
+.parent-audio-test-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.parent-audio-test-btn {
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: #5d3a00;
+  background: rgba(255, 248, 231, 0.95);
+  border: 1.5px solid rgba(232, 184, 75, 0.75);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.parent-audio-test-btn:active {
+  transform: scale(0.97);
+}
+
+.parent-setting-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.parent-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6d4c41;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(255, 248, 231, 0.7);
+}
+
+.parent-toggle-btn {
+  min-width: 44px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  color: #5d3a00;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(232, 184, 75, 0.75);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.parent-toggle-btn.is-on {
+  background: rgba(102, 187, 106, 0.25);
+  border-color: rgba(76, 175, 80, 0.65);
+}
+
+.parent-range {
+  flex: 1;
+  max-width: 140px;
+  accent-color: #e8b84b;
+}
+
+.parent-range:disabled {
+  opacity: 0.45;
+}
+
 .parent-stat-list {
   list-style: none;
   display: flex;

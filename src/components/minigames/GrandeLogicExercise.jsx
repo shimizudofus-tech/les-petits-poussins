@@ -47,7 +47,14 @@ export default function GrandeLogicExercise({ section = 'grande', onCorrect }) {
 
   return (
     <>
-      <PetiteExerciseHeader instruction={instruction} parentHint={parentHint} />
+      <PetiteExerciseHeader
+        instruction={instruction}
+        parentHint={parentHint}
+        audioKey={
+          exercise.promptAudioKey ??
+          (exercise.type === 'oddOneOut' ? 'trouve_intrus' : 'continue_suite')
+        }
+      />
 
       {exercise.type === 'oddOneOut' ? (
         <div className="grande-logic-row flex flex-wrap items-center justify-center gap-2">

@@ -210,7 +210,7 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
   }
 
   const handleListen = () => {
-    if (puzzle.audioKey) playWord(puzzle.audioKey)
+    playWord('remets_image')
   }
 
   const boardWidth = PUZZLE_BOARD_WIDTH * scale
@@ -243,16 +243,14 @@ export default function PuzzleExercise({ exerciseKey, section = 'petite', onCorr
         <div className="puzzle-app-stars" aria-label={`${gameState.stars} étoiles`}>
           ⭐ {gameState.stars}
         </div>
-        {puzzle.audioKey ? (
-          <button
-            type="button"
-            className="puzzle-app-audio"
-            onClick={handleListen}
-            aria-label={`Écouter ${puzzle.title}`}
-          >
-            🔊
-          </button>
-        ) : null}
+        <button
+          type="button"
+          className="puzzle-app-audio"
+          onClick={handleListen}
+          aria-label="Écouter la consigne"
+        >
+          🔊
+        </button>
       </header>
 
       <div className="puzzle-app-body">

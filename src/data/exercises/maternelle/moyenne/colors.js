@@ -39,7 +39,8 @@ function findObject(id, targetKey, distractorKeys, difficulty) {
     difficulty,
     colorName: color.name,
     colorHex: color.hex,
-    audioKey: color.audioKey,
+    colorKey: target.color,
+    audioKey: `trouve_objet_${target.color}`,
     correct: target,
     distractors: distractorKeys.map((k) => OBJ[k]),
   }
@@ -60,7 +61,7 @@ function findColor(id, objectKey, difficulty) {
     object,
     colorName: color.name,
     correctHex: color.hex,
-    audioKey: object.id,
+    audioKey: `quelle_couleur_${objectKey}`,
     colorOptions: [color, ...picks.map((k) => COLORS[k])],
   }
 }

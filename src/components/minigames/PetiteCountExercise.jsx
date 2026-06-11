@@ -6,6 +6,7 @@ import { makeOpts } from '../../utils/exerciseUtils'
 import AnswerButtons from './AnswerButtons'
 import ExerciseUnavailable from './ExerciseUnavailable'
 import PetiteExerciseHeader from './PetiteExerciseHeader'
+import { promptKeyForCount } from '../../utils/audioPrompts'
 
 export default function PetiteCountExercise({ section = 'petite', onCorrect }) {
   const { gameState, setGameState } = useGame()
@@ -22,7 +23,7 @@ export default function PetiteCountExercise({ section = 'petite', onCorrect }) {
       answer: source.count,
       scene: source.emoji.repeat(source.count),
       options: makeOpts(source.count, 1, maxAnswer, optionCount),
-      audioKey: source.emojiKey,
+      audioKey: promptKeyForCount(source),
     }
   }, [section, maxDifficulty])
 

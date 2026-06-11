@@ -38,6 +38,7 @@ export default function PatternExercise({ section = 'moyenne', onCorrect }) {
       <PetiteExerciseHeader
         instruction="Continue"
         parentHint={`Suite ${exercise.patternType}`}
+        audioKey={exercise.promptAudioKey ?? 'continue_suite'}
       />
       <div className="pattern-sequence flex flex-wrap items-center justify-center gap-2">
         {exercise.sequence.map((item, index) => (

@@ -4,6 +4,7 @@ import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
 import ExerciseUnavailable from './ExerciseUnavailable'
 import PetiteExerciseHeader from './PetiteExerciseHeader'
+import { promptKeyForPetiteColor } from '../../utils/audioPrompts'
 
 function buildQuiz(section, maxDifficulty) {
   const target = pickMaternelleExercise(section, 'colors', maxDifficulty)
@@ -54,7 +55,7 @@ export default function PetiteColorsExercise({ section = 'petite', onCorrect }) 
       <PetiteExerciseHeader
         instruction="Trouve la couleur"
         parentHint={`Cherche : ${target.name}`}
-        audioKey={target.audioKey}
+        audioKey={promptKeyForPetiteColor(target.audioKey)}
         audioLabel={target.name}
       />
       <div className="petite-color-choices flex flex-wrap justify-center gap-4">

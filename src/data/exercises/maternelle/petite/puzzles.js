@@ -18,6 +18,7 @@ export const petitePuzzleExercises = [
     pieceCount: 2,
     difficulty: 1,
     audioKey: 'poussin',
+    promptAudioKey: 'remets_image',
   },
   {
     id: 'mat-petite-puzzle-fleur',
@@ -31,6 +32,7 @@ export const petitePuzzleExercises = [
     pieceCount: 4,
     difficulty: 2,
     audioKey: 'fleur',
+    promptAudioKey: 'remets_image',
   },
   {
     id: 'mat-petite-puzzle-maison',
@@ -44,5 +46,6 @@ export const petitePuzzleExercises = [
     pieceCount: 6,
     difficulty: 3,
     audioKey: 'maison',
+    promptAudioKey: 'remets_image',
   },
 ]

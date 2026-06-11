@@ -11,6 +11,8 @@ import {
   PARENT_RETURN_SESSION_KEY,
 } from '../../utils/parentContentStats'
 import { CORRECTS_TO_UNLOCK, MAX_MATERNELLE_DIFFICULTY } from '../../utils/maternelleProgress'
+import { playWord } from '../../utils/audioManager'
+import { isMusicFileAvailable, startBackgroundMusic, stopBackgroundMusic } from '../../utils/music'
 
 const CP_LABELS = [
   { key: 'dictee', label: 'Dictée CP' },
@@ -51,7 +53,8 @@ function getReturnScreen() {
 }
 
 export default function ScreenParent() {
-  const { gameState, switchScreen, resetProgress } = useGame()
+  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast } = useGame()
+  const audioSettings = gameState.audioSettings ?? {}
   const stats = getExerciseContentStats()
   const petiteStats = getMaternellePetiteStats()
   const moyenneStats = getMaternelleMoyenneStats()
@@ -96,6 +99,92 @@ export default function ScreenParent() {
       >
         ← Retour
       </button>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Réglages audio</h2>
+        <ul className="parent-setting-list">
+          <li className="parent-setting-row">
+            <span>Musique</span>
+            <button
+              type="button"
+              className={`parent-toggle-btn ${audioSettings.musicEnabled ? 'is-on' : ''}`}
+              onClick={() => {
+                const next = !audioSettings.musicEnabled
+                updateAudioSettings({ musicEnabled: next })
+                if (next) startBackgroundMusic()
+              }}
+            >
+              {audioSettings.musicEnabled ? 'ON' : 'OFF'}
+            </button>
+          </li>
+          <li className="parent-setting-row">
+            <span>Volume musique</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={Math.round((audioSettings.musicVolume ?? 0.25) * 100)}
+              disabled={!audioSettings.musicEnabled}
+              className="parent-range"
+              onChange={(e) =>
+                updateAudioSettings({ musicVolume: Number(e.target.value) / 100 })
+              }
+            />
+          </li>
+          <li className="parent-setting-row">
+            <span>Voix</span>
+            <button
+              type="button"
+              className={`parent-toggle-btn ${audioSettings.voiceEnabled ? 'is-on' : ''}`}
+              onClick={() => updateAudioSettings({ voiceEnabled: !audioSettings.voiceEnabled })}
+            >
+              {audioSettings.voiceEnabled ? 'ON' : 'OFF'}
+            </button>
+          </li>
+          <li className="parent-setting-row">
+            <span>Volume voix</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={Math.round((audioSettings.voiceVolume ?? 1) * 100)}
+              disabled={!audioSettings.voiceEnabled}
+              className="parent-range"
+              onChange={(e) =>
+                updateAudioSettings({ voiceVolume: Number(e.target.value) / 100 })
+              }
+            />
+          </li>
+        </ul>
+        <div className="parent-audio-test-row">
+          <button type="button" className="parent-audio-test-btn" onClick={() => playWord('rouge')}>
+            Tester voix
+          </button>
+          <button
+            type="button"
+            className="parent-audio-test-btn"
+            onClick={async () => {
+              const available = await isMusicFileAvailable()
+              if (!available) {
+                showToast('Aucune musique trouvée. Ajoute public/audio/music/background.mp3', '#8d6e3a')
+                return
+              }
+              const started = await startBackgroundMusic()
+              if (!started) {
+                showToast('Impossible de lancer la musique', '#ef5350')
+              }
+            }}
+          >
+            Tester musique
+          </button>
+          <button type="button" className="parent-audio-test-btn" onClick={() => stopBackgroundMusic()}>
+            Stop musique
+          </button>
+        </div>
+        <p className="parent-card-hint">
+          Musique : public/audio/music/background.mp3 — activée par défaut, démarrage au premier tap.
+        </p>
+      </section>
 
       <section className="parent-card">
         <h2 className="parent-card-title">Contenu pédagogique — CP</h2>
@@ -196,8 +285,8 @@ export default function ScreenParent() {
       <section className="parent-card">
         <h2 className="parent-card-title">Fichiers audio attendus</h2>
         <p className="parent-card-hint">
-          Audio : les MP3 maison peuvent être ajoutés dans src/assets/audio/voix/. En attendant, le
-          jeu utilise une voix automatique du navigateur.
+          Audio : les MP3 maison peuvent être ajoutés dans public/audio/voix/. En attendant, le jeu
+          utilise une voix automatique du navigateur.
         </p>
         <p className="parent-card-hint">{audioFiles.length} fichier(s) MP3 référencé(s)</p>
         <ul className="parent-detail-list">
