@@ -9,6 +9,7 @@ export const SCREENS = {
   COLLECTION: 'collection',
   FARM_EXPLORE: 'farm-explore',
   PARENT: 'parent',
+  BADGES: 'badges',
   /** @deprecated Ancien écran grille — migré vers UPGRADE */
   BUILDER: 'builder',
   /** @deprecated Ancien nom — migré vers COLLECTION */

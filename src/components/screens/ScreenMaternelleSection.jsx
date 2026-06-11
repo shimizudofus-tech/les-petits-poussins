@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ScreenTitle from './ScreenTitle'
 import SubjectTabs from '../minigames/SubjectTabs'
 import ZoneColoringExercise from '../minigames/ZoneColoringExercise'
@@ -14,6 +14,7 @@ import GrandeLettersExercise from '../minigames/GrandeLettersExercise'
 import GrandeSoundsExercise from '../minigames/GrandeSoundsExercise'
 import GrandeCountExercise from '../minigames/GrandeCountExercise'
 import GrandeLogicExercise from '../minigames/GrandeLogicExercise'
+import { TESTABLE_SUBJECTS } from '../../data/badges'
 import { SCREENS, useGame } from '../../context/GameContext'
 
 const DEFAULT_SUBJECT = {
@@ -59,12 +60,33 @@ const SECTION_META = {
 }
 
 export default function ScreenMaternelleSection() {
-  const { gameState, setSubject, switchScreen } = useGame()
+  const {
+    gameState,
+    setSubject,
+    switchScreen,
+    setExerciseContext,
+    registerExerciseAdvance,
+    startTest,
+    showToast,
+  } = useGame()
   const [exerciseKey, setExerciseKey] = useState(0)
 
   const section = gameState.maternelleSection ?? 'petite'
   const meta = SECTION_META[section] ?? SECTION_META.petite
   const subject = gameState.currentSubject?.[section] ?? DEFAULT_SUBJECT[section] ?? 'coloring'
+  const activeTest = gameState.achievements?.tests?.activeTest
+  const canStartTest = TESTABLE_SUBJECTS.has(subject) && !activeTest
+
+  useEffect(() => {
+    setExerciseContext({ level: 'maternelle', section, subject })
+  }, [section, subject, setExerciseContext])
+
+  useEffect(() => {
+    registerExerciseAdvance(() => {
+      setExerciseKey((k) => k + 1)
+    })
+    return () => registerExerciseAdvance(null)
+  }, [registerExerciseAdvance])
 
   const handleSubject = (sub) => {
     setSubject(section, sub)
@@ -72,7 +94,14 @@ export default function ScreenMaternelleSection() {
   }
 
   const handleCorrect = () => {
+    if (activeTest) return
     setTimeout(() => setExerciseKey((k) => k + 1), 1800)
+  }
+
+  const handleStartTest = () => {
+    startTest({ level: 'maternelle', section, subject, length: 5 })
+    setExerciseKey((k) => k + 1)
+    showToast('Petit test : 5 questions !', '#7c4dff')
   }
 
   const comingSoon = false
@@ -194,6 +223,19 @@ export default function ScreenMaternelleSection() {
             onSelect={handleSubject}
             variant={tabVariant}
           />
+
+          {activeTest ? (
+            <div className="test-banner mx-3.5 mt-2 shrink-0">
+              Petit test — Question {Math.min(activeTest.index + 1, activeTest.length)} /{' '}
+              {activeTest.length}
+            </div>
+          ) : null}
+
+          {canStartTest ? (
+            <button type="button" onClick={handleStartTest} className="test-start-btn mx-3.5 mt-2 shrink-0">
+              📝 Petit test (5 questions)
+            </button>
+          ) : null}
 
           <div
             className={

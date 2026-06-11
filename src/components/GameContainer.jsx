@@ -10,6 +10,7 @@ import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
 import ScreenFarmExplore from './screens/ScreenFarmExplore'
 import ScreenParent from './screens/ScreenParent'
+import ScreenBadges from './screens/ScreenBadges'
 import Feedback from './Feedback'
 import { isValidScreen, resolveScreen, SCREENS } from '../constants/screens'
 import { useGame } from '../context/GameContext'
@@ -61,6 +62,7 @@ export default function GameContainer() {
               {screen === SCREENS.COLLECTION && <ScreenCollection />}
               {screen === SCREENS.FARM_EXPLORE && <ScreenFarmExplore />}
               {screen === SCREENS.PARENT && <ScreenParent />}
+              {screen === SCREENS.BADGES && <ScreenBadges />}
             </>
           )}
         </div>

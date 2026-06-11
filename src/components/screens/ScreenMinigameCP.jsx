@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ScreenTitle from './ScreenTitle'
 import SubjectTabs from '../minigames/SubjectTabs'
 import MathExercise from '../minigames/MathExercise'
@@ -13,9 +13,13 @@ const CP_TABS = [
 ]
 
 export default function ScreenMinigameCP() {
-  const { gameState, setSubject, switchScreen } = useGame()
+  const { gameState, setSubject, switchScreen, setExerciseContext } = useGame()
   const [exerciseKey, setExerciseKey] = useState(0)
   const subject = gameState.currentSubject.cp
+
+  useEffect(() => {
+    setExerciseContext({ level: 'cp', section: null, subject })
+  }, [subject, setExerciseContext])
 
   const handleSubject = (sub) => {
     setSubject('cp', sub)

@@ -6,6 +6,15 @@ import {
   isValidFarmUpgradeKey,
 } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
+import {
+  applyExerciseResult,
+  evaluateBadgeUnlocks,
+  finishTestInState,
+  mergeAchievements,
+  recordTestAnswerInState,
+  startTestInState,
+  unlockBadgeInState,
+} from '../utils/achievements'
 import { setVoiceDisabledHandler } from '../utils/audio'
 import { playError, playSuccess } from '../utils/audioManager'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
@@ -26,6 +35,14 @@ export function GameProvider({ children }) {
   const toastTimerRef = useRef(null)
   const feedbackTimerRef = useRef(null)
   const suppressPersistRef = useRef(false)
+  const exerciseContextRef = useRef({ level: 'maternelle', section: 'petite', subject: 'coloring' })
+  const exerciseAdvanceRef = useRef(null)
+  const achievementNotifyRef = useRef(null)
+
+  function normalizeSubject(level, subject) {
+    if (level === 'cp' && subject === 'math') return 'maths'
+    return subject
+  }
 
   const showToast = useCallback((message, color = '#ff8f00') => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
@@ -44,17 +61,199 @@ export function GameProvider({ children }) {
     setGameState((prev) => ({ ...prev, currentScreen: target }))
   }, [])
 
-  const showFeedback = useCallback((correct) => {
-    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
-    setFeedback({ correct })
-    if (correct) {
-      playSuccess()
-      setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
-    } else {
-      playError()
+  const setExerciseContext = useCallback(({ level, section, subject }) => {
+    exerciseContextRef.current = {
+      level,
+      section,
+      subject: normalizeSubject(level, subject),
     }
-    feedbackTimerRef.current = setTimeout(() => setFeedback(null), 1400)
   }, [])
+
+  const registerExerciseAdvance = useCallback((fn) => {
+    exerciseAdvanceRef.current = fn
+  }, [])
+
+  const flushAchievementNotifications = useCallback(() => {
+    const pending = achievementNotifyRef.current
+    achievementNotifyRef.current = null
+    if (!pending) return
+
+    if (pending.testResult) {
+      const result = pending.testResult
+      showToast(`Test terminé : ${result.score}/${result.length} (+${result.stars}⭐)`, '#7c4dff')
+    }
+
+    for (const badge of pending.badges) {
+      showModal({
+        icon: badge.icon,
+        title: 'Badge débloqué !',
+        body: `${badge.name} — +${badge.rewardStars ?? 0}⭐`,
+        buttons: [{ label: 'Super !', type: 'primary' }],
+      })
+      break
+    }
+  }, [showModal, showToast])
+
+  const unlockBadge = useCallback(
+    (badgeId) => {
+      let unlockedBadge = null
+      setGameState((prev) => {
+        const { achievements: nextAchievements, badge, stars } = unlockBadgeInState(
+          prev.achievements,
+          badgeId,
+        )
+        if (!badge) return prev
+        unlockedBadge = badge
+        return {
+          ...prev,
+          achievements: nextAchievements,
+          stars: prev.stars + stars,
+        }
+      })
+      if (unlockedBadge) {
+        showModal({
+          icon: unlockedBadge.icon,
+          title: 'Badge débloqué !',
+          body: `${unlockedBadge.name} — +${unlockedBadge.rewardStars ?? 0}⭐`,
+          buttons: [{ label: 'Super !', type: 'primary' }],
+        })
+      }
+      return unlockedBadge
+    },
+    [showModal],
+  )
+
+  const recordExerciseResult = useCallback(
+    ({ level, section, subject, success, exerciseId, source }) => {
+      setGameState((prev) => {
+        const ctx = exerciseContextRef.current
+        const resolved = {
+          level: level ?? ctx.level,
+          section: section ?? ctx.section,
+          subject: normalizeSubject(level ?? ctx.level, subject ?? ctx.subject),
+          success: Boolean(success),
+          exerciseId,
+          source,
+        }
+
+        let achievements = applyExerciseResult(prev.achievements, resolved)
+        let bonusStars = 0
+        const notifications = { badges: [], testResult: null, advanceTest: false }
+
+        if (prev.achievements?.tests?.activeTest) {
+          const testResult = recordTestAnswerInState(achievements, {
+            success: resolved.success,
+            exerciseId,
+          })
+          achievements = testResult.achievements
+
+          if (testResult.finished && testResult.result) {
+            notifications.testResult = testResult.result
+            bonusStars += testResult.result.stars
+
+            if (testResult.result.perfect) {
+              const perfectUnlock = unlockBadgeInState(achievements, 'perfect_test')
+              achievements = perfectUnlock.achievements
+              if (perfectUnlock.badge) {
+                bonusStars += perfectUnlock.stars
+                notifications.badges.push(perfectUnlock.badge)
+              }
+            }
+          } else if (achievements.tests.activeTest) {
+            notifications.advanceTest = true
+          }
+        }
+
+        const pending = evaluateBadgeUnlocks(achievements)
+        for (const badgeId of pending) {
+          const unlock = unlockBadgeInState(achievements, badgeId)
+          achievements = unlock.achievements
+          if (unlock.badge) {
+            bonusStars += unlock.stars
+            notifications.badges.push(unlock.badge)
+          }
+        }
+
+        achievementNotifyRef.current = notifications
+        queueMicrotask(flushAchievementNotifications)
+
+        if (notifications.advanceTest) {
+          queueMicrotask(() => {
+            setTimeout(() => exerciseAdvanceRef.current?.(), 1800)
+          })
+        }
+
+        return { ...prev, achievements, stars: prev.stars + bonusStars }
+      })
+    },
+    [flushAchievementNotifications],
+  )
+
+  const startTest = useCallback(({ level, section, subject, length = 5 }) => {
+    setGameState((prev) => ({
+      ...prev,
+      achievements: startTestInState(prev.achievements, { level, section, subject, length }),
+    }))
+  }, [])
+
+  const recordTestAnswer = useCallback(({ success, exerciseId }) => {
+    setGameState((prev) => {
+      const result = recordTestAnswerInState(prev.achievements, { success, exerciseId })
+      if (result.finished && result.result) {
+        queueMicrotask(() => {
+          showToast(
+            `Test terminé : ${result.result.score}/${result.result.length} (+${result.result.stars}⭐)`,
+            '#7c4dff',
+          )
+        })
+      }
+      return { ...prev, achievements: result.achievements, stars: prev.stars + (result.result?.stars ?? 0) }
+    })
+  }, [showToast])
+
+  const finishTest = useCallback(() => {
+    setGameState((prev) => {
+      const result = finishTestInState(prev.achievements)
+      if (result.finished && result.result) {
+        queueMicrotask(() => {
+          showToast(
+            `Test terminé : ${result.result.score}/${result.result.length} (+${result.result.stars}⭐)`,
+            '#7c4dff',
+          )
+        })
+      }
+      return {
+        ...prev,
+        achievements: result.achievements,
+        stars: prev.stars + (result.result?.stars ?? 0),
+      }
+    })
+  }, [showToast])
+
+  const showFeedback = useCallback(
+    (correct, meta) => {
+      if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
+      setFeedback({ correct })
+      if (correct) {
+        playSuccess()
+        setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
+      } else {
+        playError()
+      }
+      if (meta?.skipAchievement !== true) {
+        recordExerciseResult({
+          success: correct,
+          exerciseId: meta?.exerciseId,
+          level: meta?.level,
+          section: meta?.section,
+          subject: meta?.subject,
+          source: meta?.source,
+        })
+      }
+      feedbackTimerRef.current = setTimeout(() => setFeedback(null), 1400)
+    },
+    [recordExerciseResult],
+  )
 
   const setSubject = useCallback((level, subject) => {
     setGameState((prev) => ({
@@ -342,6 +541,13 @@ export function GameProvider({ children }) {
         selectAnimal,
         resetProgress,
         updateAudioSettings,
+        setExerciseContext,
+        registerExerciseAdvance,
+        recordExerciseResult,
+        unlockBadge,
+        startTest,
+        recordTestAnswer,
+        finishTest,
         showToast,
         showModal,
         hideModal,

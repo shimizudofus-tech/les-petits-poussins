@@ -13,6 +13,8 @@ import {
 import { CORRECTS_TO_UNLOCK, MAX_MATERNELLE_DIFFICULTY } from '../../utils/maternelleProgress'
 import { playWord } from '../../utils/audioManager'
 import { isMusicFileAvailable, startBackgroundMusic, stopBackgroundMusic } from '../../utils/music'
+import { BADGE_BY_ID } from '../../data/badges'
+import { getAchievementSummary } from '../../utils/achievements'
 
 const CP_LABELS = [
   { key: 'dictee', label: 'Dictée CP' },
@@ -55,6 +57,7 @@ function getReturnScreen() {
 export default function ScreenParent() {
   const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast } = useGame()
   const audioSettings = gameState.audioSettings ?? {}
+  const achievementSummary = getAchievementSummary(gameState.achievements)
   const stats = getExerciseContentStats()
   const petiteStats = getMaternellePetiteStats()
   const moyenneStats = getMaternelleMoyenneStats()
@@ -184,6 +187,112 @@ export default function ScreenParent() {
         <p className="parent-card-hint">
           Musique : public/audio/music/background.mp3 — activée par défaut, démarrage au premier tap.
         </p>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Réussites et badges</h2>
+        <ul className="parent-stat-list">
+          <li className="parent-stat-row">
+            <span>Exercices réussis</span>
+            <strong>{achievementSummary.totalSuccess}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Tentatives</span>
+            <strong>{achievementSummary.totalAttempts}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Meilleur streak</span>
+            <strong>{achievementSummary.bestStreak}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Badges débloqués</span>
+            <strong>
+              {achievementSummary.badgesUnlocked} / {achievementSummary.badgesTotal}
+            </strong>
+          </li>
+        </ul>
+
+        {achievementSummary.recentBadges.length > 0 ? (
+          <>
+            <h3 className="parent-card-subtitle mt-3">Derniers badges</h3>
+            <ul className="parent-stat-list">
+              {achievementSummary.recentBadges.map((badgeId) => (
+                <li key={badgeId} className="parent-stat-row">
+                  <span>
+                    {BADGE_BY_ID[badgeId]?.icon} {BADGE_BY_ID[badgeId]?.name ?? badgeId}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+
+        {achievementSummary.testHistory.length > 0 ? (
+          <>
+            <h3 className="parent-card-subtitle mt-3">Derniers tests</h3>
+            <ul className="parent-stat-list">
+              {achievementSummary.testHistory.map((test, index) => (
+                <li key={`${test.finishedAt}-${index}`} className="parent-stat-row">
+                  <span>
+                    {test.section ? `${test.section} · ` : ''}
+                    {test.subject}
+                  </span>
+                  <strong>
+                    {test.score}/{test.length}
+                  </strong>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+
+        <h3 className="parent-card-subtitle mt-3">Petite Section — réussites</h3>
+        <ul className="parent-stat-list">
+          {PETITE_LABELS.map(({ key, label }) => (
+            <li key={`ach-petite-${key}`} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{achievementSummary.successStats.maternelle.petite[key]?.totalSuccess ?? 0}</strong>
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="parent-card-subtitle mt-3">Moyenne Section — réussites</h3>
+        <ul className="parent-stat-list">
+          {MOYENNE_LABELS.map(({ key, label }) => (
+            <li key={`ach-moyenne-${key}`} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{achievementSummary.successStats.maternelle.moyenne[key]?.totalSuccess ?? 0}</strong>
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="parent-card-subtitle mt-3">Grande Section — réussites</h3>
+        <ul className="parent-stat-list">
+          {GRANDE_LABELS.map(({ key, label }) => (
+            <li key={`ach-grande-${key}`} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{achievementSummary.successStats.maternelle.grande[key]?.totalSuccess ?? 0}</strong>
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="parent-card-subtitle mt-3">CP — réussites</h3>
+        <ul className="parent-stat-list">
+          {CP_LABELS.map(({ key, label }) => (
+            <li key={`ach-cp-${key}`} className="parent-stat-row">
+              <span>{label}</span>
+              <strong>{achievementSummary.successStats.cp[key]?.totalSuccess ?? 0}</strong>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          onClick={() => switchScreen(SCREENS.BADGES)}
+          className="parent-audio-test-btn mt-3 w-full"
+        >
+          Voir les badges (enfant)
+        </button>
       </section>
 
       <section className="parent-card">

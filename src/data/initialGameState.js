@@ -4,6 +4,7 @@ import { CHICKEN_STAGE_ICONS } from './chickenAssets'
 import { DEFAULT_FARM_UPGRADES } from './farmUpgrades'
 import { DEFAULT_AUDIO_SETTINGS } from '../utils/audioSettings'
 import { createDefaultLearningProgress } from '../utils/maternelleProgress'
+import { createDefaultAchievements } from '../utils/achievements'
 
 export function createInitialGameState() {
   return {
@@ -17,6 +18,7 @@ export function createInitialGameState() {
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',
     learningProgress: createDefaultLearningProgress(),
+    achievements: createDefaultAchievements(),
     audioSettings: { ...DEFAULT_AUDIO_SETTINGS },
 
     collection: {

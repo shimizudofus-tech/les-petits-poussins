@@ -121,6 +121,20 @@ export default function ScreenTamagotchi() {
 
         type="button"
 
+        onClick={() => switchScreen(SCREENS.BADGES)}
+
+        className={secondaryBtnClass}
+
+      >
+
+        🏅 Badges
+
+      </button>
+
+      <button
+
+        type="button"
+
         onClick={() => switchScreen(SCREENS.FARM_EXPLORE)}
 
         className={secondaryBtnClass}

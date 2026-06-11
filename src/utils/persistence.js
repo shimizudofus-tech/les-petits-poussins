@@ -11,6 +11,7 @@ import {
   MOYENNE_ACTIVITIES,
   PETITE_ACTIVITIES,
 } from './maternelleProgress'
+import { mergeAchievements } from './achievements'
 
 export const STORAGE_KEY = 'les-petits-poussins-game-state'
 
@@ -124,6 +125,7 @@ export function loadGameState() {
       currentSubject: mergeCurrentSubject(saved, initial),
       maternelleSection: saved.maternelleSection ?? initial.maternelleSection,
       learningProgress: mergeLearningProgress(saved.learningProgress, initial),
+      achievements: mergeAchievements(saved.achievements),
       audioSettings: mergeAudioSettings(saved.audioSettings),
       coloring: { ...initial.coloring, ...saved.coloring },
       dictee: { ...initial.dictee, ...saved.dictee },
