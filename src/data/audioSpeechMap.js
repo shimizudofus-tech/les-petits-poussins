@@ -109,7 +109,7 @@ export const AUDIO_SPEECH_MAP = {
   le_moins: 'Où y en a-t-il le moins ?',
 
   // Consignes générales
-  remets_image: "Remets l'image",
+  remets_image: 'Remets les morceaux au bon endroit.',
   continue_suite: 'Continue la suite',
   trouve_intrus: "Trouve l'intrus",
   ecoute_et_trouve: 'Écoute et trouve',
