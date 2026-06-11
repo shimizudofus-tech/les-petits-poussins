@@ -65,9 +65,9 @@ function drawCloud(x = 55, y = 42, scale = 1) {
   </g>`
 }
 
-function drawFlower(x, y, color = '#E91E63') {
+function drawFlower(x = 248, y = 138, color = '#E91E63') {
   return `<g transform="translate(${x},${y})">
-    <line x1="0" y1="0" x2="0" y2="18" stroke="#388E3C" stroke-width="3"/>
+    <line x1="0" y1="0" x2="0" y2="16" stroke="#388E3C" stroke-width="3"/>
     <circle cx="0" cy="-4" r="5" fill="${color}"/>
     <circle cx="-6" cy="2" r="4" fill="${color}" opacity="0.9"/>
     <circle cx="6" cy="2" r="4" fill="${color}" opacity="0.9"/>
@@ -76,12 +76,12 @@ function drawFlower(x, y, color = '#E91E63') {
   </g>`
 }
 
-function drawTree(x = 28, y = 95) {
+function drawTree(x = 18, y = 102) {
   return `<g transform="translate(${x},${y})">
-    <rect x="-5" y="18" width="10" height="22" fill="#795548" rx="2"/>
-    <circle cx="0" cy="8" r="22" fill="#43A047"/>
-    <circle cx="-12" cy="14" r="14" fill="#66BB6A"/>
-    <circle cx="12" cy="14" r="14" fill="#66BB6A"/>
+    <rect x="-4" y="14" width="8" height="18" fill="#795548" rx="2"/>
+    <circle cx="0" cy="6" r="16" fill="#43A047"/>
+    <circle cx="-9" cy="10" r="10" fill="#66BB6A"/>
+    <circle cx="9" cy="10" r="10" fill="#66BB6A"/>
   </g>`
 }
 
@@ -96,8 +96,8 @@ function drawFence() {
   </g>`
 }
 
-function drawEgg(x = 210, y = 138) {
-  return `<ellipse cx="${x}" cy="${y}" rx="12" ry="16" fill="#FFF8E1" stroke="#FFE082" stroke-width="2"/>`
+function drawEgg(x = 218, y = 142) {
+  return `<ellipse cx="${x}" cy="${y}" rx="10" ry="13" fill="#FFF8E1" stroke="#FFE082" stroke-width="2"/>`
 }
 
 function drawApple(x = 220, y = 132) {
@@ -121,7 +121,7 @@ function drawProp(name) {
     case 'cloud':
       return drawCloud(50, 35, 1)
     case 'flower':
-      return drawFlower(235, 128) + drawFlower(48, 135, '#AB47BC')
+      return drawFlower()
     case 'tree':
       return drawTree()
     case 'fence':
@@ -197,11 +197,12 @@ function drawPig(variant = 1) {
 
 function drawSheep(variant = 1) {
   const fluff = variant === 2 ? '#EEEEEE' : '#FAFAFA'
-  return `<g transform="translate(140,98)">
-    <ellipse cx="0" cy="14" rx="34" ry="24" fill="${fluff}" stroke="#E0E0E0" stroke-width="1"/>
-    <circle cx="-18" cy="6" r="10" fill="${fluff}"/>
-    <circle cx="18" cy="6" r="10" fill="${fluff}"/>
-    <circle cx="0" cy="-2" r="12" fill="${fluff}"/>
+  const stroke = '#B0BEC5'
+  return `<g transform="translate(140,100)">
+    <ellipse cx="0" cy="14" rx="34" ry="24" fill="${fluff}" stroke="${stroke}" stroke-width="2"/>
+    <circle cx="-18" cy="6" r="10" fill="${fluff}" stroke="${stroke}" stroke-width="1.5"/>
+    <circle cx="18" cy="6" r="10" fill="${fluff}" stroke="${stroke}" stroke-width="1.5"/>
+    <circle cx="0" cy="-2" r="12" fill="${fluff}" stroke="${stroke}" stroke-width="1.5"/>
     <rect x="-8" y="-18" width="16" height="14" fill="#424242" rx="6"/>
     <circle cx="-4" cy="-14" r="2" fill="#fff"/>
     <circle cx="4" cy="-14" r="2" fill="#fff"/>
@@ -244,17 +245,16 @@ function drawCat(variant = 1) {
 }
 
 function drawRabbit(variant = 1) {
-  return `<g transform="translate(140,104)">
-    <ellipse cx="0" cy="8" rx="24" ry="20" fill="#F5F5F5"/>
-    <circle cx="0" cy="-10" r="18" fill="#FAFAFA"/>
-    <ellipse cx="-8" cy="-32" rx="6" ry="18" fill="#FAFAFA"/>
-    <ellipse cx="8" cy="-32" rx="6" ry="18" fill="#FAFAFA"/>
-    <ellipse cx="-8" cy="-32" rx="3" ry="12" fill="#F8BBD0" opacity="0.6"/>
-    <ellipse cx="8" cy="-32" rx="3" ry="12" fill="#F8BBD0" opacity="0.6"/>
+  return `<g transform="translate(140,102)">
+    <ellipse cx="0" cy="8" rx="26" ry="22" fill="#F5F5F5" stroke="#CFD8DC" stroke-width="2"/>
+    <circle cx="0" cy="-10" r="20" fill="#FAFAFA" stroke="#CFD8DC" stroke-width="1.5"/>
+    <ellipse cx="-8" cy="-30" rx="6" ry="16" fill="#FAFAFA" stroke="#CFD8DC" stroke-width="1.5"/>
+    <ellipse cx="8" cy="-30" rx="6" ry="16" fill="#FAFAFA" stroke="#CFD8DC" stroke-width="1.5"/>
+    <ellipse cx="-8" cy="-30" rx="3" ry="10" fill="#F8BBD0" opacity="0.55"/>
+    <ellipse cx="8" cy="-30" rx="3" ry="10" fill="#F8BBD0" opacity="0.55"/>
     <circle cx="-6" cy="-12" r="3" fill="#212121"/>
     <circle cx="6" cy="-12" r="3" fill="#212121"/>
     <circle cx="0" cy="-6" r="3" fill="#F48FB1"/>
-    ${variant === 2 ? drawEgg(-50, 30) : ''}
     <ellipse cx="-10" cy="18" rx="5" ry="3" fill="#EEEEEE"/>
     <ellipse cx="10" cy="18" rx="5" ry="3" fill="#EEEEEE"/>
   </g>`
@@ -274,42 +274,42 @@ function drawDuck(variant = 1) {
 }
 
 function drawHorse(variant = 1) {
-  return `<g transform="translate(140,94)">
-    <ellipse cx="0" cy="16" rx="36" ry="24" fill="#8D6E63"/>
-    <rect x="-10" y="-20" width="20" height="28" fill="#A1887F" rx="8"/>
-    <ellipse cx="0" cy="-28" rx="14" ry="16" fill="#A1887F"/>
-    <polygon points="-8,-42 -4,-48 0,-42" fill="#A1887F"/>
-    <polygon points="8,-42 4,-48 0,-42" fill="#A1887F"/>
-    <circle cx="-5" cy="-30" r="2.5" fill="#212121"/>
-    <circle cx="5" cy="-30" r="2.5" fill="#212121"/>
-    <path d="M16,-8 L28,-20 L24,-4 Z" fill="#6D4C41"/>
-    ${variant === 2 ? '<rect x="-28" y="28" width="8" height="16" fill="#5D4037" rx="2"/><rect x="20" y="28" width="8" height="16" fill="#5D4037" rx="2"/>' : '<rect x="-24" y="30" width="7" height="14" fill="#5D4037" rx="2"/><rect x="17" y="30" width="7" height="14" fill="#5D4037" rx="2"/>'}
+  return `<g transform="translate(140,102)">
+    <ellipse cx="0" cy="14" rx="34" ry="22" fill="#8D6E63"/>
+    <rect x="-9" y="-16" width="18" height="24" fill="#A1887F" rx="7"/>
+    <ellipse cx="0" cy="-24" rx="13" ry="14" fill="#A1887F"/>
+    <polygon points="-7,-36 -3,-42 1,-36" fill="#A1887F"/>
+    <polygon points="7,-36 3,-42 -1,-36" fill="#A1887F"/>
+    <circle cx="-5" cy="-26" r="2.5" fill="#212121"/>
+    <circle cx="5" cy="-26" r="2.5" fill="#212121"/>
+    <path d="M14,-6 L24,-16 L20,-2 Z" fill="#6D4C41"/>
+    ${variant === 2 ? '<rect x="-26" y="26" width="7" height="14" fill="#5D4037" rx="2"/><rect x="19" y="26" width="7" height="14" fill="#5D4037" rx="2"/>' : '<rect x="-22" y="28" width="6" height="12" fill="#5D4037" rx="2"/><rect x="16" y="28" width="6" height="12" fill="#5D4037" rx="2"/>'}
   </g>`
 }
 
 function drawFrog(variant = 1) {
-  return `<g transform="translate(140,108)">
-    <ellipse cx="0" cy="6" rx="32" ry="22" fill="#66BB6A"/>
-    <circle cx="-14" cy="-12" r="12" fill="#81C784"/>
-    <circle cx="14" cy="-12" r="12" fill="#81C784"/>
-    <circle cx="-14" cy="-12" r="5" fill="#FFF"/>
-    <circle cx="14" cy="-12" r="5" fill="#FFF"/>
-    <circle cx="-14" cy="-12" r="2.5" fill="#212121"/>
-    <circle cx="14" cy="-12" r="2.5" fill="#212121"/>
-    <path d="M-8,4 Q0,12 8,4" stroke="#388E3C" stroke-width="2" fill="none"/>
-    ${variant === 2 ? '<ellipse cx="-20" cy="18" rx="8" ry="4" fill="#43A047"/><ellipse cx="20" cy="18" rx="8" ry="4" fill="#43A047"/>' : '<ellipse cx="-16" cy="16" rx="6" ry="3" fill="#43A047"/><ellipse cx="16" cy="16" rx="6" ry="3" fill="#43A047"/>'}
+  return `<g transform="translate(140,104)">
+    <ellipse cx="0" cy="6" rx="34" ry="24" fill="#43A047" stroke="#2E7D32" stroke-width="2"/>
+    <circle cx="-14" cy="-10" r="13" fill="#66BB6A" stroke="#388E3C" stroke-width="1.5"/>
+    <circle cx="14" cy="-10" r="13" fill="#66BB6A" stroke="#388E3C" stroke-width="1.5"/>
+    <circle cx="-14" cy="-10" r="5" fill="#FFF"/>
+    <circle cx="14" cy="-10" r="5" fill="#FFF"/>
+    <circle cx="-14" cy="-10" r="2.5" fill="#212121"/>
+    <circle cx="14" cy="-10" r="2.5" fill="#212121"/>
+    <path d="M-8,4 Q0,12 8,4" stroke="#1B5E20" stroke-width="2" fill="none"/>
+    ${variant === 2 ? '<ellipse cx="-20" cy="18" rx="8" ry="4" fill="#388E3C"/><ellipse cx="20" cy="18" rx="8" ry="4" fill="#388E3C"/>' : '<ellipse cx="-16" cy="16" rx="6" ry="3" fill="#388E3C"/><ellipse cx="16" cy="16" rx="6" ry="3" fill="#388E3C"/>'}
   </g>`
 }
 
 function drawFish(variant = 1) {
-  const color = variant === 2 ? '#42A5F5' : '#FF7043'
-  return `<g transform="translate(140,118)">
-    <ellipse cx="0" cy="0" rx="36" ry="22" fill="${color}"/>
-    <polygon points="-36,0 -52,-14 -52,14" fill="${color}"/>
-    <circle cx="16" cy="-4" r="5" fill="#fff"/>
-    <circle cx="17" cy="-4" r="2.5" fill="#212121"/>
-    <path d="M-8,8 Q0,14 8,8" stroke="#E64A19" stroke-width="2" fill="none" opacity="0.5"/>
-    <ellipse cx="-10" cy="0" rx="8" ry="5" fill="#fff" opacity="0.25"/>
+  const color = variant === 2 ? '#1E88E5' : '#FF7043'
+  const stroke = variant === 2 ? '#1565C0' : '#E64A19'
+  return `<g transform="translate(140,108)">
+    <ellipse cx="0" cy="0" rx="38" ry="24" fill="${color}" stroke="${stroke}" stroke-width="2"/>
+    <polygon points="-38,0 -54,-15 -54,15" fill="${color}" stroke="${stroke}" stroke-width="2"/>
+    <circle cx="18" cy="-4" r="5" fill="#fff"/>
+    <circle cx="19" cy="-4" r="2.5" fill="#212121"/>
+    <ellipse cx="-10" cy="0" rx="8" ry="5" fill="#fff" opacity="0.3"/>
   </g>`
 }
 

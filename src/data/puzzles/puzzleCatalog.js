@@ -35,7 +35,7 @@ export const PUZZLE_CATALOG = [
     sections: ALL_SECTIONS,
     audioKey: 'poussin',
     tags: ['animal', 'ferme', 'facile'],
-    scene: { animal: 'chick', background: 'meadow', props: ['sun', 'flower'], variant: 1 },
+    scene: { animal: 'chick', background: 'meadow', props: ['sun'], variant: 1 },
   },
   {
     id: 'farm-chick-002',
@@ -100,7 +100,7 @@ export const PUZZLE_CATALOG = [
     sections: ALL_SECTIONS,
     audioKey: 'vache',
     tags: ['animal', 'ferme'],
-    scene: { animal: 'cow', background: 'meadow', props: ['sun', 'tree'], variant: 1 },
+    scene: { animal: 'cow', background: 'meadow', props: ['sun'], variant: 1 },
   },
   {
     id: 'farm-cow-002',
@@ -295,7 +295,7 @@ export const PUZZLE_CATALOG = [
     sections: ALL_SECTIONS,
     audioKey: 'cheval',
     tags: ['animal', 'ferme'],
-    scene: { animal: 'horse', background: 'meadow', props: ['tree'], variant: 2 },
+    scene: { animal: 'horse', background: 'meadow', props: ['cloud'], variant: 2 },
   },
   {
     id: 'farm-frog-001',
@@ -321,7 +321,7 @@ export const PUZZLE_CATALOG = [
     sections: ALL_SECTIONS,
     audioKey: 'grenouille',
     tags: ['animal', 'mare'],
-    scene: { animal: 'frog', background: 'pond', props: ['flower'], variant: 2 },
+    scene: { animal: 'frog', background: 'pond', props: ['cloud'], variant: 2 },
   },
   {
     id: 'farm-fish-001',
@@ -399,7 +399,7 @@ export const PUZZLE_CATALOG = [
     sections: ALL_SECTIONS,
     audioKey: 'canard',
     tags: ['animal', 'mare'],
-    scene: { animal: 'duck', background: 'pond', props: ['flower'], variant: 1 },
+    scene: { animal: 'duck', background: 'pond', props: ['cloud'], variant: 1 },
   },
   {
     id: 'farm-chick-004',
