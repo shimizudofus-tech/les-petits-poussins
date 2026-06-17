@@ -31,6 +31,8 @@ export function createDefaultAchievements() {
         grande: createSectionStats(GRANDE_ACTIVITIES),
       },
       cp: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
+      ce1: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
+      ce2: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
     },
     badges: {},
     tests: {
@@ -73,11 +75,18 @@ export function mergeAchievements(saved) {
         grande: mergeSectionStats(saved.successStats?.maternelle?.grande, defaults.successStats.maternelle.grande),
       },
       cp: mergeSectionStats(saved.successStats?.cp, defaults.successStats.cp),
+      ce1: mergeSectionStats(saved.successStats?.ce1, defaults.successStats.ce1),
+      ce2: mergeSectionStats(saved.successStats?.ce2, defaults.successStats.ce2),
     },
     badges: { ...(saved.badges ?? {}) },
     tests: {
       history: Array.isArray(saved.tests?.history) ? saved.tests.history.slice(-20) : [],
-      activeTest: saved.tests?.activeTest ?? null,
+      activeTest: saved.tests?.activeTest
+        ? {
+            ...saved.tests.activeTest,
+            answers: [...(saved.tests.activeTest.answers ?? [])],
+          }
+        : null,
     },
   }
 }
@@ -86,12 +95,26 @@ function getStatsBucket(achievements, { level, section, subject }) {
   if (level === 'cp') {
     return achievements.successStats.cp[subject] ?? createActivityStats()
   }
+  if (level === 'ce1') {
+    return achievements.successStats.ce1[subject] ?? createActivityStats()
+  }
+  if (level === 'ce2') {
+    return achievements.successStats.ce2[subject] ?? createActivityStats()
+  }
   return achievements.successStats.maternelle[section]?.[subject] ?? createActivityStats()
 }
 
 function setStatsBucket(achievements, { level, section, subject }, stats) {
   if (level === 'cp') {
     achievements.successStats.cp[subject] = stats
+    return
+  }
+  if (level === 'ce1') {
+    achievements.successStats.ce1[subject] = stats
+    return
+  }
+  if (level === 'ce2') {
+    achievements.successStats.ce2[subject] = stats
     return
   }
   if (!achievements.successStats.maternelle[section]) {
@@ -124,6 +147,12 @@ function sumAllSuccesses(achievements) {
     for (const stats of Object.values(section)) total += stats.totalSuccess
   }
   for (const stats of Object.values(achievements.successStats.cp)) {
+    total += stats.totalSuccess
+  }
+  for (const stats of Object.values(achievements.successStats.ce1 ?? {})) {
+    total += stats.totalSuccess
+  }
+  for (const stats of Object.values(achievements.successStats.ce2 ?? {})) {
     total += stats.totalSuccess
   }
   return total
@@ -181,6 +210,13 @@ export function unlockBadgeInState(achievements, badgeId) {
   return { achievements: next, badge: def, stars: def.rewardStars ?? 0 }
 }
 
+export function cancelTestInState(achievements) {
+  const next = mergeAchievements(achievements)
+  if (!next.tests.activeTest) return next
+  next.tests.activeTest = null
+  return next
+}
+
 export function startTestInState(achievements, { level, section, subject, length = 5 }) {
   const next = mergeAchievements(achievements)
   next.tests.activeTest = {
@@ -201,11 +237,19 @@ export function recordTestAnswerInState(achievements, { success, exerciseId }) {
   const test = next.tests.activeTest
   if (!test) return { achievements: next, finished: false }
 
-  test.index += 1
-  test.correct += success ? 1 : 0
-  test.answers.push({ success, exerciseId: exerciseId ?? null, at: new Date().toISOString() })
+  const updatedTest = {
+    ...test,
+    index: test.index + 1,
+    correct: test.correct + (success ? 1 : 0),
+    answers: [
+      ...test.answers,
+      { success, exerciseId: exerciseId ?? null, at: new Date().toISOString() },
+    ],
+  }
 
-  if (test.index >= test.length) {
+  next.tests = { ...next.tests, activeTest: updatedTest }
+
+  if (updatedTest.index >= updatedTest.length) {
     return finishTestInState(next)
   }
 
@@ -217,8 +261,8 @@ export function finishTestInState(achievements) {
   const test = next.tests.activeTest
   if (!test) return { achievements: next, finished: false, result: null }
 
-  const score = test.correct
   const length = test.length
+  const score = Math.min(test.correct, length)
   const perfect = score >= length
   const stars = getTestStarReward(score, length)
 
@@ -303,6 +347,8 @@ export function getAchievementSummary(achievements) {
     for (const stats of Object.values(section)) walk(stats)
   }
   for (const stats of Object.values(merged.successStats.cp)) walk(stats)
+  for (const stats of Object.values(merged.successStats.ce1 ?? {})) walk(stats)
+  for (const stats of Object.values(merged.successStats.ce2 ?? {})) walk(stats)
 
   const badgesUnlocked = Object.keys(merged.badges).length
 

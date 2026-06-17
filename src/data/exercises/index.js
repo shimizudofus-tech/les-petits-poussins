@@ -19,6 +19,12 @@ import { grandeLogicExercises } from './maternelle/grande/logic'
 import { cpMathExercises } from './cp/maths'
 import { cpDicteeExercises } from './cp/dictee'
 import { cpLectureExercises } from './cp/lecture'
+import { ce1MathExercises } from './ce1/maths'
+import { ce1DicteeExercises } from './ce1/dictee'
+import { ce1LectureExercises } from './ce1/lecture'
+import { ce2MathExercises } from './ce2/maths'
+import { ce2DicteeExercises } from './ce2/dictee'
+import { ce2LectureExercises } from './ce2/lecture'
 
 const maternellePetiteExercises = {
   coloring: petiteColoringExercises,
@@ -58,6 +64,16 @@ export const exercisesByLevel = {
     maths: cpMathExercises,
     dictee: cpDicteeExercises,
     lecture: cpLectureExercises,
+  },
+  ce1: {
+    maths: ce1MathExercises,
+    dictee: ce1DicteeExercises,
+    lecture: ce1LectureExercises,
+  },
+  ce2: {
+    maths: ce2MathExercises,
+    dictee: ce2DicteeExercises,
+    lecture: ce2LectureExercises,
   },
 }
 
@@ -109,6 +125,18 @@ export function pickCpExercise(subject, maxDifficulty = 3) {
   )
   if (!list.length) {
     console.warn(`[exercises] Aucun exercice cp/${subject} (diff ≤ ${maxDifficulty})`)
+    return null
+  }
+  return list[Math.floor(Math.random() * list.length)]
+}
+
+// Picker générique par niveau primaire (cp, ce1, …)
+export function pickGradeExercise(level, subject, maxDifficulty = 3) {
+  const list = getExercises(level, subject).filter(
+    (item) => (item.difficulty ?? 1) <= maxDifficulty,
+  )
+  if (!list.length) {
+    console.warn(`[exercises] Aucun exercice ${level}/${subject} (diff ≤ ${maxDifficulty})`)
     return null
   }
   return list[Math.floor(Math.random() * list.length)]

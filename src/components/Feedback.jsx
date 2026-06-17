@@ -21,14 +21,14 @@ export default function Feedback() {
               <span className="feedback-child-star" aria-hidden="true">
                 ⭐
               </span>
-              <span className="feedback-child-text">Bravo !</span>
+              <span className="feedback-child-text">{feedback.message ?? 'Bravo !'}</span>
             </>
           ) : (
             <>
               <span className="feedback-child-emoji" aria-hidden="true">
                 😊
               </span>
-              <span className="feedback-child-text">Encore !</span>
+              <span className="feedback-child-text">{feedback.message ?? 'Encore !'}</span>
             </>
           )}
         </div>

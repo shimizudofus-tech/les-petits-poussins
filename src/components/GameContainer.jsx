@@ -1,25 +1,21 @@
-import StatusBar from './StatusBar'
-import BottomNav from './BottomNav'
 import Toast from './Toast'
 import Modal from './Modal'
 import ScreenTamagotchi from './screens/ScreenTamagotchi'
 import ScreenLevelSelect from './screens/ScreenLevelSelect'
 import ScreenMaternelleSection from './screens/ScreenMaternelleSection'
 import ScreenMinigameCP from './screens/ScreenMinigameCP'
+import ScreenMinigameCe1 from './screens/ScreenMinigameCe1'
+import ScreenMinigameCe2 from './screens/ScreenMinigameCe2'
 import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
 import ScreenFarmExplore from './screens/ScreenFarmExplore'
 import ScreenParent from './screens/ScreenParent'
 import ScreenBadges from './screens/ScreenBadges'
 import Feedback from './Feedback'
+import EvolvingBackground from './EvolvingBackground'
+import { computeFarmLevel } from '../data/farmUpgrades'
 import { isValidScreen, resolveScreen, SCREENS } from '../constants/screens'
 import { useGame } from '../context/GameContext'
-
-const BOTTOM_NAV_SCREENS = new Set([
-  SCREENS.TAMAGOTCHI,
-  SCREENS.UPGRADE,
-  SCREENS.COLLECTION,
-])
 
 function ScreenFallback() {
   const { switchScreen } = useGame()
@@ -41,33 +37,38 @@ function ScreenFallback() {
 export default function GameContainer() {
   const { gameState } = useGame()
   const screen = resolveScreen(gameState.currentScreen)
-  const showBottomNav = BOTTOM_NAV_SCREENS.has(screen)
   const screenKnown = isValidScreen(gameState.currentScreen)
+
+  const animal = gameState.collection?.[gameState.currentAnimalKey]
+  const stage = animal?.currentStage ?? 'egg'
+  const farmLevel = computeFarmLevel(gameState.farmUpgrades)
 
   return (
     <div className="game-container phone-frame">
       <div className="game-shell phone-frame">
-        <StatusBar />
+        <EvolvingBackground stage={stage} farmLevel={farmLevel} />
 
-        <div className="game-screen-slot">
-          {!screenKnown ? (
-            <ScreenFallback />
-          ) : (
-            <>
-              {screen === SCREENS.TAMAGOTCHI && <ScreenTamagotchi />}
-              {screen === SCREENS.LEVEL_SELECT && <ScreenLevelSelect />}
-              {screen === SCREENS.MATERNELLE_SECTION && <ScreenMaternelleSection />}
-              {screen === SCREENS.MINIGAME_CP && <ScreenMinigameCP />}
-              {screen === SCREENS.UPGRADE && <ScreenUpgrade />}
-              {screen === SCREENS.COLLECTION && <ScreenCollection />}
-              {screen === SCREENS.FARM_EXPLORE && <ScreenFarmExplore />}
-              {screen === SCREENS.PARENT && <ScreenParent />}
-              {screen === SCREENS.BADGES && <ScreenBadges />}
-            </>
-          )}
+        <div className="game-shell-content relative z-10 flex min-h-0 flex-1 flex-col">
+          <div className="game-screen-slot">
+            {!screenKnown ? (
+              <ScreenFallback />
+            ) : (
+              <>
+                {screen === SCREENS.TAMAGOTCHI && <ScreenTamagotchi />}
+                {screen === SCREENS.LEVEL_SELECT && <ScreenLevelSelect />}
+                {screen === SCREENS.MATERNELLE_SECTION && <ScreenMaternelleSection />}
+                {screen === SCREENS.MINIGAME_CP && <ScreenMinigameCP />}
+                {screen === SCREENS.MINIGAME_CE1 && <ScreenMinigameCe1 />}
+                {screen === SCREENS.MINIGAME_CE2 && <ScreenMinigameCe2 />}
+                {screen === SCREENS.UPGRADE && <ScreenUpgrade />}
+                {screen === SCREENS.COLLECTION && <ScreenCollection />}
+                {screen === SCREENS.FARM_EXPLORE && <ScreenFarmExplore />}
+                {screen === SCREENS.PARENT && <ScreenParent />}
+                {screen === SCREENS.BADGES && <ScreenBadges />}
+              </>
+            )}
+          </div>
         </div>
-
-        {showBottomNav && <BottomNav />}
       </div>
 
       <Toast />

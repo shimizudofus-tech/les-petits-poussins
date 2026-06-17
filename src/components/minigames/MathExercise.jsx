@@ -1,16 +1,15 @@
 import { useMemo, useState } from 'react'
-import { pickCpExercise } from '../../data/exercises'
+import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
-import { getCpUnlockedDifficulty } from '../../utils/cpProgress'
 import AnswerButtons from './AnswerButtons'
 import ExerciseUnavailable from './ExerciseUnavailable'
 
-export default function MathExercise({ onCorrect, exerciseKey = 0 }) {
+export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState, showFeedback } = useGame()
-  const maxDifficulty = getCpUnlockedDifficulty(gameState.learningProgress, 'maths')
+  const maxDifficulty = gameState.learningProgress?.[level]?.maths?.unlockedDifficulty ?? 1
   const source = useMemo(
-    () => pickCpExercise('maths', maxDifficulty),
-    [exerciseKey, maxDifficulty],
+    () => pickGradeExercise(level, 'maths', maxDifficulty),
+    [exerciseKey, maxDifficulty, level],
   )
   const [answeredIndex, setAnsweredIndex] = useState(null)
   const [answerCorrect, setAnswerCorrect] = useState(null)
@@ -51,8 +50,16 @@ export default function MathExercise({ onCorrect, exerciseKey = 0 }) {
       const isCorrect = value === 'ok'
       setAnsweredIndex(index)
       setAnswerCorrect(isCorrect)
-      showFeedback(isCorrect)
-      if (isCorrect) onCorrect?.()
+      showFeedback(isCorrect, { exerciseId: source?.id })
+      if (isCorrect) {
+        onCorrect?.()
+      } else {
+        // Mauvaise réponse : on réactive les boutons pour réessayer.
+        setTimeout(() => {
+          setAnsweredIndex(null)
+          setAnswerCorrect(null)
+        }, 1100)
+      }
     }
 
     return (
@@ -93,6 +100,7 @@ export default function MathExercise({ onCorrect, exerciseKey = 0 }) {
         correct={exercise.answer}
         onCorrect={onCorrect}
         columns={exercise.columns}
+        feedbackMeta={{ exerciseId: source?.id }}
       />
     </>
   )

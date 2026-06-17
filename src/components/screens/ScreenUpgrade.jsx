@@ -1,59 +1,99 @@
+import { useState } from 'react'
 import MobileScreenLayout from '../layout/MobileScreenLayout'
-import { useGame } from '../../context/GameContext'
+import FarmArt, { hasFarmArt } from '../farm/FarmArt'
+import { SCREENS, useGame } from '../../context/GameContext'
 import {
-  FARM_UPGRADE_MAX_LEVEL,
-  FARM_UPGRADE_PARTS,
-  getUpgradeCost,
-  isFarmUpgradeAtMax,
-} from '../../data/farmUpgrades'
+  FARM_CATEGORIES,
+  TOTAL_FARM_UPGRADES,
+  countOwnedUpgrades,
+  getItemCost,
+  getOwned,
+  isItemMaxed,
+} from '../../data/farmCatalog'
 
 export default function ScreenUpgrade() {
-  const { gameState, upgradeFarmPart } = useGame()
-  const upgrades = gameState.farmUpgrades
+  const { gameState, buyFarmItem, switchScreen } = useGame()
+  const shop = gameState.farmShop ?? {}
+  const [tab, setTab] = useState(FARM_CATEGORIES[0].key)
+
+  const owned = countOwnedUpgrades(shop)
+  const activeCat = FARM_CATEGORIES.find((c) => c.key === tab) ?? FARM_CATEGORIES[0]
+
+  const header = (
+    <header className="screen-header shrink-0 border-b-[3px] border-[#c8902a] bg-gradient-to-br from-[#ffe082] to-[#ffcc02] px-[var(--screen-padding)] py-1.5">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/40 text-base font-black text-[#5d3a00] active:scale-90"
+          aria-label="Retour"
+        >
+          ←
+        </button>
+        <h1 className="min-w-0 flex-1 truncate text-center text-sm font-black uppercase tracking-wide text-[#5d3a00]">
+          ✨ AMÉLIORER
+        </h1>
+        <div className="status-chip status-chip--stars shrink-0">⭐ {gameState.stars}</div>
+      </div>
+    </header>
+  )
+
+  const tabs = (
+    <div className="upgrade-tabs">
+      {FARM_CATEGORIES.map((c) => (
+        <button
+          key={c.key}
+          type="button"
+          onClick={() => setTab(c.key)}
+          className={`upgrade-tab${tab === c.key ? ' upgrade-tab--active' : ''}`}
+        >
+          <span className="upgrade-tab-icon">{c.icon}</span>
+          <span className="upgrade-tab-label">{c.label}</span>
+        </button>
+      ))}
+    </div>
+  )
 
   return (
     <MobileScreenLayout
       className="screen-upgrade"
-      title="AMÉLIORER"
-      titleIcon="✨"
-      scrollable
-      mainClassName="px-[var(--screen-padding)] py-3"
+      header={header}
+      scrollable={false}
+      mainClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
-      <p className="upgrade-hint shrink-0 text-center text-[0.7rem] font-bold leading-snug text-[#2e7d32]">
-        Utilise tes étoiles pour faire grandir ta ferme !
+      <p className="upgrade-progress-line shrink-0">
+        🏡 {owned} / {TOTAL_FARM_UPGRADES} améliorations · ta ferme grandit !
       </p>
 
-      <div className="upgrade-grid">
-        {FARM_UPGRADE_PARTS.map(({ key, label, icon }) => {
-          const level = upgrades[key] ?? 0
-          const atMax = isFarmUpgradeAtMax(level)
-          const cost = getUpgradeCost(level)
+      {tabs}
+
+      <div className="upgrade-list">
+        {activeCat.items.map((item) => {
+          const level = getOwned(shop, item.id)
+          const maxed = isItemMaxed(shop, item.id)
+          const cost = getItemCost(shop, item.id)
+          const canAfford = gameState.stars >= cost
+          const pct = Math.round((level / item.max) * 100)
 
           return (
-            <div
-              key={key}
-              className={`upgrade-card ${atMax ? 'upgrade-card--max' : ''}`}
-            >
-              <div className="upgrade-card-icon" aria-hidden="true">
-                {icon}
+            <div key={item.id} className={`upgrade-row${maxed ? ' upgrade-row--max' : ''}`}>
+              <div className="upgrade-row-icon" aria-hidden="true">
+                {hasFarmArt(item.id) ? <FarmArt kind={item.id} width={40} /> : item.icon}
               </div>
-              <h3 className="upgrade-card-title">{label}</h3>
-              <p className="upgrade-card-level">
-                Niveau {level}
-                {atMax ? ` / ${FARM_UPGRADE_MAX_LEVEL}` : ''}
-              </p>
-              {atMax ? (
-                <p className="upgrade-card-max-label">Niveau max</p>
-              ) : (
-                <p className="upgrade-card-cost">Améliorer pour {cost} ⭐</p>
-              )}
+              <div className="upgrade-row-mid">
+                <span className="upgrade-row-name">{item.name}</span>
+                <div className="upgrade-row-bar">
+                  <div className="upgrade-row-bar-fill" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="upgrade-row-lvl">{level} / {item.max}</span>
+              </div>
               <button
                 type="button"
-                onClick={() => upgradeFarmPart(key)}
-                disabled={atMax}
-                className="upgrade-card-btn"
+                onClick={() => buyFarmItem(item.id)}
+                disabled={maxed || !canAfford}
+                className={`upgrade-row-btn${maxed ? ' upgrade-row-btn--max' : ''}`}
               >
-                {atMax ? 'Complet' : 'Améliorer'}
+                {maxed ? '✓ Max' : <>{cost} ⭐</>}
               </button>
             </div>
           )

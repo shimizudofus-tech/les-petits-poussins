@@ -8,8 +8,7 @@ const MATERNELLE_LEVELS = [
     title: 'Petite Section',
     subtitle: 'Petits · 3–4 ans',
     badge: 'Toucher & reconnaître',
-    gradient: 'from-[#e8f5e9] to-[#f3e5f5]',
-    border: 'border-[#ce93d8]',
+    tint: 'linear-gradient(135deg, #f3e5f5, #e1bee7)',
   },
   {
     key: 'moyenne',
@@ -17,8 +16,7 @@ const MATERNELLE_LEVELS = [
     title: 'Moyenne Section',
     subtitle: 'Moyens · 4–5 ans',
     badge: 'Associer & comparer',
-    gradient: 'from-[#fff8e7] to-[#e8f5e9]',
-    border: 'border-[#aed581]',
+    tint: 'linear-gradient(135deg, #e8f5e9, #c5e1a5)',
   },
   {
     key: 'grande',
@@ -26,8 +24,7 @@ const MATERNELLE_LEVELS = [
     title: 'Grande Section',
     subtitle: 'Grands · 5–6 ans',
     badge: 'Préparer le CP',
-    gradient: 'from-[#fff3e0] to-[#e3f2fd]',
-    border: 'border-[#ffb74d]',
+    tint: 'linear-gradient(135deg, #fff3e0, #ffcc80)',
   },
 ]
 
@@ -66,51 +63,85 @@ export default function ScreenLevelSelect() {
 
   return (
     <MobileScreenLayout
-      className="screen-level-select bg-gradient-to-b from-[#e3f2fd] to-[#fff8e7]"
+      className="screen-level-select screen-veil"
       title="Choisis ton niveau"
       titleIcon="🎒"
       footer={footer}
       mainClassName="px-4 py-3"
     >
       <div className="flex w-full max-w-full flex-col gap-3">
-        <p className="text-center text-[0.72rem] font-bold text-[#6d4c41]">Maternelle</p>
+        <p className="screen-section-label">Maternelle</p>
 
-        {MATERNELLE_LEVELS.map(({ key, icon, title, subtitle, badge, gradient, border }) => (
+        {MATERNELLE_LEVELS.map(({ key, icon, title, subtitle, badge, tint }) => (
           <div
             key={key}
             role="button"
             tabIndex={0}
             onClick={() => goMaternelle(key)}
             onKeyDown={(e) => e.key === 'Enter' && goMaternelle(key)}
-            className={`level-card maternelle flex w-full max-w-full cursor-pointer items-center gap-3 rounded-[20px] border-[3px] ${border} bg-gradient-to-br ${gradient} p-3 transition-[transform,box-shadow] duration-150 active:scale-[0.97]`}
+            className="kid-card"
           >
-            <div className="shrink-0 text-4xl">{icon}</div>
+            <div className="kid-card__icon" style={{ background: tint }}>
+              {icon}
+            </div>
             <div className="min-w-0 flex-1">
               <div className="text-lg font-black text-[#3e2700]">{title}</div>
               <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{subtitle}</div>
-              <div className="mt-1 inline-block rounded-[10px] bg-white/60 px-2 py-0.5 text-[0.68rem] font-extrabold text-[#5d3a00]">
-                {badge}
-              </div>
+              <span className="kid-card__badge">{badge}</span>
             </div>
           </div>
         ))}
 
-        <p className="mt-1 text-center text-[0.72rem] font-bold text-[#6d4c41]">Primaire</p>
+        <p className="screen-section-label mt-1">Primaire</p>
 
         <div
           role="button"
           tabIndex={0}
           onClick={() => switchScreen(SCREENS.MINIGAME_CP)}
           onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAME_CP)}
-          className="level-card cp flex w-full max-w-full cursor-pointer items-center gap-3 rounded-[20px] border-[3px] border-[#64b5f6] bg-gradient-to-br from-[#fff8e7] to-[#e3f2fd] p-3 transition-[transform,box-shadow] duration-150 active:scale-[0.97]"
+          className="kid-card"
         >
-          <div className="shrink-0 text-4xl">✏️</div>
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #e3f2fd, #90caf9)' }}>
+            ✏️
+          </div>
           <div className="min-w-0 flex-1">
             <div className="text-xl font-black text-[#3e2700]">CP</div>
             <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">6 à 7 ans</div>
-            <div className="mt-1 inline-block rounded-[10px] bg-white/60 px-2 py-0.5 text-[0.68rem] font-extrabold text-[#5d3a00]">
-              Maths &amp; Dictée
-            </div>
+            <span className="kid-card__badge">Maths &amp; Dictée</span>
+          </div>
+        </div>
+
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => switchScreen(SCREENS.MINIGAME_CE1)}
+          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAME_CE1)}
+          className="kid-card"
+        >
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #ede7f6, #b39ddb)' }}>
+            📐
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xl font-black text-[#3e2700]">CE1</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">7 à 8 ans</div>
+            <span className="kid-card__badge">Calcul, lecture &amp; dictée</span>
+          </div>
+        </div>
+
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => switchScreen(SCREENS.MINIGAME_CE2)}
+          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAME_CE2)}
+          className="kid-card"
+        >
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #e0f2f1, #80cbc4)' }}>
+            🧮
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xl font-black text-[#3e2700]">CE2</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">8 à 9 ans</div>
+            <span className="kid-card__badge">Multiplications, divisions &amp; dictée</span>
           </div>
         </div>
       </div>

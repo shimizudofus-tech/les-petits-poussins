@@ -15,6 +15,10 @@ export function createInitialGameState() {
     builderSelectedItem: null,
     farmLayout: Array(9).fill(null),
     farmUpgrades: { ...DEFAULT_FARM_UPGRADES },
+    farmShop: {},
+    farmPlacements: {},
+    animalCare: {},
+    feedRewardClaimedAt: 0,
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',
     learningProgress: createDefaultLearningProgress(),
@@ -105,7 +109,7 @@ export function createInitialGameState() {
       { id: 'hay', icon: BUILDER_ICONS.hay, price: 4, name: 'Blé' },
     ],
 
-    currentSubject: { petite: 'coloring', moyenne: 'colors', grande: 'letters', cp: 'math' },
+    currentSubject: { petite: 'coloring', moyenne: 'colors', grande: 'letters', cp: 'math', ce1: 'math', ce2: 'math' },
     coloring: { currentColor: '#ef5350', drawn: false },
     dictee: { word: '', typed: [], scrambled: [] },
   }

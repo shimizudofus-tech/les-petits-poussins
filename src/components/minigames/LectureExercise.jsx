@@ -1,18 +1,17 @@
 import { useMemo } from 'react'
-import { pickCpExercise } from '../../data/exercises'
+import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
-import { getCpUnlockedDifficulty } from '../../utils/cpProgress'
 import { playWord } from '../../utils/audioManager'
 import ExerciseImageDisplay from './ExerciseImageDisplay'
 import AnswerButtons from './AnswerButtons'
 import ExerciseUnavailable from './ExerciseUnavailable'
 
-export default function LectureExercise({ onCorrect, exerciseKey = 0 }) {
+export default function LectureExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState } = useGame()
-  const maxDifficulty = getCpUnlockedDifficulty(gameState.learningProgress, 'lecture')
+  const maxDifficulty = gameState.learningProgress?.[level]?.lecture?.unlockedDifficulty ?? 1
 
   const exercise = useMemo(() => {
-    const source = pickCpExercise('lecture', maxDifficulty)
+    const source = pickGradeExercise(level, 'lecture', maxDifficulty)
     if (!source) return null
 
     const parts = source.sentence.split('___')
@@ -22,7 +21,7 @@ export default function LectureExercise({ onCorrect, exerciseKey = 0 }) {
       after: parts[1] ?? '',
       options: [...source.choices].sort(() => Math.random() - 0.5).map((o) => ({ label: o, value: o })),
     }
-  }, [exerciseKey, maxDifficulty])
+  }, [exerciseKey, maxDifficulty, level])
 
   if (!exercise) {
     return <ExerciseUnavailable />
@@ -55,6 +54,7 @@ export default function LectureExercise({ onCorrect, exerciseKey = 0 }) {
         correct={exercise.answer}
         onCorrect={onCorrect}
         columns={3}
+        feedbackMeta={{ exerciseId: exercise.id }}
       />
     </>
   )

@@ -17,12 +17,30 @@ import {
   CP_SUBJECTS,
   CP_SUBJECT_LABELS,
   MAX_CP_DIFFICULTY,
+  formatCpTestHistoryEntry,
   getCpActivityProgress,
 } from '../../utils/cpProgress'
 import { playWord } from '../../utils/audioManager'
 import { isMusicFileAvailable, startBackgroundMusic, stopBackgroundMusic } from '../../utils/music'
 import { BADGE_BY_ID } from '../../data/badges'
 import { getAchievementSummary } from '../../utils/achievements'
+import { getHungryKeys, nextHungerInHours } from '../../utils/animalCare'
+import {
+  CE1_SUBJECTS,
+  CE1_SUBJECT_LABELS,
+  MAX_CE1_DIFFICULTY,
+  CORRECTS_TO_UNLOCK_CE1,
+  getCe1ActivityProgress,
+  formatCe1TestHistoryEntry,
+} from '../../utils/ce1Progress'
+import {
+  CE2_SUBJECTS,
+  CE2_SUBJECT_LABELS,
+  MAX_CE2_DIFFICULTY,
+  CORRECTS_TO_UNLOCK_CE2,
+  getCe2ActivityProgress,
+  formatCe2TestHistoryEntry,
+} from '../../utils/ce2Progress'
 
 const CP_LABELS = [
   { key: 'dictee', label: 'Dictée CP' },
@@ -78,9 +96,27 @@ export default function ScreenParent() {
   const unlockedCount = Object.values(gameState.collection).filter((animal) => animal.unlocked).length
   const totalAnimals = Object.keys(gameState.collection).length
   const farmLevel = computeFarmLevel(gameState.farmUpgrades)
+  const animalCare = gameState.animalCare ?? {}
+  const hungryAnimals = getHungryKeys(gameState.collection, animalCare).length
+  const nextHungerHours = nextHungerInHours(gameState.collection, animalCare)
+  const lastMissionAt = gameState.feedRewardClaimedAt
+    ? new Date(gameState.feedRewardClaimedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+    : '—'
   const petiteProgress = gameState.learningProgress?.maternelle?.petite ?? {}
   const moyenneProgress = gameState.learningProgress?.maternelle?.moyenne ?? {}
   const grandeProgress = gameState.learningProgress?.maternelle?.grande ?? {}
+  const cpTestHistory = (gameState.achievements?.tests?.history ?? [])
+    .filter((test) => test.level === 'cp')
+    .slice(-5)
+    .reverse()
+  const ce1TestHistory = (gameState.achievements?.tests?.history ?? [])
+    .filter((test) => test.level === 'ce1')
+    .slice(-5)
+    .reverse()
+  const ce2TestHistory = (gameState.achievements?.tests?.history ?? [])
+    .filter((test) => test.level === 'ce2')
+    .slice(-5)
+    .reverse()
 
   const handleBack = () => {
     switchScreen(getReturnScreen())
@@ -363,6 +399,93 @@ export default function ScreenParent() {
           Prochain palier : {CORRECTS_TO_UNLOCK_CP} bonnes réponses pour monter de niveau (max niveau 3).
           Les erreurs ne font pas reculer.
         </p>
+
+        {cpTestHistory.length > 0 ? (
+          <>
+            <h3 className="parent-card-subtitle mt-3">Derniers tests CP</h3>
+            <ul className="parent-stat-list">
+              {cpTestHistory.map((test, index) => (
+                <li key={`cp-test-${test.finishedAt}-${index}`} className="parent-stat-row">
+                  <span>{formatCpTestHistoryEntry(test)}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Progression CE1</h2>
+        <ul className="parent-stat-list">
+          {CE1_SUBJECTS.map((key) => {
+            const prog = getCe1ActivityProgress(gameState.learningProgress, key)
+            const atMax = prog.unlockedDifficulty >= MAX_CE1_DIFFICULTY
+            const label = CE1_SUBJECT_LABELS[key] ?? key
+            return (
+              <li key={`ce1-prog-${key}`} className="parent-stat-row">
+                <span>{label}</span>
+                <strong>
+                  Niveau {prog.unlockedDifficulty}/{MAX_CE1_DIFFICULTY}
+                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_CE1}`}
+                </strong>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="parent-card-hint mt-2">
+          CE1 (7–8 ans) : additions/soustractions à 2 chiffres, tables ×2/×5/×10, lecture et dictée
+          de mots plus longs. {CORRECTS_TO_UNLOCK_CE1} bonnes réponses pour monter de niveau (max 3).
+        </p>
+
+        {ce1TestHistory.length > 0 ? (
+          <>
+            <h3 className="parent-card-subtitle mt-3">Derniers tests CE1</h3>
+            <ul className="parent-stat-list">
+              {ce1TestHistory.map((test, index) => (
+                <li key={`ce1-test-${test.finishedAt}-${index}`} className="parent-stat-row">
+                  <span>{formatCe1TestHistoryEntry(test)}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Progression CE2</h2>
+        <ul className="parent-stat-list">
+          {CE2_SUBJECTS.map((key) => {
+            const prog = getCe2ActivityProgress(gameState.learningProgress, key)
+            const atMax = prog.unlockedDifficulty >= MAX_CE2_DIFFICULTY
+            const label = CE2_SUBJECT_LABELS[key] ?? key
+            return (
+              <li key={`ce2-prog-${key}`} className="parent-stat-row">
+                <span>{label}</span>
+                <strong>
+                  Niveau {prog.unlockedDifficulty}/{MAX_CE2_DIFFICULTY}
+                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_CE2}`}
+                </strong>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="parent-card-hint mt-2">
+          CE2 (8–9 ans) : additions/soustractions à 3 chiffres, tables ×3 à ×9, divisions simples,
+          lecture et dictée de mots difficiles. {CORRECTS_TO_UNLOCK_CE2} bonnes réponses pour monter (max 3).
+        </p>
+
+        {ce2TestHistory.length > 0 ? (
+          <>
+            <h3 className="parent-card-subtitle mt-3">Derniers tests CE2</h3>
+            <ul className="parent-stat-list">
+              {ce2TestHistory.map((test, index) => (
+                <li key={`ce2-test-${test.finishedAt}-${index}`} className="parent-stat-row">
+                  <span>{formatCe2TestHistoryEntry(test)}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
       </section>
 
       <section className="parent-card">
@@ -482,6 +605,28 @@ export default function ScreenParent() {
         <h2 className="parent-card-title">imageKey utilisés</h2>
         <p className="parent-card-hint">{imageKeys.length} clé(s) d&apos;image</p>
         <p className="parent-tag-list">{imageKeys.join(', ')}</p>
+      </section>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Animaux</h2>
+        <ul className="parent-stat-list">
+          <li className="parent-stat-row">
+            <span>Animaux affamés</span>
+            <strong>{hungryAnimals} / {unlockedCount}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Dernière mission nourrir</span>
+            <strong>{lastMissionAt}</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Prochain cycle de faim</span>
+            <strong>{hungryAnimals > 0 ? 'maintenant' : nextHungerHours != null ? `dans ${nextHungerHours} h` : '—'}</strong>
+          </li>
+        </ul>
+        <p className="parent-card-hint mt-2">
+          Les animaux débloqués ont faim toutes les 24 h. Dans « Explorer la ferme », touche un
+          animal affamé pour le nourrir. Tout nourrir donne +{3} ⭐ (une fois par cycle).
+        </p>
       </section>
 
       <section className="parent-card">

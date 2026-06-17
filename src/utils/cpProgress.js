@@ -62,3 +62,18 @@ export function recordCpSuccess(setGameState, subject) {
     }
   })
 }
+
+export const CP_TESTABLE_SUBJECTS = new Set(CP_SUBJECTS)
+
+export function getCpTestEncouragement(score, length = 5) {
+  if (score >= length) return 'excellent'
+  if (score >= length - 1) return 'bravo'
+  if (score >= 3) return 'réussi'
+  return 'continue'
+}
+
+export function formatCpTestHistoryEntry(test) {
+  const label = CP_SUBJECT_LABELS[test.subject] ?? test.subject
+  const mood = getCpTestEncouragement(test.score, test.length)
+  return `${label} CP — ${test.score}/${test.length} — ${mood}`
+}

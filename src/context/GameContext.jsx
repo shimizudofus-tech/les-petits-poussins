@@ -5,25 +5,36 @@ import {
   isFarmUpgradeAtMax,
   isValidFarmUpgradeKey,
 } from '../data/farmUpgrades'
+import { getCatalogItem, getItemCost, isItemMaxed } from '../data/farmCatalog'
 import { createInitialGameState } from '../data/initialGameState'
 import {
   applyExerciseResult,
   evaluateBadgeUnlocks,
   finishTestInState,
-  mergeAchievements,
   recordTestAnswerInState,
   startTestInState,
   unlockBadgeInState,
+  cancelTestInState,
 } from '../utils/achievements'
 import { setVoiceDisabledHandler } from '../utils/audio'
 import { playError, playSuccess } from '../utils/audioManager'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
-import { setMusicVolume, startBackgroundMusic, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
+import { setMusicVolume, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
 import { checkEvolution } from '../utils/evolution'
 import { PARENT_RETURN_SESSION_KEY } from '../utils/parentContentStats'
 import { clearSavedGameState, loadGameState, saveGameState } from '../utils/persistence'
 
 export { SCREENS }
+
+// Joyful, kid-friendly encouragements rotated on each answer so the maternelle
+// feedback stays lively instead of repeating the same word every time.
+const KID_CHEERS = ['Bravo !', 'Super !', 'Génial !', 'Bien joué !', 'Hourra !', 'Trop fort !', 'Champion !', 'Magnifique !']
+const KID_RETRIES = ['Encore !', 'Presque !', 'Réessaie !', 'On continue !']
+
+function pickCheer(correct) {
+  const pool = correct ? KID_CHEERS : KID_RETRIES
+  return pool[Math.floor(Math.random() * pool.length)]
+}
 
 const GameContext = createContext(null)
 
@@ -38,6 +49,7 @@ export function GameProvider({ children }) {
   const exerciseContextRef = useRef({ level: 'maternelle', section: 'petite', subject: 'coloring' })
   const exerciseAdvanceRef = useRef(null)
   const achievementNotifyRef = useRef(null)
+  const activeTestRef = useRef(null)
 
   function normalizeSubject(level, subject) {
     if (level === 'cp' && subject === 'math') return 'maths'
@@ -78,7 +90,7 @@ export function GameProvider({ children }) {
     achievementNotifyRef.current = null
     if (!pending) return
 
-    if (pending.testResult) {
+    if (pending.testResult && pending.testResult.level !== 'cp') {
       const result = pending.testResult
       showToast(`Test terminé : ${result.score}/${result.length} (+${result.stars}⭐)`, '#7c4dff')
     }
@@ -196,6 +208,13 @@ export function GameProvider({ children }) {
     }))
   }, [])
 
+  const cancelTest = useCallback(() => {
+    setGameState((prev) => ({
+      ...prev,
+      achievements: cancelTestInState(prev.achievements),
+    }))
+  }, [])
+
   const recordTestAnswer = useCallback(({ success, exerciseId }) => {
     setGameState((prev) => {
       const result = recordTestAnswerInState(prev.achievements, { success, exerciseId })
@@ -233,10 +252,13 @@ export function GameProvider({ children }) {
   const showFeedback = useCallback(
     (correct, meta) => {
       if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
-      setFeedback({ correct })
+      setFeedback({ correct, message: pickCheer(correct) })
+      const inTest = Boolean(activeTestRef.current)
       if (correct) {
         playSuccess()
-        setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
+        if (!inTest) {
+          setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
+        }
       } else {
         playError()
       }
@@ -297,6 +319,35 @@ export function GameProvider({ children }) {
             ...prev.farmUpgrades,
             [partKey]: currentLevel + 1,
           },
+        }
+      })
+    },
+    [showToast],
+  )
+
+  const buyFarmItem = useCallback(
+    (id) => {
+      const item = getCatalogItem(id)
+      if (!item) {
+        queueMicrotask(() => showToast('⚠️ Amélioration inconnue.', '#ef5350'))
+        return
+      }
+      setGameState((prev) => {
+        const shop = prev.farmShop ?? {}
+        if (isItemMaxed(shop, id)) {
+          queueMicrotask(() => showToast('Niveau maximum atteint !', '#ff8f00'))
+          return prev
+        }
+        const cost = getItemCost(shop, id)
+        if (prev.stars < cost) {
+          queueMicrotask(() => showToast("❌ Pas assez d'étoiles !", '#ef5350'))
+          return prev
+        }
+        queueMicrotask(() => showToast(`✅ ${item.name} amélioré !`, '#66bb6a'))
+        return {
+          ...prev,
+          stars: prev.stars - cost,
+          farmShop: { ...shop, [id]: (shop[id] ?? 0) + 1 },
         }
       })
     },
@@ -366,6 +417,17 @@ export function GameProvider({ children }) {
     },
     [showToast],
   )
+
+  const setAnimalDisplayStage = useCallback((animalKey, stage) => {
+    setGameState((prev) => {
+      const animal = prev.collection[animalKey]
+      if (!animal || !animal.unlocked) return prev
+      return {
+        ...prev,
+        collection: { ...prev.collection, [animalKey]: { ...animal, displayStage: stage } },
+      }
+    })
+  }, [])
 
   const unlockNextAnimal = useCallback(
     (currentAnimalKey, collection) => {
@@ -499,6 +561,10 @@ export function GameProvider({ children }) {
   }, [gameState.audioSettings])
 
   useEffect(() => {
+    activeTestRef.current = gameState.achievements?.tests?.activeTest ?? null
+  }, [gameState.achievements?.tests?.activeTest])
+
+  useEffect(() => {
     setVoiceDisabledHandler(() => showToast('Voix désactivée', '#8d6e3a'))
     unlockAudioOnFirstInteraction(() => getActiveAudioSettings())
     return () => setVoiceDisabledHandler(null)
@@ -538,7 +604,9 @@ export function GameProvider({ children }) {
         selectBuilderItem,
         placeBuilderItem,
         upgradeFarmPart,
+        buyFarmItem,
         selectAnimal,
+        setAnimalDisplayStage,
         resetProgress,
         updateAudioSettings,
         setExerciseContext,
@@ -546,6 +614,7 @@ export function GameProvider({ children }) {
         recordExerciseResult,
         unlockBadge,
         startTest,
+        cancelTest,
         recordTestAnswer,
         finishTest,
         showToast,

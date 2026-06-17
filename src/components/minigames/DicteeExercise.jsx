@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
-import { pickCpExercise } from '../../data/exercises'
+import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
-import { getCpUnlockedDifficulty } from '../../utils/cpProgress'
 import { playWord } from '../../utils/audioManager'
 import ExerciseImageDisplay from './ExerciseImageDisplay'
 import ExerciseUnavailable from './ExerciseUnavailable'
@@ -20,12 +19,12 @@ function buildLetterPool(displayWord) {
   return pool.sort(() => Math.random() - 0.5)
 }
 
-export default function DicteeExercise({ onCorrect, exerciseKey = 0 }) {
+export default function DicteeExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState, showFeedback, showToast } = useGame()
-  const maxDifficulty = getCpUnlockedDifficulty(gameState.learningProgress, 'dictee')
+  const maxDifficulty = gameState.learningProgress?.[level]?.dictee?.unlockedDifficulty ?? 1
   const source = useMemo(
-    () => pickCpExercise('dictee', maxDifficulty),
-    [exerciseKey, maxDifficulty],
+    () => pickGradeExercise(level, 'dictee', maxDifficulty),
+    [exerciseKey, maxDifficulty, level],
   )
 
   const exercise = useMemo(() => {
@@ -65,7 +64,7 @@ export default function DicteeExercise({ onCorrect, exerciseKey = 0 }) {
   const handleValidate = () => {
     const answer = typed.map((t) => t.letter).join('')
     const correct = answer === exercise.displayWord
-    showFeedback(correct)
+    showFeedback(correct, { exerciseId: exercise.id })
     if (correct) {
       onCorrect?.()
     } else {

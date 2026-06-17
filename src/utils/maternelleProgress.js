@@ -1,4 +1,6 @@
 import { createDefaultCpProgress } from './cpProgress'
+import { createDefaultCe1Progress } from './ce1Progress'
+import { createDefaultCe2Progress } from './ce2Progress'
 
 export const MATERNELLE_SECTIONS = ['petite', 'moyenne', 'grande']
 
@@ -34,6 +36,8 @@ export function createDefaultLearningProgress() {
       grande: createSectionProgress(GRANDE_ACTIVITIES),
     },
     cp: createDefaultCpProgress(),
+    ce1: createDefaultCe1Progress(),
+    ce2: createDefaultCe2Progress(),
   }
 }
 

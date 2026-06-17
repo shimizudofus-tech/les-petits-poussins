@@ -17,7 +17,6 @@ function FarmCloud({ className }) {
 
 function FarmAssetImage({ part, level, className }) {
   if (!level) return null
-
   return (
     <img
       src={getFarmAssetSrc(part, level)}
@@ -29,7 +28,7 @@ function FarmAssetImage({ part, level, className }) {
   )
 }
 
-function FarmAnimal({ animalKey, animal, className, onClick, interactive }) {
+function FarmAnimal({ animalKey, animal, className, onClick, interactive, tapped, reaction, feedMode, isFed }) {
   if (!animal?.unlocked) return null
 
   const stage = animal.currentStage
@@ -41,14 +40,26 @@ function FarmAnimal({ animalKey, animal, className, onClick, interactive }) {
     <AnimalIcon icon={icon} alt="" className="farm-scene-animal-emoji" />
   )
 
+  const idleClass = interactive ? 'farm-animal--wander' : 'farm-scene-animal--bob'
+  const animClass = tapped ? 'farm-animal--wiggle' : idleClass
+
   if (interactive && onClick) {
     return (
       <button
         type="button"
-        className={`farm-scene-animal farm-scene-animal--interactive farm-scene-animal--bob ${className}`}
+        className={`farm-scene-animal farm-scene-animal--interactive ${animClass} ${className}${isFed ? ' farm-animal--fed' : ''}`}
         onClick={() => onClick(animalKey, animal)}
         aria-label={animal.name}
       >
+        {feedMode && !isFed && (
+          <span className="farm-animal-feed-badge" aria-hidden="true">🍎</span>
+        )}
+        {feedMode && isFed && (
+          <span className="farm-animal-feed-badge farm-animal-feed-badge--done" aria-hidden="true">✅</span>
+        )}
+        {!feedMode && tapped && reaction && (
+          <span className="farm-animal-reaction" aria-hidden="true">{reaction}</span>
+        )}
         {content}
       </button>
     )
@@ -66,6 +77,10 @@ export default function FarmScene({
   collection,
   variant = 'compact',
   onAnimalClick,
+  tappedKey,
+  tappedReaction,
+  feedMode = false,
+  fedSet,
 }) {
   const barn = getVisualLevel(farmUpgrades?.barn ?? 1)
   const nest = getVisualLevel(farmUpgrades?.nest ?? 1)
@@ -75,7 +90,9 @@ export default function FarmScene({
   const animalsLevel = getVisualLevel(farmUpgrades?.animals ?? 1)
 
   const unlockedAnimals = Object.entries(collection ?? {}).filter(([, a]) => a.unlocked)
-  const visibleAnimals = unlockedAnimals.slice(0, Math.max(1, animalsLevel + 1))
+  const visibleAnimals = variant === 'large'
+    ? unlockedAnimals
+    : unlockedAnimals.slice(0, Math.max(1, animalsLevel + 1))
   const interactive = variant === 'large' && typeof onAnimalClick === 'function'
 
   return (
@@ -146,6 +163,10 @@ export default function FarmScene({
             className={`farm-scene-animal--slot-${index}`}
             onClick={onAnimalClick}
             interactive={interactive}
+            tapped={tappedKey === key}
+            reaction={tappedReaction}
+            feedMode={feedMode}
+            isFed={fedSet?.has(key) ?? false}
           />
         ))}
       </div>

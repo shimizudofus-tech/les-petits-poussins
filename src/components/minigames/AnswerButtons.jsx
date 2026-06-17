@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 
-export default function AnswerButtons({ options, correct, onCorrect, columns = 3, variant }) {
+export default function AnswerButtons({ options, correct, onCorrect, columns = 3, variant, feedbackMeta }) {
   const { showFeedback } = useGame()
   const [answeredIndex, setAnsweredIndex] = useState(null)
   const [answerCorrect, setAnswerCorrect] = useState(null)
+  const retryTimerRef = useRef(null)
+
+  useEffect(() => () => { if (retryTimerRef.current) clearTimeout(retryTimerRef.current) }, [])
 
   const colsClass =
     columns === 4 ? 'cols-4' : columns === 2 ? 'cols-2' : 'cols-3'
@@ -15,8 +18,16 @@ export default function AnswerButtons({ options, correct, onCorrect, columns = 3
     const isCorrect = value == correct
     setAnsweredIndex(index)
     setAnswerCorrect(isCorrect)
-    showFeedback(isCorrect)
-    if (isCorrect) onCorrect?.()
+    showFeedback(isCorrect, feedbackMeta)
+    if (isCorrect) {
+      onCorrect?.()
+    } else {
+      // Mauvaise réponse : on remet les boutons cliquables pour réessayer.
+      retryTimerRef.current = setTimeout(() => {
+        setAnsweredIndex(null)
+        setAnswerCorrect(null)
+      }, 1100)
+    }
   }
 
   return (

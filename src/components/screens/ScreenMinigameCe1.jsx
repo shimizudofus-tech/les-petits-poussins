@@ -8,24 +8,24 @@ import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
 import { SCREENS, useGame } from '../../context/GameContext'
 import {
-  CP_SUBJECT_LABELS,
-  CP_TESTABLE_SUBJECTS,
-  CP_UI_SUBJECT_MAP,
-  getCpUnlockedDifficulty,
-  recordCpSuccess,
-} from '../../utils/cpProgress'
+  CE1_SUBJECT_LABELS,
+  CE1_TESTABLE_SUBJECTS,
+  CE1_UI_SUBJECT_MAP,
+  getCe1UnlockedDifficulty,
+  recordCe1Success,
+} from '../../utils/ce1Progress'
 
-const CP_TABS = [
+const CE1_TABS = [
   { id: 'math', label: '➕ Maths' },
   { id: 'dictee', label: '🔤 Dictée' },
   { id: 'lecture', label: '📖 Lecture' },
 ]
 
-function countCpPool(subject, maxDifficulty) {
-  return getExercises('cp', subject).filter((item) => (item.difficulty ?? 1) <= maxDifficulty).length
+function countCe1Pool(subject, maxDifficulty) {
+  return getExercises('ce1', subject).filter((item) => (item.difficulty ?? 1) <= maxDifficulty).length
 }
 
-export default function ScreenMinigameCP() {
+export default function ScreenMinigameCe1() {
   const {
     gameState,
     setSubject,
@@ -41,17 +41,17 @@ export default function ScreenMinigameCP() {
   const [testResult, setTestResult] = useState(null)
   const historyLenRef = useRef(gameState.achievements?.tests?.history?.length ?? 0)
 
-  const subject = gameState.currentSubject.cp
-  const progressSubject = CP_UI_SUBJECT_MAP[subject] ?? subject
-  const level = getCpUnlockedDifficulty(gameState.learningProgress, progressSubject)
-  const levelLabel = CP_SUBJECT_LABELS[progressSubject] ?? 'CP'
+  const subject = gameState.currentSubject.ce1 ?? 'math'
+  const progressSubject = CE1_UI_SUBJECT_MAP[subject] ?? subject
+  const level = getCe1UnlockedDifficulty(gameState.learningProgress, progressSubject)
+  const levelLabel = CE1_SUBJECT_LABELS[progressSubject] ?? 'CE1'
   const activeTest = gameState.achievements?.tests?.activeTest
-  const isCpTestActive = activeTest?.level === 'cp'
-  const poolSize = countCpPool(progressSubject, level)
-  const canStartTest = CP_TESTABLE_SUBJECTS.has(progressSubject) && !activeTest && poolSize > 0
+  const isCe1TestActive = activeTest?.level === 'ce1'
+  const poolSize = countCe1Pool(progressSubject, level)
+  const canStartTest = CE1_TESTABLE_SUBJECTS.has(progressSubject) && !activeTest && poolSize > 0
 
   useEffect(() => {
-    setExerciseContext({ level: 'cp', section: null, subject })
+    setExerciseContext({ level: 'ce1', section: null, subject })
   }, [subject, setExerciseContext])
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function ScreenMinigameCP() {
     const history = gameState.achievements?.tests?.history ?? []
     if (history.length > historyLenRef.current) {
       const latest = history[history.length - 1]
-      if (latest?.level === 'cp' && latest.subject === progressSubject) {
+      if (latest?.level === 'ce1' && latest.subject === progressSubject) {
         setTestResult(latest)
       }
     }
@@ -77,18 +77,18 @@ export default function ScreenMinigameCP() {
   }, [gameState.achievements?.tests?.history, progressSubject])
 
   const handleSubject = (sub) => {
-    if (isCpTestActive) {
+    if (isCe1TestActive) {
       cancelTest()
       showToast('Test arrêté', '#8d6e3a')
     }
     setTestResult(null)
-    setSubject('cp', sub)
+    setSubject('ce1', sub)
     setExerciseKey((k) => k + 1)
   }
 
   const handleCorrect = () => {
-    recordCpSuccess(setGameState, progressSubject)
-    if (!isCpTestActive) {
+    recordCe1Success(setGameState, progressSubject)
+    if (!isCe1TestActive) {
       setTimeout(() => setExerciseKey((k) => k + 1), 1800)
     }
   }
@@ -99,7 +99,7 @@ export default function ScreenMinigameCP() {
       return
     }
     setTestResult(null)
-    startTest({ level: 'cp', section: null, subject: progressSubject, length: 5 })
+    startTest({ level: 'ce1', section: null, subject: progressSubject, length: 5 })
     setExerciseKey((k) => k + 1)
     showToast('Petit test : 5 questions !', '#7c4dff')
   }
@@ -115,15 +115,15 @@ export default function ScreenMinigameCP() {
 
   return (
     <main className="screen screen-minigame-cp flex h-full min-h-0 w-full max-w-full flex-col overflow-y-auto overflow-x-hidden pb-4">
-      <ScreenTitle>✏️ CP — École</ScreenTitle>
+      <ScreenTitle>✏️ CE1 — École</ScreenTitle>
 
-      <SubjectTabs tabs={CP_TABS} active={subject} onSelect={handleSubject} />
+      <SubjectTabs tabs={CE1_TABS} active={subject} onSelect={handleSubject} />
 
       <p className="cp-level-badge mx-3.5 mt-2 shrink-0 text-center">
         {levelLabel} — Niveau {level}
       </p>
 
-      {isCpTestActive ? (
+      {isCe1TestActive ? (
         <div className="test-banner mx-3.5 mt-2 shrink-0">
           Petit test — Question {Math.min(activeTest.index + 1, activeTest.length)} /{' '}
           {activeTest.length}
@@ -137,7 +137,7 @@ export default function ScreenMinigameCP() {
       ) : null}
 
       <div className="exercise-area flex flex-1 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5">
-        {testResult && !isCpTestActive ? (
+        {testResult && !isCe1TestActive ? (
           <CpTestResult
             result={testResult}
             subjectLabel={levelLabel}
@@ -147,13 +147,13 @@ export default function ScreenMinigameCP() {
         ) : (
           <>
             {subject === 'math' && (
-              <MathExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+              <MathExercise key={exerciseKey} exerciseKey={exerciseKey} level="ce1" onCorrect={handleCorrect} />
             )}
             {subject === 'dictee' && (
-              <DicteeExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+              <DicteeExercise key={exerciseKey} exerciseKey={exerciseKey} level="ce1" onCorrect={handleCorrect} />
             )}
             {subject === 'lecture' && (
-              <LectureExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+              <LectureExercise key={exerciseKey} exerciseKey={exerciseKey} level="ce1" onCorrect={handleCorrect} />
             )}
           </>
         )}

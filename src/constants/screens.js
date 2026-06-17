@@ -5,6 +5,8 @@ export const SCREENS = {
   MINIGAME_MATERNELLE: 'minigame-maternelle',
   MATERNELLE_SECTION: 'maternelle-section',
   MINIGAME_CP: 'minigame-cp',
+  MINIGAME_CE1: 'minigame-ce1',
+  MINIGAME_CE2: 'minigame-ce2',
   UPGRADE: 'upgrade',
   COLLECTION: 'collection',
   FARM_EXPLORE: 'farm-explore',
