@@ -8,7 +8,7 @@ import { createDefaultAchievements } from '../utils/achievements'
 
 export function createInitialGameState() {
   return {
-    stars: 10,
+    stars: 1000,
     farmLevel: 1,
     hunger: 50,
     currentAnimalKey: 'chicken',
