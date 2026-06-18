@@ -4051,6 +4051,63 @@ body {
   backdrop-filter: blur(10px) saturate(1.1);
 }
 
+/* ── Barre de croissance (œuf → bébé → adulte) ── */
+.growth-tracker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin: 0 auto 8px;
+  width: 88%;
+  max-width: 320px;
+  padding: 8px 12px;
+  border-radius: var(--kid-radius);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 18px rgba(20, 30, 60, 0.12);
+  backdrop-filter: blur(8px) saturate(1.05);
+}
+.growth-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+}
+.growth-step {
+  font-size: 1.15rem;
+  line-height: 1;
+  filter: grayscale(1) opacity(0.4);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+.growth-step--done { filter: none; }
+.growth-step--active { transform: scale(1.25); }
+.growth-link {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(120, 100, 60, 0.25);
+}
+.growth-link--done { background: #ffb300; }
+.growth-bar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(120, 100, 60, 0.2);
+  overflow: hidden;
+}
+.growth-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd23b, #ff9f1c);
+  transition: width 0.4s ease;
+}
+.growth-caption {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #5d3a00;
+}
+
 /* ═══════════════════════════════════════════════════════════
    MODERN UI KIT — soft buttons + glass chrome (new look)
    ═══════════════════════════════════════════════════════════ */
@@ -4081,6 +4138,10 @@ body {
 .kid-btn--feed {
   background: linear-gradient(135deg, #ff9a62 0%, #f4511e 100%);
   box-shadow: 0 8px 22px rgba(244, 81, 30, 0.4);
+}
+.kid-btn--locked {
+  filter: grayscale(0.5);
+  opacity: 0.7;
 }
 .kid-btn--play {
   background: linear-gradient(135deg, #9b7bff 0%, #6a3df0 100%);

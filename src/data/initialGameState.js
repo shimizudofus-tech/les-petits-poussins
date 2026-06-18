@@ -98,6 +98,78 @@ export function createInitialGameState() {
           adult: { icon: '🦆', name: 'Canard' },
         },
       },
+      horse: {
+        name: 'Cheval',
+        age: 0,
+        currentStage: 'egg',
+        completed: false,
+        unlocked: false,
+        stages: {
+          egg: { icon: '📦', name: 'Mystère', nextAge: 5 },
+          baby: { icon: '🐴', name: 'Poulain', nextAge: 12 },
+          adult: { icon: '🐎', name: 'Cheval' },
+        },
+      },
+      goat: {
+        name: 'Chèvre',
+        age: 0,
+        currentStage: 'egg',
+        completed: false,
+        unlocked: false,
+        stages: {
+          egg: { icon: '📦', name: 'Mystère', nextAge: 4 },
+          baby: { icon: '🐐', name: 'Chevreau', nextAge: 10 },
+          adult: { icon: '🐐', name: 'Chèvre' },
+        },
+      },
+      dog: {
+        name: 'Chien',
+        age: 0,
+        currentStage: 'egg',
+        completed: false,
+        unlocked: false,
+        stages: {
+          egg: { icon: '📦', name: 'Mystère', nextAge: 4 },
+          baby: { icon: '🐶', name: 'Chiot', nextAge: 10 },
+          adult: { icon: '🐕', name: 'Chien' },
+        },
+      },
+      cat: {
+        name: 'Chat',
+        age: 0,
+        currentStage: 'egg',
+        completed: false,
+        unlocked: false,
+        stages: {
+          egg: { icon: '📦', name: 'Mystère', nextAge: 4 },
+          baby: { icon: '🐱', name: 'Chaton', nextAge: 10 },
+          adult: { icon: '🐈', name: 'Chat' },
+        },
+      },
+      turkey: {
+        name: 'Dinde',
+        age: 0,
+        currentStage: 'egg',
+        completed: false,
+        unlocked: false,
+        stages: {
+          egg: { icon: '📦', name: 'Mystère', nextAge: 5 },
+          baby: { icon: '🦃', name: 'Dindonneau', nextAge: 12 },
+          adult: { icon: '🦃', name: 'Dinde' },
+        },
+      },
+      mouse: {
+        name: 'Souris',
+        age: 0,
+        currentStage: 'egg',
+        completed: false,
+        unlocked: false,
+        stages: {
+          egg: { icon: '📦', name: 'Mystère', nextAge: 4 },
+          baby: { icon: '🐭', name: 'Souriceau', nextAge: 9 },
+          adult: { icon: '🐁', name: 'Souris' },
+        },
+      },
     },
 
     shop: [

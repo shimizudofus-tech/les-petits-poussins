@@ -35,6 +35,42 @@ export const ANIMAL_INFO = {
     reactions: ['💧', '🌊', '❤️', '✨', '🦆'],
     food: '🐟',
   },
+  horse: {
+    eats: '🌾 Foin, herbe et avoine',
+    fact: 'Un cheval peut dormir debout grâce à ses jambes qui se bloquent !',
+    reactions: ['🐎', '🌾', '❤️', '⭐', '🏇'],
+    food: '🌾',
+  },
+  goat: {
+    eats: '🌿 Herbe, feuilles et brindilles',
+    fact: 'Les chèvres ont une excellente mémoire et adorent grimper !',
+    reactions: ['🐐', '🌿', '❤️', '⛰️', '✨'],
+    food: '🌿',
+  },
+  dog: {
+    eats: '🦴 Croquettes et un bon os',
+    fact: "Le chien entend des sons quatre fois plus loin que l'humain !",
+    reactions: ['🦴', '🐾', '❤️', '⭐', '🐕'],
+    food: '🦴',
+  },
+  cat: {
+    eats: '🐟 Croquettes et un peu de poisson',
+    fact: 'Un chat passe environ la moitié de sa journée à dormir !',
+    reactions: ['🐟', '🧶', '❤️', '😴', '🐈'],
+    food: '🐟',
+  },
+  turkey: {
+    eats: '🌽 Graines, maïs et insectes',
+    fact: 'La dinde peut faire gonfler ses plumes pour paraître plus grande !',
+    reactions: ['🌽', '🪶', '❤️', '⭐', '🦃'],
+    food: '🌽',
+  },
+  mouse: {
+    eats: '🧀 Graines, fromage et miettes',
+    fact: 'Une souris peut se faufiler dans un trou large comme un crayon !',
+    reactions: ['🧀', '🌾', '❤️', '✨', '🐭'],
+    food: '🧀',
+  },
 }
 
 export function getAnimalInfo(animalKey) {

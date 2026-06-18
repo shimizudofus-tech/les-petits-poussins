@@ -36,6 +36,9 @@ function pickCheer(correct) {
   return pool[Math.floor(Math.random() * pool.length)]
 }
 
+// Coût en étoiles pour prendre un nouvel animal (l'adulte reste jusque-là).
+export const NEW_ANIMAL_COST = 15
+
 const GameContext = createContext(null)
 
 export function GameProvider({ children }) {
@@ -429,39 +432,40 @@ export function GameProvider({ children }) {
     })
   }, [])
 
-  const unlockNextAnimal = useCallback(
-    (currentAnimalKey, collection) => {
-      const keys = Object.keys(collection)
-      const idx = keys.indexOf(currentAnimalKey)
-      if (idx + 1 >= keys.length) return collection
-
-      const nextKey = keys[idx + 1]
-      const nextAnimal = collection[nextKey]
-      const updatedCollection = {
-        ...collection,
-        [nextKey]: { ...nextAnimal, unlocked: true },
+  // Prendre un nouvel animal : l'animal adulte RESTE, on n'en prend un nouveau
+  // que quand on a assez d'étoiles (coût ci-dessous). Tirage au hasard, sans nom.
+  const adoptNewAnimal = useCallback(() => {
+    setGameState((prev) => {
+      const current = prev.collection[prev.currentAnimalKey]
+      const isAdult = current?.currentStage === 'adult' || current?.completed
+      if (!isAdult) {
+        queueMicrotask(() => showToast("Fais d'abord grandir ton animal ! 🐣", '#ff8f00'))
+        return prev
+      }
+      const lockedKeys = Object.keys(prev.collection).filter((key) => !prev.collection[key].unlocked)
+      if (lockedKeys.length === 0) {
+        queueMicrotask(() => showToast('Tu as déjà tous les animaux ! 🎉', '#66bb6a'))
+        return prev
+      }
+      if (prev.stars < NEW_ANIMAL_COST) {
+        queueMicrotask(() => showToast(`Il te faut ${NEW_ANIMAL_COST} ⭐ pour un nouvel animal !`, '#ef5350'))
+        return prev
       }
 
-      setTimeout(() => {
-        showModal({
-          icon: '🎉',
-          title: `${nextAnimal.name} débloqué !`,
-          body: `Veux-tu t'occuper de ${nextAnimal.name} maintenant ?`,
-          buttons: [
-            {
-              label: 'Choisir cet animal',
-              type: 'primary',
-              onClick: () => selectAnimal(nextKey),
-            },
-            { label: 'Continuer', type: 'secondary' },
-          ],
-        })
-      }, 500)
+      const nextKey = lockedKeys[Math.floor(Math.random() * lockedKeys.length)]
+      const nextAnimal = prev.collection[nextKey]
+      // Pas de nom révélé avant l'ouverture de l'œuf/cadeau.
+      queueMicrotask(() => showToast('🎉 Nouvel animal débloqué !', '#7c4dff'))
 
-      return updatedCollection
-    },
-    [showModal, selectAnimal],
-  )
+      return {
+        ...prev,
+        stars: prev.stars - NEW_ANIMAL_COST,
+        currentAnimalKey: nextKey,
+        hunger: 50,
+        collection: { ...prev.collection, [nextKey]: { ...nextAnimal, unlocked: true } },
+      }
+    })
+  }, [showToast])
 
   const updateAudioSettings = useCallback((patch) => {
     setGameState((prev) => {
@@ -509,18 +513,14 @@ export function GameProvider({ children }) {
       const isFullyGrown = animal.currentStage === 'adult' || animal.completed
 
       if (isFullyGrown) {
+        // L'animal adulte RESTE. On invite juste à prendre un nouvel animal.
         queueMicrotask(() =>
           showToast(
-            `${animal.name} est adulte ! Tu peux t'occuper d'un autre animal dans la Collection.`,
+            `${animal.name} est adulte ! 🥚 Prends un nouvel animal quand tu as ${NEW_ANIMAL_COST} ⭐.`,
             '#ff8f00',
           ),
         )
-
-        return {
-          ...prev,
-          stars: prev.stars - 1,
-          hunger: Math.min(100, prev.hunger + 30),
-        }
+        return prev
       }
 
       const agedAnimal = { ...animal, age: animal.age + 1 }
@@ -528,13 +528,12 @@ export function GameProvider({ children }) {
         ...prev.collection,
         [prev.currentAnimalKey]: agedAnimal,
       }
-      let { collection, event } = checkEvolution(prev.currentAnimalKey, collectionWithAge)
+      const { collection, event } = checkEvolution(prev.currentAnimalKey, collectionWithAge)
 
       if (event?.type === 'hatch') {
         queueMicrotask(() => showToast(`🎊 L'œuf a éclos ! Bébé ${event.name} !`, '#7c4dff'))
       } else if (event?.type === 'adult') {
-        queueMicrotask(() => showToast(`Bravo ! ${event.name} est adulte !`, '#7c4dff'))
-        collection = unlockNextAnimal(prev.currentAnimalKey, collection)
+        queueMicrotask(() => showToast(`Bravo ! ${event.name} est adulte ! 🏆`, '#7c4dff'))
       }
 
       return {
@@ -544,7 +543,7 @@ export function GameProvider({ children }) {
         collection,
       }
     })
-  }, [showToast, unlockNextAnimal])
+  }, [showToast])
 
   useEffect(() => {
     if (suppressPersistRef.current) return
@@ -599,6 +598,7 @@ export function GameProvider({ children }) {
         setGameState,
         switchScreen,
         feedAnimal,
+        adoptNewAnimal,
         showFeedback,
         setSubject,
         selectBuilderItem,
