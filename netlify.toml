@@ -1,0 +1,5 @@
+# Config Netlify quand le site est relié à ce dépôt GitHub (app à la racine).
+# Le SPA-fallback est géré par public/_redirects.
+[build]
+  command = "npm run build"
+  publish = "dist"
