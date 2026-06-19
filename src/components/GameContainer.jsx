@@ -16,6 +16,18 @@ import EvolvingBackground from './EvolvingBackground'
 import { computeFarmLevel } from '../data/farmUpgrades'
 import { isValidScreen, resolveScreen, SCREENS } from '../constants/screens'
 import { useGame } from '../context/GameContext'
+import { useEffect } from 'react'
+import { setSceneMusic } from '../utils/softAudio'
+
+// Écrans d'exercices → musique coupée (concentration).
+const EXERCISE_SCREENS = new Set([
+  SCREENS.MINIGAME_CP, SCREENS.MINIGAME_CE1, SCREENS.MINIGAME_CE2, SCREENS.MATERNELLE_SECTION,
+])
+function sceneForScreen(screen) {
+  if (EXERCISE_SCREENS.has(screen)) return null
+  if (screen === SCREENS.FARM_EXPLORE) return 'farm'
+  return 'home'
+}
 
 function ScreenFallback() {
   const { switchScreen } = useGame()
@@ -42,6 +54,11 @@ export default function GameContainer() {
   const animal = gameState.collection?.[gameState.currentAnimalKey]
   const stage = animal?.currentStage ?? 'egg'
   const farmLevel = computeFarmLevel(gameState.farmUpgrades)
+
+  // Musique d'ambiance selon l'écran (accueil / ferme / silence en exercice).
+  useEffect(() => {
+    setSceneMusic(sceneForScreen(screen))
+  }, [screen])
 
   return (
     <div className="game-container phone-frame">

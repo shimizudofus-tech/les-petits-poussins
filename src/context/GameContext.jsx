@@ -20,6 +20,7 @@ import { setVoiceDisabledHandler } from '../utils/audio'
 import { playError, playSuccess } from '../utils/audioManager'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
 import { setMusicVolume, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
+import { setSoftAudioEnabled, setSoftAudioVolume, initClickSfx } from '../utils/softAudio'
 import { checkEvolution } from '../utils/evolution'
 import { PARENT_RETURN_SESSION_KEY } from '../utils/parentContentStats'
 import { clearSavedGameState, loadGameState, saveGameState } from '../utils/persistence'
@@ -554,6 +555,8 @@ export function GameProvider({ children }) {
     const settings = mergeAudioSettings(gameState.audioSettings)
     setActiveAudioSettings(settings)
     setMusicVolume(settings.musicVolume)
+    setSoftAudioVolume(settings.musicVolume)
+    setSoftAudioEnabled(settings.musicEnabled)
     if (!settings.musicEnabled) {
       stopBackgroundMusic()
     }
@@ -566,6 +569,7 @@ export function GameProvider({ children }) {
   useEffect(() => {
     setVoiceDisabledHandler(() => showToast('Voix désactivée', '#8d6e3a'))
     unlockAudioOnFirstInteraction(() => getActiveAudioSettings())
+    initClickSfx()
     return () => setVoiceDisabledHandler(null)
   }, [showToast])
 
