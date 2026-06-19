@@ -29,7 +29,13 @@ const MATERNELLE_LEVELS = [
 ]
 
 export default function ScreenLevelSelect() {
-  const { switchScreen, setGameState } = useGame()
+  const { gameState, switchScreen, setGameState, showPaywall } = useGame()
+  const premium = gameState.premium ?? false
+
+  const goPrimaire = (screen) => {
+    if (premium) switchScreen(screen)
+    else showPaywall('Les niveaux CP, CE1 et CE2 sont dans la version complète.')
+  }
 
   const goMaternelle = (section) => {
     setGameState((prev) => ({
@@ -92,17 +98,19 @@ export default function ScreenLevelSelect() {
           </div>
         ))}
 
-        <p className="screen-section-label mt-1">Primaire</p>
+        <p className="screen-section-label mt-1">
+          Primaire {!premium && <span className="text-[0.7rem] font-bold text-[#b8860b]">🔒 version complète</span>}
+        </p>
 
         <div
           role="button"
           tabIndex={0}
-          onClick={() => switchScreen(SCREENS.MINIGAME_CP)}
-          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAME_CP)}
-          className="kid-card"
+          onClick={() => goPrimaire(SCREENS.MINIGAME_CP)}
+          onKeyDown={(e) => e.key === 'Enter' && goPrimaire(SCREENS.MINIGAME_CP)}
+          className={`kid-card${premium ? '' : ' kid-card--locked'}`}
         >
           <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #e3f2fd, #90caf9)' }}>
-            ✏️
+            {premium ? '✏️' : '🔒'}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xl font-black text-[#3e2700]">CP</div>
@@ -114,12 +122,12 @@ export default function ScreenLevelSelect() {
         <div
           role="button"
           tabIndex={0}
-          onClick={() => switchScreen(SCREENS.MINIGAME_CE1)}
-          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAME_CE1)}
-          className="kid-card"
+          onClick={() => goPrimaire(SCREENS.MINIGAME_CE1)}
+          onKeyDown={(e) => e.key === 'Enter' && goPrimaire(SCREENS.MINIGAME_CE1)}
+          className={`kid-card${premium ? '' : ' kid-card--locked'}`}
         >
           <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #ede7f6, #b39ddb)' }}>
-            📐
+            {premium ? '📐' : '🔒'}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xl font-black text-[#3e2700]">CE1</div>
@@ -131,12 +139,12 @@ export default function ScreenLevelSelect() {
         <div
           role="button"
           tabIndex={0}
-          onClick={() => switchScreen(SCREENS.MINIGAME_CE2)}
-          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAME_CE2)}
-          className="kid-card"
+          onClick={() => goPrimaire(SCREENS.MINIGAME_CE2)}
+          onKeyDown={(e) => e.key === 'Enter' && goPrimaire(SCREENS.MINIGAME_CE2)}
+          className={`kid-card${premium ? '' : ' kid-card--locked'}`}
         >
           <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #e0f2f1, #80cbc4)' }}>
-            🧮
+            {premium ? '🧮' : '🔒'}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xl font-black text-[#3e2700]">CE2</div>

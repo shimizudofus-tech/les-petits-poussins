@@ -72,6 +72,33 @@ export function GameProvider({ children }) {
     setModal({ icon, title, body, buttons })
   }, [])
 
+  // Abonnement (1,99 €/mois). Stub : le paiement réel (Google Play Billing /
+  // RevenueCat via l'app native Capacitor) sera branché ici plus tard.
+  const subscribe = useCallback(() => {
+    showToast('Abonnement bientôt disponible 🙂', '#7c4dff')
+  }, [showToast])
+
+  // Met à jour l'accès premium (utilisé par le paiement et le bouton test parent).
+  const setPremium = useCallback((value) => {
+    setGameState((prev) => ({ ...prev, premium: Boolean(value) }))
+  }, [])
+
+  // Fenêtre "Version complète" déclenchée quand on touche du contenu verrouillé.
+  const showPaywall = useCallback(
+    (body = 'Débloque CP, CE1, CE2, tous les animaux et toute la ferme !') => {
+      showModal({
+        icon: '⭐',
+        title: 'Version complète — 1,99 €/mois',
+        body,
+        buttons: [
+          { label: "S'abonner", type: 'primary', onClick: () => subscribe() },
+          { label: 'Plus tard', type: 'secondary' },
+        ],
+      })
+    },
+    [showModal, subscribe],
+  )
+
   const switchScreen = useCallback((screen) => {
     const target = resolveScreen(screen, SCREENS.TAMAGOTCHI)
     setGameState((prev) => ({ ...prev, currentScreen: target }))
@@ -448,6 +475,14 @@ export function GameProvider({ children }) {
         queueMicrotask(() => showToast('Tu as déjà tous les animaux ! 🎉', '#66bb6a'))
         return prev
       }
+      // Gratuit : 2 animaux max (poule + 1). Au-delà → version complète.
+      if (!prev.premium) {
+        const unlockedCount = Object.values(prev.collection).filter((a) => a.unlocked).length
+        if (unlockedCount >= 2) {
+          queueMicrotask(() => showPaywall('Débloque tous les animaux avec la version complète !'))
+          return prev
+        }
+      }
       if (prev.stars < NEW_ANIMAL_COST) {
         queueMicrotask(() => showToast(`Il te faut ${NEW_ANIMAL_COST} ⭐ pour un nouvel animal !`, '#ef5350'))
         return prev
@@ -466,7 +501,7 @@ export function GameProvider({ children }) {
         collection: { ...prev.collection, [nextKey]: { ...nextAnimal, unlocked: true } },
       }
     })
-  }, [showToast])
+  }, [showToast, showPaywall])
 
   const updateAudioSettings = useCallback((patch) => {
     setGameState((prev) => {
@@ -603,6 +638,9 @@ export function GameProvider({ children }) {
         switchScreen,
         feedAnimal,
         adoptNewAnimal,
+        showPaywall,
+        setPremium,
+        subscribe,
         showFeedback,
         setSubject,
         selectBuilderItem,

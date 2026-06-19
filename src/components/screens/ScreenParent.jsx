@@ -81,7 +81,8 @@ function getReturnScreen() {
 }
 
 export default function ScreenParent() {
-  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast } = useGame()
+  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe } = useGame()
+  const premium = gameState.premium ?? false
   const audioSettings = gameState.audioSettings ?? {}
   const achievementSummary = getAchievementSummary(gameState.achievements)
   const stats = getExerciseContentStats()
@@ -147,6 +148,33 @@ export default function ScreenParent() {
       >
         ← Retour
       </button>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Version complète</h2>
+        <ul className="parent-stat-list">
+          <li className="parent-stat-row">
+            <span>Statut</span>
+            <strong>{premium ? '✅ Premium (1,99 €/mois)' : 'Gratuite (essai)'}</strong>
+          </li>
+        </ul>
+        <p className="parent-card-hint mt-2">
+          Gratuit : Maternelle, 2 animaux, Explorer en lecture seule. Premium : CP/CE1/CE2,
+          tous les animaux et la ferme complète. (Paiement via Google Play à venir dans l'app Android.)
+        </p>
+        {!premium ? (
+          <button type="button" className="parent-audio-test-btn mt-3 w-full" onClick={() => subscribe()}>
+            S'abonner (1,99 €/mois)
+          </button>
+        ) : null}
+        <button
+          type="button"
+          className={`parent-toggle-btn mt-3 ${premium ? 'is-on' : ''}`}
+          onClick={() => setPremium(!premium)}
+        >
+          Premium TEST : {premium ? 'ON' : 'OFF'}
+        </button>
+        <p className="parent-card-hint mt-1">Bouton de test (à retirer en production) pour simuler l'abonnement.</p>
+      </section>
 
       <section className="parent-card">
         <h2 className="parent-card-title">Réglages audio</h2>

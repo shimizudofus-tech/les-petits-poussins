@@ -4232,6 +4232,10 @@ body {
   transform: scale(0.98);
   box-shadow: 0 4px 12px rgba(20, 30, 60, 0.16);
 }
+.kid-card--locked {
+  opacity: 0.62;
+  filter: saturate(0.65);
+}
 .kid-card__icon {
   flex-shrink: 0;
   width: 58px;

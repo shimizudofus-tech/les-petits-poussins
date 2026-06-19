@@ -89,7 +89,8 @@ function AnimalInfoSheet({ animalKey, animal, onClose }) {
 }
 
 export default function ScreenFarmExplore() {
-  const { gameState, setGameState, switchScreen, showToast } = useGame()
+  const { gameState, setGameState, switchScreen, showToast, showPaywall } = useGame()
+  const premium = gameState.premium ?? false
 
   const [tappedKey, setTappedKey] = useState(null)
   const [tappedReaction, setTappedReaction] = useState(null)
@@ -179,14 +180,16 @@ export default function ScreenFarmExplore() {
     setTimeout(() => setTappedKey(null), 500)
 
     if (isAnimalHungry(gameState.animalCare, animalKey, Date.now())) {
-      feedOne(animalKey)
+      // Gratuit : Explorer en lecture seule → nourrir = version complète.
+      if (!premium) showPaywall('Nourris tes animaux avec la version complète !')
+      else feedOne(animalKey)
     } else if (missionActive) {
       showToast(`😊 ${animal.name} n'a pas faim pour le moment`, '#66bb6a')
     } else {
       setInfoKey(animalKey)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState.animalCare, gameState.stars, gameState.feedRewardClaimedAt, unlockedAnimals, missionActive, setGameState, showToast])
+  }, [gameState.animalCare, gameState.stars, gameState.feedRewardClaimedAt, unlockedAnimals, missionActive, premium, setGameState, showToast, showPaywall])
 
   const handlePlace = useCallback((key, pos) => {
     setGameState((s) => ({
@@ -223,10 +226,13 @@ export default function ScreenFarmExplore() {
           </button>
           <button
             type="button"
-            onClick={() => { setInfoKey(null); setMoveMode(true) }}
+            onClick={() => {
+              if (!premium) { showPaywall('Aménage ta ferme avec la version complète !'); return }
+              setInfoKey(null); setMoveMode(true)
+            }}
             className="farm-feed-btn"
           >
-            🛠️ Aménager
+            🛠️ Aménager{!premium ? ' 🔒' : ''}
           </button>
         </>
       )}
