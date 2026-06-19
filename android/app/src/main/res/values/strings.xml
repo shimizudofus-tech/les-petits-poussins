@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Les Petits Poussins</string>
+    <string name="title_activity_main">Les Petits Poussins</string>
+    <string name="package_name">com.lespetitspoussins.app</string>
+    <string name="custom_url_scheme">com.lespetitspoussins.app</string>
+</resources>
