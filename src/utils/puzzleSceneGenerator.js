@@ -301,6 +301,12 @@ const MASCOT = {
   rabbit:  { m: ['#FFFFFF', '#E6EAEF'], two: ['#FFCBDD', '#F4A6C2'], line: '#BEC6CF', acc: '#FFC2D6', accLine: '#E59ABA', dk: '#7C6A5E' },
   duck:    { m: ['#B8997A', '#8A6B50'], two: ['#4BD06A', '#1F9E3E'], line: '#6E5440', acc: '#FFB52E', accLine: '#E08D00', dk: '#155E2C' },
   duckBaby:{ m: ['#FFEFA0', '#FFD23B'], two: ['#FFEFA0', '#FFD23B'], line: '#E9A400', acc: '#FFB52E', accLine: '#E08D00', dk: '#B57A00' },
+  horse:   { m: ['#D89A5E', '#B0703A'], two: ['#F0D2A8', '#D6A876'], line: '#8A5A30', acc: '#4A3018', accLine: '#6E4A28', dk: '#3E2A18' },
+  goat:    { m: ['#F3EFE7', '#D9D2C4'], two: ['#E7E0D2', '#CCC3B0'], line: '#AEA48E', acc: '#D8CBB0', accLine: '#9A8E76', dk: '#6B5E48' },
+  dog:     { m: ['#F0C078', '#D89A48'], two: ['#FBE6BC', '#E8C078'], line: '#B97E32', acc: '#A86A30', accLine: '#9A5E28', dk: '#5A3A18' },
+  cat:     { m: ['#CDD1D8', '#ABB2BC'], two: ['#E6E9EE', '#C6CCD4'], line: '#8A929E', acc: '#FFC2D6', accLine: '#9AA2AE', dk: '#5A626E' },
+  turkey:  { m: ['#9A6440', '#73492A'], two: ['#C9824E', '#A65F30'], line: '#5A3A22', acc: '#E84A30', accLine: '#B83020', dk: '#3E2A18' },
+  mouse:   { m: ['#CFCFD6', '#A9A9B5'], two: ['#FBD0DD', '#F2A6BE'], line: '#8E8E9A', acc: '#F4A6C2', accLine: '#9A9AA6', dk: '#5E5E68' },
 }
 
 function mascotKey(animal, stage) {
@@ -499,8 +505,201 @@ function mascotDuckBaby() {
     ${cheekM(15, -10, 5.5, '#FFB07A')}`
 }
 
-const MASCOT_ADULT = { pig: mascotPig, cow: mascotCow, sheep: mascotSheep, rabbit: mascotRabbit, duck: mascotDuck }
-const MASCOT_BABY = { pig: mascotPigBaby, cow: mascotCowBaby, sheep: mascotSheepBaby, rabbit: mascotRabbitBaby, duck: mascotDuckBaby }
+/* ── Nouveaux animaux (même style mascotte) ── */
+function mascotHorse() {
+  const { line, acc, accLine, dk } = MASCOT.horse
+  return `
+    <ellipse cx="-15" cy="50" rx="9" ry="9" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <ellipse cx="15" cy="50" rx="9" ry="9" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M-26,-30 Q-30,-50 -16,-42 Q-14,-34 -17,-26 Z" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M26,-30 Q30,-50 16,-42 Q14,-34 17,-26 Z" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M-6,-44 Q2,-58 10,-44 Q4,-40 2,-46 Q0,-40 -6,-44 Z" fill="${acc}"/>
+    <ellipse cx="0" cy="8" rx="44" ry="42" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-14, -16, 16, 11)}
+    <ellipse cx="0" cy="24" rx="20" ry="16" fill="url(#mTwo)" stroke="${accLine}" stroke-width="3"/>
+    <ellipse cx="-7" cy="26" rx="3" ry="4" fill="${dk}"/><ellipse cx="7" cy="26" rx="3" ry="4" fill="${dk}"/>
+    ${eyeM(-14, -6, 7.5)}${eyeM(14, -6, 7.5)}
+    ${cheekM(26, 8, 6.5, '#E59A6A')}`
+}
+function mascotHorseBaby() {
+  const { line, acc, accLine, dk } = MASCOT.horse
+  return `
+    <ellipse cx="-9" cy="40" rx="7" ry="7" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <ellipse cx="9" cy="40" rx="7" ry="7" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M-20,-22 Q-24,-38 -12,-32 Q-11,-26 -14,-20 Z" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M20,-22 Q24,-38 12,-32 Q11,-26 14,-20 Z" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M-4,-32 Q2,-44 8,-32 Q3,-29 0,-34 Z" fill="${acc}"/>
+    <ellipse cx="0" cy="8" rx="33" ry="32" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-11, -8, 13, 9)}
+    <ellipse cx="0" cy="20" rx="15" ry="12" fill="url(#mTwo)" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="-5.5" cy="22" rx="2.6" ry="3.4" fill="${dk}"/><ellipse cx="5.5" cy="22" rx="2.6" ry="3.4" fill="${dk}"/>
+    ${eyeM(-12, -6, 8)}${eyeM(12, -6, 8)}
+    ${cheekM(21, 6, 6, '#E59A6A')}`
+}
+function mascotGoat() {
+  const { line, acc, accLine, dk } = MASCOT.goat
+  return `
+    <ellipse cx="-15" cy="50" rx="9" ry="8" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <ellipse cx="15" cy="50" rx="9" ry="8" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M-12,-38 Q-20,-56 -8,-54 Q-9,-46 -9,-38 Z" fill="${acc}" stroke="${accLine}" stroke-width="2.5"/>
+    <path d="M12,-38 Q20,-56 8,-54 Q9,-46 9,-38 Z" fill="${acc}" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="-34" cy="-8" rx="13" ry="8" fill="url(#mTwo)" stroke="${line}" stroke-width="3" transform="rotate(20 -34 -8)"/>
+    <ellipse cx="34" cy="-8" rx="13" ry="8" fill="url(#mTwo)" stroke="${line}" stroke-width="3" transform="rotate(-20 34 -8)"/>
+    <ellipse cx="0" cy="8" rx="44" ry="42" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-14, -16, 16, 11)}
+    <ellipse cx="0" cy="22" rx="17" ry="14" fill="url(#mTwo)" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="0" cy="20" rx="4" ry="3" fill="${dk}"/>
+    <path d="M-5,46 Q0,60 5,46 Z" fill="${acc}" stroke="${accLine}" stroke-width="2"/>
+    ${eyeM(-14, -6, 7.5)}${eyeM(14, -6, 7.5)}
+    ${cheekM(26, 8, 6.5, '#D8B89A')}`
+}
+function mascotGoatBaby() {
+  const { line, acc, accLine, dk } = MASCOT.goat
+  return `
+    <ellipse cx="-9" cy="40" rx="7" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <ellipse cx="9" cy="40" rx="7" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M-10,-30 Q-15,-42 -7,-40 Q-8,-34 -8,-30 Z" fill="${acc}" stroke="${accLine}" stroke-width="2"/>
+    <path d="M10,-30 Q15,-42 7,-40 Q8,-34 8,-30 Z" fill="${acc}" stroke="${accLine}" stroke-width="2"/>
+    <ellipse cx="-28" cy="-6" rx="11" ry="7" fill="url(#mTwo)" stroke="${line}" stroke-width="2.5" transform="rotate(20 -28 -6)"/>
+    <ellipse cx="28" cy="-6" rx="11" ry="7" fill="url(#mTwo)" stroke="${line}" stroke-width="2.5" transform="rotate(-20 28 -6)"/>
+    <ellipse cx="0" cy="8" rx="33" ry="32" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-11, -8, 13, 9)}
+    <ellipse cx="0" cy="18" rx="13" ry="11" fill="url(#mTwo)" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="0" cy="16" rx="3.4" ry="2.6" fill="${dk}"/>
+    ${eyeM(-12, -6, 8)}${eyeM(12, -6, 8)}
+    ${cheekM(21, 6, 6, '#D8B89A')}`
+}
+function mascotDog() {
+  const { line, acc, accLine, dk } = MASCOT.dog
+  return `
+    <ellipse cx="-15" cy="50" rx="9" ry="8" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <ellipse cx="15" cy="50" rx="9" ry="8" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <ellipse cx="-38" cy="2" rx="12" ry="22" fill="${acc}" stroke="${line}" stroke-width="3" transform="rotate(12 -38 2)"/>
+    <ellipse cx="38" cy="2" rx="12" ry="22" fill="${acc}" stroke="${line}" stroke-width="3" transform="rotate(-12 38 2)"/>
+    <ellipse cx="0" cy="8" rx="44" ry="42" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-14, -16, 16, 11)}
+    <ellipse cx="0" cy="24" rx="20" ry="16" fill="url(#mTwo)" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="0" cy="16" rx="6" ry="4.5" fill="${dk}"/>
+    <path d="M0,20 v6 M0,26 q-6,3 -9,1 M0,26 q6,3 9,1" fill="none" stroke="${dk}" stroke-width="2"/>
+    ${eyeM(-14, -8, 7.5)}${eyeM(14, -8, 7.5)}
+    ${cheekM(27, 8, 6.5, '#E8A86A')}`
+}
+function mascotDogBaby() {
+  const { line, acc, accLine, dk } = MASCOT.dog
+  return `
+    <ellipse cx="-9" cy="40" rx="7" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <ellipse cx="9" cy="40" rx="7" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <ellipse cx="-30" cy="4" rx="10" ry="18" fill="${acc}" stroke="${line}" stroke-width="2.5" transform="rotate(12 -30 4)"/>
+    <ellipse cx="30" cy="4" rx="10" ry="18" fill="${acc}" stroke="${line}" stroke-width="2.5" transform="rotate(-12 30 4)"/>
+    <ellipse cx="0" cy="8" rx="33" ry="32" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-11, -8, 13, 9)}
+    <ellipse cx="0" cy="20" rx="16" ry="13" fill="url(#mTwo)" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="0" cy="13" rx="5" ry="4" fill="${dk}"/>
+    <path d="M0,17 v5" fill="none" stroke="${dk}" stroke-width="1.8"/>
+    ${eyeM(-12, -7, 8)}${eyeM(12, -7, 8)}
+    ${cheekM(22, 7, 6, '#E8A86A')}`
+}
+function mascotCat() {
+  const { line, accLine, dk } = MASCOT.cat
+  return `
+    <ellipse cx="-15" cy="50" rx="9" ry="8" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <ellipse cx="15" cy="50" rx="9" ry="8" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M-34,-26 L-22,-52 L-8,-34 Z" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M34,-26 L22,-52 L8,-34 Z" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <path d="M-26,-32 L-20,-46 L-13,-34 Z" fill="#FFC2D6"/>
+    <path d="M26,-32 L20,-46 L13,-34 Z" fill="#FFC2D6"/>
+    <ellipse cx="0" cy="8" rx="44" ry="42" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-14, -16, 16, 11)}
+    ${eyeM(-14, -4, 8)}${eyeM(14, -4, 8)}
+    <path d="M-4,14 Q0,17 4,14 Q2,19 0,19 Q-2,19 -4,14 Z" fill="${accLine}"/>
+    <path d="M0,19 v4 M0,21 q-7,2 -12,0 M0,21 q7,2 12,0" fill="none" stroke="${dk}" stroke-width="1.6"/>
+    <path d="M-44,8 q-13,-1 -22,-5 M-44,15 q-13,1 -22,1 M44,8 q13,-1 22,-5 M44,15 q13,1 22,1" fill="none" stroke="${line}" stroke-width="1.4" opacity="0.6"/>
+    ${cheekM(24, 12, 6.5, '#F4A6C2')}`
+}
+function mascotCatBaby() {
+  const { line, accLine } = MASCOT.cat
+  return `
+    <ellipse cx="-9" cy="40" rx="7" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <ellipse cx="9" cy="40" rx="7" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M-26,-18 L-18,-40 L-6,-26 Z" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M26,-18 L18,-40 L6,-26 Z" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <path d="M-20,-24 L-15,-35 L-9,-26 Z" fill="#FFC2D6"/>
+    <path d="M20,-24 L15,-35 L9,-26 Z" fill="#FFC2D6"/>
+    <ellipse cx="0" cy="10" rx="33" ry="32" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-11, -6, 13, 9)}
+    ${eyeM(-12, -2, 8.5)}${eyeM(12, -2, 8.5)}
+    <path d="M-4,14 Q0,17 4,14 Q2,19 0,19 Q-2,19 -4,14 Z" fill="${accLine}"/>
+    ${cheekM(20, 12, 6, '#F4A6C2')}`
+}
+function mascotTurkey() {
+  const { line, acc, accLine } = MASCOT.turkey
+  const fan = [-42, -28, -14, 0, 14, 28, 42].map((a, i) => {
+    const col = i % 2 ? '#E0A35E' : '#C9824E'
+    return `<g transform="rotate(${a})"><ellipse cx="0" cy="-56" rx="9" ry="20" fill="${col}" stroke="${line}" stroke-width="2"/></g>`
+  }).join('')
+  return `
+    <g transform="translate(0,18)">${fan}</g>
+    <ellipse cx="-12" cy="50" rx="7" ry="7" fill="${acc}" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="12" cy="50" rx="7" ry="7" fill="${acc}" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="0" cy="12" rx="38" ry="40" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-13, -10, 15, 10)}
+    <path d="M-8,2 L-22,7 L-8,12 Z" fill="#FFB52E" stroke="#E08D00" stroke-width="2"/>
+    <path d="M-6,8 q-5,2 -5,12 q0,8 6,8 q6,0 6,-8 q0,-10 -7,-12 Z" fill="${acc}" stroke="${accLine}" stroke-width="2"/>
+    ${eyeM(-11, -6, 7)}${eyeM(13, -6, 7)}`
+}
+function mascotTurkeyBaby() {
+  const { line, acc, accLine } = MASCOT.turkey
+  return `
+    <ellipse cx="-9" cy="40" rx="6" ry="6" fill="${acc}" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="9" cy="40" rx="6" ry="6" fill="${acc}" stroke="${accLine}" stroke-width="2.5"/>
+    <ellipse cx="0" cy="10" rx="32" ry="31" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-11, -8, 13, 9)}
+    <path d="M-7,4 L-19,8 L-7,12 Z" fill="#FFB52E" stroke="#E08D00" stroke-width="2"/>
+    <path d="M0,-30 Q5,-42 9,-32 Q5,-30 4,-35 Z" fill="${acc}"/>
+    ${eyeM(-10, -6, 8)}${eyeM(11, -6, 8)}
+    ${cheekM(20, 8, 5.5, '#E8A86A')}`
+}
+function mascotMouse() {
+  const { line, acc, accLine } = MASCOT.mouse
+  return `
+    <path d="M42,40 q26,4 20,-20 q-3,-10 -10,-4 q8,2 6,12 q-2,10 -16,6 Z" fill="${line}"/>
+    <ellipse cx="-15" cy="50" rx="8" ry="7" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <ellipse cx="15" cy="50" rx="8" ry="7" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <circle cx="-26" cy="-28" r="17" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <circle cx="26" cy="-28" r="17" fill="url(#mBody)" stroke="${line}" stroke-width="3"/>
+    <circle cx="-26" cy="-28" r="10" fill="${acc}"/>
+    <circle cx="26" cy="-28" r="10" fill="${acc}"/>
+    <ellipse cx="0" cy="8" rx="42" ry="40" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-14, -14, 16, 11)}
+    ${eyeM(-13, -4, 7.5)}${eyeM(13, -4, 7.5)}
+    <ellipse cx="0" cy="14" rx="5" ry="4" fill="${accLine}"/>
+    <path d="M-2,16 q-14,2 -24,-2 M2,16 q14,2 24,-2" fill="none" stroke="${line}" stroke-width="1.5" opacity="0.7"/>
+    ${cheekM(24, 12, 6.5, '#F4A6C2')}`
+}
+function mascotMouseBaby() {
+  const { line, acc, accLine } = MASCOT.mouse
+  return `
+    <ellipse cx="-9" cy="40" rx="6.5" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <ellipse cx="9" cy="40" rx="6.5" ry="6" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <circle cx="-22" cy="-22" r="14" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <circle cx="22" cy="-22" r="14" fill="url(#mBody)" stroke="${line}" stroke-width="2.5"/>
+    <circle cx="-22" cy="-22" r="8" fill="${acc}"/>
+    <circle cx="22" cy="-22" r="8" fill="${acc}"/>
+    <ellipse cx="0" cy="10" rx="31" ry="30" fill="url(#mBody)" stroke="${line}" stroke-width="3.5"/>
+    ${shineM(-11, -6, 13, 9)}
+    ${eyeM(-11, -2, 8)}${eyeM(11, -2, 8)}
+    <ellipse cx="0" cy="13" rx="4" ry="3.2" fill="${accLine}"/>
+    ${cheekM(20, 11, 6, '#F4A6C2')}`
+}
+
+const MASCOT_ADULT = {
+  pig: mascotPig, cow: mascotCow, sheep: mascotSheep, rabbit: mascotRabbit, duck: mascotDuck,
+  horse: mascotHorse, goat: mascotGoat, dog: mascotDog, cat: mascotCat, turkey: mascotTurkey, mouse: mascotMouse,
+}
+const MASCOT_BABY = {
+  pig: mascotPigBaby, cow: mascotCowBaby, sheep: mascotSheepBaby, rabbit: mascotRabbitBaby, duck: mascotDuckBaby,
+  horse: mascotHorseBaby, goat: mascotGoatBaby, dog: mascotDogBaby, cat: mascotCatBaby, turkey: mascotTurkeyBaby, mouse: mascotMouseBaby,
+}
 
 function hasMascot(animal) {
   return Boolean(MASCOT_ADULT[animal])

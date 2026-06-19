@@ -5,6 +5,7 @@ const EGG_ANIMALS = new Set(['chicken', 'duck'])
 
 const SPRITE_ANIMAL_KEY = {
   pig: 'pig', cow: 'cow', sheep: 'sheep', rabbit: 'rabbit', duck: 'duck',
+  horse: 'horse', goat: 'goat', dog: 'dog', cat: 'cat', turkey: 'turkey', mouse: 'mouse',
 }
 
 export function isImageIcon(icon) {
