@@ -49,14 +49,17 @@ function parseMap() {
 }
 
 async function tts(text) {
+  // Mots courts : turbo v2.5 + language_code fr (force le français, sinon
+  // mauvaise détection sur 1-2 mots). Phrases : multilingual_v2 (meilleure qualité).
+  const short = text.length <= 14
+  const model = short ? 'eleven_turbo_v2_5' : 'eleven_multilingual_v2'
   const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({
       text,
-      model_id: MODEL,
-      // language_code uniquement supporté par les modèles v2.5
-      ...(MODEL.includes('v2_5') ? { language_code: LANG } : {}),
+      model_id: model,
+      ...(short ? { language_code: LANG } : {}),
       voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.2 },
     }),
   })
@@ -70,6 +73,8 @@ async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true })
   const have = new Set(fs.readdirSync(OUT_DIR).filter((f) => f.endsWith('.mp3')).map((f) => f.replace('.mp3', '')))
   const entries = parseMap()
+    // Lettres (gérées via "La lettre X") et chiffres (mots) traités séparément.
+    .filter((e) => !/^lettre_[a-z]$/.test(e.key) && !/^\d+$/.test(e.key))
   const todo = entries.filter((e) => FORCE || !have.has(e.key))
 
   console.log(`Voice ${VOICE_ID} | à générer : ${todo.length} / ${entries.length}`)
