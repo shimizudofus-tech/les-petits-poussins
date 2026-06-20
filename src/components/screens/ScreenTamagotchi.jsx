@@ -4,6 +4,8 @@ import MobileScreenLayout from '../layout/MobileScreenLayout'
 import ParentSettingsButton from '../ParentSettingsButton'
 import { SCREENS, NEW_ANIMAL_COST, useGame } from '../../context/GameContext'
 import { isImageIcon, resolveStageIcon } from '../../utils/animalIcon'
+import { playAnimalSound } from '../../utils/audio'
+import { getAnimalSound } from '../../data/animalSounds'
 
 export default function ScreenTamagotchi() {
   const { gameState, feedAnimal, adoptNewAnimal, switchScreen } = useGame()
@@ -45,6 +47,14 @@ export default function ScreenTamagotchi() {
       setTimeout(() => setIsFeeding(false), 220)
     }
     feedAnimal()
+  }
+
+  // Clic sur l'animal → son. (Pas de cri pour l'œuf.)
+  const handleSpriteClick = () => {
+    if (isEgg) return
+    setIsFeeding(true)
+    setTimeout(() => setIsFeeding(false), 220)
+    playAnimalSound(gameState.currentAnimalKey, getAnimalSound(gameState.currentAnimalKey, animal.currentStage))
   }
 
   const spriteClass = `farm-animal-sprite drop-shadow-lg transition-transform duration-150 ${
@@ -120,7 +130,12 @@ export default function ScreenTamagotchi() {
       mainClassName="relative flex min-h-0 flex-1 flex-col overflow-hidden"
     >
       <div className="relative z-10 flex min-h-0 flex-1 flex-col px-[var(--screen-padding)] py-2">
-        <div className="relative z-10 flex min-h-0 flex-1 items-end justify-center">
+        <div
+          className={`relative z-10 flex min-h-0 flex-1 items-end justify-center${isEgg ? '' : ' cursor-pointer'}`}
+          onClick={handleSpriteClick}
+          role={isEgg ? undefined : 'button'}
+          aria-label={isEgg ? undefined : 'Écouter le cri'}
+        >
           {isImageIcon(spriteSrc) ? (
             <img
               src={spriteSrc}

@@ -242,6 +242,28 @@ export function playError() {
   return playWord('oups')
 }
 
+// Cri de l'animal (son réel) joué au clic — accueil + explorer.
+const ANIMAL_VERSION = '1'
+
+export async function playAnimalSound(animalKey, fallbackText) {
+  const settings = getActiveAudioSettings()
+  if (!settings.voiceEnabled) {
+    onVoiceDisabled?.()
+    return false
+  }
+  stopAllAudio()
+  const url = `${import.meta.env.BASE_URL}audio/animals/${normalizeKey(animalKey)}.mp3?v=${ANIMAL_VERSION}`
+  try {
+    if (!(await isMp3Available(url))) throw new Error('no sfx')
+    duckMusic()
+    await tryPlayMp3(url, settings.voiceVolume)
+    return true
+  } catch {
+    if (fallbackText) return speakFallback(fallbackText)
+    return false
+  }
+}
+
 if (typeof window !== 'undefined') {
   loadVoices()
 }

@@ -6,22 +6,13 @@ import { getAnimalSound } from '../../data/animalSounds'
 import { getAnimalInfo } from '../../data/animalInfo'
 import { SCREENS, useGame } from '../../context/GameContext'
 import { isImageIcon, resolveStageIcon } from '../../utils/animalIcon'
+import { playAnimalSound } from '../../utils/audio'
 import {
   HUNGER_INTERVAL,
   FEED_REWARD,
   isAnimalHungry,
   ensureCareInitialized,
 } from '../../utils/animalCare'
-
-function speak(text) {
-  if (!('speechSynthesis' in window)) return
-  window.speechSynthesis.cancel()
-  const utt = new SpeechSynthesisUtterance(text)
-  utt.lang = 'fr-FR'
-  utt.rate = 0.95
-  utt.pitch = 1.25
-  window.speechSynthesis.speak(utt)
-}
 
 function pickReaction(animalKey) {
   const { reactions } = getAnimalInfo(animalKey)
@@ -60,7 +51,7 @@ function AnimalInfoSheet({ animalKey, animal, onClose }) {
             <button
               type="button"
               className="animal-info-speak-btn"
-              onClick={() => speak(sound)}
+              onClick={() => playAnimalSound(animalKey, sound)}
               aria-label="Écouter"
             >▶</button>
           </div>
@@ -172,7 +163,7 @@ export default function ScreenFarmExplore() {
 
   const handleAnimalTap = useCallback((animalKey, animal) => {
     const sound = getAnimalSound(animalKey, animal.currentStage)
-    speak(sound)
+    playAnimalSound(animalKey, sound)
 
     const reaction = pickReaction(animalKey)
     setTappedKey(animalKey)
