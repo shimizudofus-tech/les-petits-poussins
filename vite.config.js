@@ -39,6 +39,10 @@ export default defineConfig({
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
+      workbox: {
+        // Ne pas renvoyer l'app (index.html) pour la page de test des voix.
+        navigateFallbackDenylist: [/voix\.html/],
+      },
     }),
   ],
 })
