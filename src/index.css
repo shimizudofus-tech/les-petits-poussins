@@ -424,6 +424,18 @@ body {
   margin-bottom: 6px;
   text-transform: uppercase;
 }
+.chalk-listen {
+  margin-left: 8px;
+  padding: 1px 7px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.chalk-listen:active { transform: scale(0.9); }
 
 .chalk-question {
   font-size: 2.4rem;

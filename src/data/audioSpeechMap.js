@@ -165,8 +165,15 @@ export const AUDIO_SPEECH_MAP = {
   cochon: 'cochon',
   vache: 'vache',
 
+  // Consignes génériques
+  ecoute_bien: 'Écoute bien',
+  choisis_bonne_reponse: 'Choisis la bonne réponse',
+
   // Feedback
   bravo: 'Bravo !',
+  excellent: 'Excellent !',
+  bien_joue: 'Bien joué !',
+  continue_comme_ca: 'Continue comme ça !',
   oups: 'Essaie encore !',
 }
 

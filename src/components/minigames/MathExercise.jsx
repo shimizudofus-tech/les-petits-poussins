@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
+import { playWord } from '../../utils/audio'
 import AnswerButtons from './AnswerButtons'
 import ExerciseUnavailable from './ExerciseUnavailable'
 
@@ -65,7 +66,10 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
     return (
       <>
         <div className="chalkboard">
-          <div className="chalkboard-label">➕ Calcul mental</div>
+          <div className="chalkboard-label">
+            ➕ Calcul mental
+            <button type="button" className="chalk-listen" onClick={() => playWord('choisis_bonne_reponse')} aria-label="Écouter la consigne">🔊</button>
+          </div>
           <div className="chalk-question">{exercise.question}</div>
         </div>
         <div className="answers-grid cols-3">
@@ -92,7 +96,10 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
   return (
     <>
       <div className="chalkboard">
-        <div className="chalkboard-label">➕ Calcul mental</div>
+        <div className="chalkboard-label">
+          ➕ Calcul mental
+          <button type="button" className="chalk-listen" onClick={() => playWord('choisis_bonne_reponse')} aria-label="Écouter la consigne">🔊</button>
+        </div>
         <div className="chalk-question">{exercise.question}</div>
       </div>
       <AnswerButtons

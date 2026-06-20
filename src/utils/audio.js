@@ -227,8 +227,11 @@ export async function playWord(audioKey, options = {}) {
   }
 }
 
+const SUCCESS_KEYS = ['bravo', 'excellent', 'bien_joue', 'continue_comme_ca']
+
 export function playSuccess() {
-  return playWord('bravo')
+  const key = SUCCESS_KEYS[Math.floor(Math.random() * SUCCESS_KEYS.length)]
+  return playWord(key)
 }
 
 export function playError() {
