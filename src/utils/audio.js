@@ -32,8 +32,12 @@ function normalizeKey(audioKey) {
     .replace(/[\u0300-\u036f]/g, '')
 }
 
+// Version audio : à incrémenter à chaque régénération des voix pour casser
+// le cache navigateur (les fichiers gardent le même nom).
+const AUDIO_VERSION = '3'
+
 function getMp3Url(audioKey) {
-  return `/audio/voix/${normalizeKey(audioKey)}.mp3`
+  return `${import.meta.env.BASE_URL}audio/voix/${normalizeKey(audioKey)}.mp3?v=${AUDIO_VERSION}`
 }
 
 export function loadVoices() {

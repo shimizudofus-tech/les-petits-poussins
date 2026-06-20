@@ -33,7 +33,7 @@ const rows = ordered.map((k, i) => `
   <div class="row" data-i="${i}">
     <code>${k}</code>
     <span class="txt">${text[k] ?? ''}</span>
-    <audio preload="none" src="/audio/voix/${k}.mp3"></audio>
+    <audio preload="none" src="audio/voix/${k}.mp3?v=3"></audio>
     <button onclick="playOne(${i})">▶</button>
   </div>`).join('')
 
