@@ -152,6 +152,40 @@ export default function ScreenLevelSelect() {
             <span className="kid-card__badge">Multiplications, divisions &amp; dictée</span>
           </div>
         </div>
+
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => goPrimaire(SCREENS.MINIGAME_CM1)}
+          onKeyDown={(e) => e.key === 'Enter' && goPrimaire(SCREENS.MINIGAME_CM1)}
+          className={`kid-card${premium ? '' : ' kid-card--locked'}`}
+        >
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #fff3e0, #ffb74d)' }}>
+            {premium ? '📊' : '🔒'}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xl font-black text-[#3e2700]">CM1</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">9 à 10 ans</div>
+            <span className="kid-card__badge">Fractions, grands nombres &amp; dictée</span>
+          </div>
+        </div>
+
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => goPrimaire(SCREENS.MINIGAME_CM2)}
+          onKeyDown={(e) => e.key === 'Enter' && goPrimaire(SCREENS.MINIGAME_CM2)}
+          className={`kid-card${premium ? '' : ' kid-card--locked'}`}
+        >
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #fce4ec, #f06292)' }}>
+            {premium ? '🎓' : '🔒'}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xl font-black text-[#3e2700]">CM2</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">10 à 11 ans</div>
+            <span className="kid-card__badge">Décimaux, pourcentages &amp; dictée</span>
+          </div>
+        </div>
       </div>
     </MobileScreenLayout>
   )

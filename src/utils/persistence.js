@@ -14,6 +14,7 @@ import {
 import { createDefaultCpProgress, CP_SUBJECTS } from './cpProgress'
 import { createDefaultCe1Progress, CE1_SUBJECTS } from './ce1Progress'
 import { createDefaultCe2Progress, CE2_SUBJECTS } from './ce2Progress'
+import { createDefaultGradeProgress, GRADE_SUBJECTS } from './gradeProgress'
 import { mergeAchievements } from './achievements'
 
 export const STORAGE_KEY = 'les-petits-poussins-game-state'
@@ -111,6 +112,17 @@ function mergeCe2Progress(savedCe2, defaultCe2) {
   return merged
 }
 
+function mergeGradeProgress(savedGrade, defaultGrade) {
+  const merged = { ...defaultGrade }
+  for (const subject of GRADE_SUBJECTS) {
+    merged[subject] = {
+      ...defaultGrade[subject],
+      ...savedGrade?.[subject],
+    }
+  }
+  return merged
+}
+
 function mergeLearningProgress(saved, initial) {
   const base = initial.learningProgress ?? createDefaultLearningProgress()
   const savedMaternelle = saved?.maternelle ?? {}
@@ -134,6 +146,8 @@ function mergeLearningProgress(saved, initial) {
     cp: mergeCpProgress(saved?.cp, base.cp ?? createDefaultCpProgress()),
     ce1: mergeCe1Progress(saved?.ce1, base.ce1 ?? createDefaultCe1Progress()),
     ce2: mergeCe2Progress(saved?.ce2, base.ce2 ?? createDefaultCe2Progress()),
+    cm1: mergeGradeProgress(saved?.cm1, base.cm1 ?? createDefaultGradeProgress()),
+    cm2: mergeGradeProgress(saved?.cm2, base.cm2 ?? createDefaultGradeProgress()),
   }
 }
 

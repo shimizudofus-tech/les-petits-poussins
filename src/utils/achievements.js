@@ -33,6 +33,8 @@ export function createDefaultAchievements() {
       cp: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
       ce1: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
       ce2: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
+      cm1: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
+      cm2: Object.fromEntries(CP_SUBJECTS.map((key) => [key, createActivityStats()])),
     },
     badges: {},
     tests: {
@@ -77,6 +79,8 @@ export function mergeAchievements(saved) {
       cp: mergeSectionStats(saved.successStats?.cp, defaults.successStats.cp),
       ce1: mergeSectionStats(saved.successStats?.ce1, defaults.successStats.ce1),
       ce2: mergeSectionStats(saved.successStats?.ce2, defaults.successStats.ce2),
+      cm1: mergeSectionStats(saved.successStats?.cm1, defaults.successStats.cm1),
+      cm2: mergeSectionStats(saved.successStats?.cm2, defaults.successStats.cm2),
     },
     badges: { ...(saved.badges ?? {}) },
     tests: {
@@ -91,30 +95,21 @@ export function mergeAchievements(saved) {
   }
 }
 
+// Niveaux primaires à buckets plats (un sous-objet par matière).
+const FLAT_LEVELS = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
+
 function getStatsBucket(achievements, { level, section, subject }) {
-  if (level === 'cp') {
-    return achievements.successStats.cp[subject] ?? createActivityStats()
-  }
-  if (level === 'ce1') {
-    return achievements.successStats.ce1[subject] ?? createActivityStats()
-  }
-  if (level === 'ce2') {
-    return achievements.successStats.ce2[subject] ?? createActivityStats()
+  if (FLAT_LEVELS.includes(level)) {
+    const bucket = achievements.successStats[level] ?? (achievements.successStats[level] = {})
+    return bucket[subject] ?? createActivityStats()
   }
   return achievements.successStats.maternelle[section]?.[subject] ?? createActivityStats()
 }
 
 function setStatsBucket(achievements, { level, section, subject }, stats) {
-  if (level === 'cp') {
-    achievements.successStats.cp[subject] = stats
-    return
-  }
-  if (level === 'ce1') {
-    achievements.successStats.ce1[subject] = stats
-    return
-  }
-  if (level === 'ce2') {
-    achievements.successStats.ce2[subject] = stats
+  if (FLAT_LEVELS.includes(level)) {
+    if (!achievements.successStats[level]) achievements.successStats[level] = {}
+    achievements.successStats[level][subject] = stats
     return
   }
   if (!achievements.successStats.maternelle[section]) {
@@ -146,14 +141,10 @@ function sumAllSuccesses(achievements) {
   for (const section of Object.values(achievements.successStats.maternelle)) {
     for (const stats of Object.values(section)) total += stats.totalSuccess
   }
-  for (const stats of Object.values(achievements.successStats.cp)) {
-    total += stats.totalSuccess
-  }
-  for (const stats of Object.values(achievements.successStats.ce1 ?? {})) {
-    total += stats.totalSuccess
-  }
-  for (const stats of Object.values(achievements.successStats.ce2 ?? {})) {
-    total += stats.totalSuccess
+  for (const level of FLAT_LEVELS) {
+    for (const stats of Object.values(achievements.successStats[level] ?? {})) {
+      total += stats.totalSuccess
+    }
   }
   return total
 }
@@ -346,9 +337,9 @@ export function getAchievementSummary(achievements) {
   for (const section of Object.values(merged.successStats.maternelle)) {
     for (const stats of Object.values(section)) walk(stats)
   }
-  for (const stats of Object.values(merged.successStats.cp)) walk(stats)
-  for (const stats of Object.values(merged.successStats.ce1 ?? {})) walk(stats)
-  for (const stats of Object.values(merged.successStats.ce2 ?? {})) walk(stats)
+  for (const level of FLAT_LEVELS) {
+    for (const stats of Object.values(merged.successStats[level] ?? {})) walk(stats)
+  }
 
   const badgesUnlocked = Object.keys(merged.badges).length
 

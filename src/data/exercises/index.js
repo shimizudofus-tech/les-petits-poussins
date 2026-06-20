@@ -25,6 +25,12 @@ import { ce1LectureExercises } from './ce1/lecture'
 import { ce2MathExercises } from './ce2/maths'
 import { ce2DicteeExercises } from './ce2/dictee'
 import { ce2LectureExercises } from './ce2/lecture'
+import { cm1MathExercises } from './cm1/maths'
+import { cm1DicteeExercises } from './cm1/dictee'
+import { cm1LectureExercises } from './cm1/lecture'
+import { cm2MathExercises } from './cm2/maths'
+import { cm2DicteeExercises } from './cm2/dictee'
+import { cm2LectureExercises } from './cm2/lecture'
 
 const maternellePetiteExercises = {
   coloring: petiteColoringExercises,
@@ -74,6 +80,16 @@ export const exercisesByLevel = {
     maths: ce2MathExercises,
     dictee: ce2DicteeExercises,
     lecture: ce2LectureExercises,
+  },
+  cm1: {
+    maths: cm1MathExercises,
+    dictee: cm1DicteeExercises,
+    lecture: cm1LectureExercises,
+  },
+  cm2: {
+    maths: cm2MathExercises,
+    dictee: cm2DicteeExercises,
+    lecture: cm2LectureExercises,
   },
 }
 
