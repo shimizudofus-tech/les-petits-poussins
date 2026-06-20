@@ -25,18 +25,20 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
     setActiveZone(null)
   }, [exerciseKey, exercise?.id])
 
-  const fills = useMemo(() => {
-    if (!exercise) return {}
-    const initial = {}
-    for (const zone of exercise.zones) {
-      initial[zone.id] = zoneFills[zone.id] ?? zone.defaultFill
-    }
-    return initial
-  }, [exercise, zoneFills])
-
   if (!exercise) {
     return <ExerciseUnavailable />
   }
+
+  // Zone "fond" plein-cadre (derrière tout) → on peut colorier l'arrière-plan.
+  const [, , vbW = 200, vbH = 200] = (exercise.viewBox ?? '0 0 200 200').split(/\s+/).map(Number)
+  const bgZone = {
+    id: '__bg',
+    d: `M0 0 H${vbW} V${vbH} H0 Z`,
+    defaultFill: '#ffffff',
+    noStroke: true,
+    guideOpacity: 0.001,
+  }
+  const allZones = [bgZone, ...exercise.zones]
 
   const handleZoneClick = (zoneId) => {
     setZoneFills((prev) => ({ ...prev, [zoneId]: selectedColor }))
@@ -51,7 +53,7 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
   // Anti-triche : il faut vraiment colorier avant de pouvoir terminer
   // (sinon on validait à l'infini sans rien colorier → étoiles infinies).
   const coloredCount = Object.keys(zoneFills).length
-  const required = Math.max(3, Math.ceil(exercise.zones.length / 2))
+  const required = Math.max(3, Math.ceil(allZones.length / 2))
   const canFinish = coloredCount >= required
 
   const handleFinish = () => {
@@ -96,17 +98,17 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
           role="img"
           aria-label={`Coloriage ${exercise.title}`}
         >
-          {exercise.zones.map((zone) => {
+          {allZones.map((zone) => {
             const userFilled = Object.hasOwn(zoneFills, zone.id)
             const guideOpacity = zone.guideOpacity ?? exercise.guideOpacity ?? 0.38
             return (
               <path
                 key={zone.id}
                 d={zone.d}
-                fill={fills[zone.id] ?? zone.defaultFill}
+                fill={zoneFills[zone.id] ?? zone.defaultFill}
                 fillOpacity={userFilled ? 1 : guideOpacity}
-                stroke="#4e342e"
-                strokeWidth={zone.strokeOnly ? 3 : 3}
+                stroke={zone.noStroke ? 'none' : '#4e342e'}
+                strokeWidth={3}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className={`zone-coloring-zone cursor-pointer ${
@@ -116,7 +118,7 @@ export default function ZoneColoringExercise({ exerciseKey, section = 'petite', 
                 onKeyDown={(e) => e.key === 'Enter' && handleZoneClick(zone.id)}
                 tabIndex={0}
                 role="button"
-                aria-label={`Zone ${zone.id}`}
+                aria-label={zone.id === '__bg' ? 'Fond' : `Zone ${zone.id}`}
               />
             )
           })}
