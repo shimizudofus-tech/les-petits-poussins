@@ -28,7 +28,8 @@ const OUT_DIR = path.join(ROOT, 'public/audio/voix')
 
 const API_KEY = process.env.XI_API_KEY
 const VOICE_ID = process.env.VOICE_ID || 'XB0fDUnXU5powFXDhCwa' // Charlotte (FR femme douce)
-const MODEL = 'eleven_multilingual_v2'
+const MODEL = process.env.MODEL || 'eleven_turbo_v2_5' // supporte language_code
+const LANG = process.env.LANG_CODE || 'fr' // force la prononciation française
 const FORCE = process.env.FORCE === '1'
 
 if (!API_KEY) {
@@ -54,6 +55,7 @@ async function tts(text) {
     body: JSON.stringify({
       text,
       model_id: MODEL,
+      language_code: LANG,
       voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.2 },
     }),
   })
