@@ -49,17 +49,14 @@ function parseMap() {
 }
 
 async function tts(text) {
-  // Mots courts : turbo v2.5 + language_code fr (force le français, sinon
-  // mauvaise détection sur 1-2 mots). Phrases : multilingual_v2 (meilleure qualité).
-  const short = text.length <= 14
-  const model = short ? 'eleven_turbo_v2_5' : 'eleven_multilingual_v2'
+  // Voix Perle native FR + multilingual_v2 : bon français même sur les mots
+  // courts (turbo v2.5 glitchait : jordin, abilee, lite…).
   const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
     method: 'POST',
     headers: { 'xi-api-key': API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({
       text,
-      model_id: model,
-      ...(short ? { language_code: LANG } : {}),
+      model_id: 'eleven_multilingual_v2',
       voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.2 },
     }),
   })
