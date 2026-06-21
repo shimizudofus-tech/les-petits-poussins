@@ -20,6 +20,8 @@ export function createInitialGameState() {
     farmPlacements: {},
     animalCare: {},
     feedRewardClaimedAt: 0,
+    reviewStats: {}, // { [exerciseId]: nb d'erreurs } — révision adaptative
+
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',
     learningProgress: createDefaultLearningProgress(),

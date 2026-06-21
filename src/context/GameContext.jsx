@@ -236,7 +236,15 @@ export function GameProvider({ children }) {
           })
         }
 
-        return { ...prev, achievements, stars: prev.stars + bonusStars }
+        // Révision adaptative : on compte les ratés par exercice (réussite → oublié).
+        let reviewStats = prev.reviewStats ?? {}
+        if (exerciseId) {
+          reviewStats = { ...reviewStats }
+          if (resolved.success) delete reviewStats[exerciseId]
+          else reviewStats[exerciseId] = Math.min(5, (reviewStats[exerciseId] ?? 0) + 1)
+        }
+
+        return { ...prev, achievements, stars: prev.stars + bonusStars, reviewStats }
       })
     },
     [flushAchievementNotifications],

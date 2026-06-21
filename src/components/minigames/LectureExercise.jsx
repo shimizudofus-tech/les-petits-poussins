@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
+import { weakIdSet } from '../../utils/review'
 import { playWord } from '../../utils/audioManager'
 import ExerciseImageDisplay from './ExerciseImageDisplay'
 import AnswerButtons from './AnswerButtons'
@@ -9,9 +10,11 @@ import ExerciseUnavailable from './ExerciseUnavailable'
 export default function LectureExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState } = useGame()
   const maxDifficulty = gameState.learningProgress?.[level]?.lecture?.unlockedDifficulty ?? 1
+  const weakRef = useRef(new Set())
+  weakRef.current = weakIdSet(gameState.reviewStats)
 
   const exercise = useMemo(() => {
-    const source = pickGradeExercise(level, 'lecture', maxDifficulty)
+    const source = pickGradeExercise(level, 'lecture', maxDifficulty, weakRef.current)
     if (!source) return null
 
     const parts = source.sentence.split('___')

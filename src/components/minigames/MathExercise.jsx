@@ -1,15 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
 import { playWord } from '../../utils/audio'
+import { weakIdSet } from '../../utils/review'
 import AnswerButtons from './AnswerButtons'
 import ExerciseUnavailable from './ExerciseUnavailable'
 
 export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState, showFeedback } = useGame()
   const maxDifficulty = gameState.learningProgress?.[level]?.maths?.unlockedDifficulty ?? 1
+  const weakRef = useRef(new Set())
+  weakRef.current = weakIdSet(gameState.reviewStats)
   const source = useMemo(
-    () => pickGradeExercise(level, 'maths', maxDifficulty),
+    () => pickGradeExercise(level, 'maths', maxDifficulty, weakRef.current),
     [exerciseKey, maxDifficulty, level],
   )
   const [answeredIndex, setAnsweredIndex] = useState(null)

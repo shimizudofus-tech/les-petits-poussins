@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
+import { weakIdSet } from '../../utils/review'
 import { playWord } from '../../utils/audioManager'
 import ExerciseImageDisplay from './ExerciseImageDisplay'
 import ExerciseUnavailable from './ExerciseUnavailable'
@@ -22,8 +23,10 @@ function buildLetterPool(displayWord) {
 export default function DicteeExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState, showFeedback, showToast } = useGame()
   const maxDifficulty = gameState.learningProgress?.[level]?.dictee?.unlockedDifficulty ?? 1
+  const weakRef = useRef(new Set())
+  weakRef.current = weakIdSet(gameState.reviewStats)
   const source = useMemo(
-    () => pickGradeExercise(level, 'dictee', maxDifficulty),
+    () => pickGradeExercise(level, 'dictee', maxDifficulty, weakRef.current),
     [exerciseKey, maxDifficulty, level],
   )
 

@@ -1,6 +1,7 @@
 import MobileScreenLayout from '../layout/MobileScreenLayout'
 import { computeFarmLevel } from '../../data/farmUpgrades'
 import { SCREENS, useGame } from '../../context/GameContext'
+import { topWeakItems } from '../../utils/review'
 import {
   getExerciseContentStats,
   getExpectedAudioFiles,
@@ -83,6 +84,7 @@ function getReturnScreen() {
 export default function ScreenParent() {
   const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId } = useGame()
   const premium = gameState.premium ?? false
+  const weakItems = topWeakItems(gameState.reviewStats)
   const audioSettings = gameState.audioSettings ?? {}
   const achievementSummary = getAchievementSummary(gameState.achievements)
   const stats = getExerciseContentStats()
@@ -171,6 +173,23 @@ export default function ScreenParent() {
         </button>
         <p className="parent-card-hint mt-1">Chaque enfant a sa propre progression, ferme et étoiles.</p>
       </section>
+
+      {weakItems.length > 0 ? (
+        <section className="parent-card">
+          <h2 className="parent-card-title">Points à travailler</h2>
+          <ul className="parent-stat-list">
+            {weakItems.map((it) => (
+              <li key={it.id} className="parent-stat-row">
+                <span>{it.label}</span>
+                <strong>raté {it.count}×</strong>
+              </li>
+            ))}
+          </ul>
+          <p className="parent-card-hint mt-2">
+            Ces exercices sont re-proposés plus souvent à l'enfant (révision adaptative).
+          </p>
+        </section>
+      ) : null}
 
       <section className="parent-card">
         <h2 className="parent-card-title">Version complète</h2>

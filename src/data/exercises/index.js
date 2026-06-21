@@ -146,14 +146,21 @@ export function pickCpExercise(subject, maxDifficulty = 3) {
   return list[Math.floor(Math.random() * list.length)]
 }
 
-// Picker générique par niveau primaire (cp, ce1, …)
-export function pickGradeExercise(level, subject, maxDifficulty = 3) {
+// Picker générique par niveau primaire (cp, ce1, …).
+// weakIds : Set d'exerciceIds souvent ratés → re-proposés plus souvent (révision).
+export function pickGradeExercise(level, subject, maxDifficulty = 3, weakIds = null) {
   const list = getExercises(level, subject).filter(
     (item) => (item.difficulty ?? 1) <= maxDifficulty,
   )
   if (!list.length) {
     console.warn(`[exercises] Aucun exercice ${level}/${subject} (diff ≤ ${maxDifficulty})`)
     return null
+  }
+  if (weakIds && weakIds.size) {
+    const weak = list.filter((item) => weakIds.has(item.id))
+    if (weak.length && Math.random() < 0.5) {
+      return weak[Math.floor(Math.random() * weak.length)]
+    }
   }
   return list[Math.floor(Math.random() * list.length)]
 }
