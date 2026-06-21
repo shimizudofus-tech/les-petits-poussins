@@ -7,6 +7,7 @@ import ScreenMinigameCP from './screens/ScreenMinigameCP'
 import ScreenMinigameCe1 from './screens/ScreenMinigameCe1'
 import ScreenMinigameCe2 from './screens/ScreenMinigameCe2'
 import ScreenMinigameGrade from './screens/ScreenMinigameGrade'
+import ScreenTracing from './screens/ScreenTracing'
 import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
 import ScreenFarmExplore from './screens/ScreenFarmExplore'
@@ -23,7 +24,7 @@ import { setSceneMusic } from '../utils/softAudio'
 // Écrans d'exercices → musique coupée (concentration).
 const EXERCISE_SCREENS = new Set([
   SCREENS.MINIGAME_CP, SCREENS.MINIGAME_CE1, SCREENS.MINIGAME_CE2,
-  SCREENS.MINIGAME_CM1, SCREENS.MINIGAME_CM2, SCREENS.MATERNELLE_SECTION,
+  SCREENS.MINIGAME_CM1, SCREENS.MINIGAME_CM2, SCREENS.MATERNELLE_SECTION, SCREENS.TRACING,
 ])
 function sceneForScreen(screen) {
   if (EXERCISE_SCREENS.has(screen)) return null
@@ -81,6 +82,7 @@ export default function GameContainer() {
                 {screen === SCREENS.MINIGAME_CE2 && <ScreenMinigameCe2 />}
                 {screen === SCREENS.MINIGAME_CM1 && <ScreenMinigameGrade level="cm1" levelLabel="CM1" title="✏️ CM1 — École" />}
                 {screen === SCREENS.MINIGAME_CM2 && <ScreenMinigameGrade level="cm2" levelLabel="CM2" title="✏️ CM2 — École" />}
+                {screen === SCREENS.TRACING && <ScreenTracing />}
                 {screen === SCREENS.UPGRADE && <ScreenUpgrade />}
                 {screen === SCREENS.COLLECTION && <ScreenCollection />}
                 {screen === SCREENS.FARM_EXPLORE && <ScreenFarmExplore />}
