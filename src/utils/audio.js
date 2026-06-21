@@ -264,6 +264,26 @@ export async function playAnimalSound(animalKey, fallbackText) {
   }
 }
 
+// Joue un clip MP3 par chemin relatif (ex. tuto), sinon voix de secours.
+export async function playClip(relPath, fallbackText) {
+  const settings = getActiveAudioSettings()
+  if (!settings.voiceEnabled) {
+    onVoiceDisabled?.()
+    return false
+  }
+  stopAllAudio()
+  const url = `${import.meta.env.BASE_URL}${relPath}`
+  try {
+    if (!(await isMp3Available(url))) throw new Error('no clip')
+    duckMusic()
+    await tryPlayMp3(url, settings.voiceVolume)
+    return true
+  } catch {
+    if (fallbackText) return speakFallback(fallbackText)
+    return false
+  }
+}
+
 if (typeof window !== 'undefined') {
   loadVoices()
 }

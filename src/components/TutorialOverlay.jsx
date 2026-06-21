@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useGame } from '../context/GameContext'
-import { speakFallback, stopAllAudio } from '../utils/audio'
-import { getActiveAudioSettings } from '../utils/audioSettings'
+import { playClip, stopAllAudio } from '../utils/audio'
 
 const STEPS = [
   { icon: '👋', title: 'Bienvenue !', text: "Élève ton animal et apprends en t'amusant." },
@@ -18,7 +17,8 @@ export default function TutorialOverlay() {
   const s = STEPS[step]
 
   const speakStep = () => {
-    if (getActiveAudioSettings().voiceEnabled) speakFallback(`${s.title}. ${s.text}`)
+    // MP3 ElevenLabs par étape, sinon voix navigateur de secours.
+    playClip(`audio/tuto/step${step}.mp3`, `${s.title}. ${s.text}`)
   }
 
   // Lecture orale auto à chaque étape ; on coupe la voix à la fermeture.
