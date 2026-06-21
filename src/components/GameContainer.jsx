@@ -88,6 +88,10 @@ export default function GameContainer() {
     setSceneMusic(sceneForScreen(screen))
   }, [screen])
 
+  // Minuteur parental : blocage quand la limite de temps du jour est atteinte.
+  const limitSec = (gameState.timeLimitMin || 0) * 60
+  const locked = limitSec > 0 && (gameState.screenTimeToday || 0) >= limitSec && screen !== SCREENS.PARENT
+
   return (
     <div className={`game-container phone-frame${gameState.dyslexiaFont ? ' font-dys' : ''}`}>
       <div className="game-shell phone-frame">
@@ -119,6 +123,19 @@ export default function GameContainer() {
           </div>
         </div>
       </div>
+
+      {locked ? (
+        <div className="time-lock-overlay">
+          <div className="time-lock-card">
+            <div className="text-5xl">⏸️</div>
+            <h2 className="text-xl font-black text-[#5d3a00]">C'est l'heure de la pause !</h2>
+            <p className="text-sm font-bold text-[#6d4c41]">Tu as bien joué aujourd'hui. À bientôt 👋</p>
+            <button type="button" className="kid-btn kid-btn--ghost" onClick={() => switchScreen(SCREENS.PARENT)}>
+              Espace parent
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <Toast />
       <Modal />

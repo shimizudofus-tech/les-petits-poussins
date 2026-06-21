@@ -24,6 +24,9 @@ export function createInitialGameState() {
     lastRewardDate: '', // récompense quotidienne (YYYY-MM-DD)
     dayStreak: 0, // jours consécutifs
     dyslexiaFont: false, // police "lecture facile"
+    screenTimeToday: 0, // secondes passées aujourd'hui
+    screenTimeDate: '', // jour du compteur (YYYY-MM-DD)
+    timeLimitMin: 0, // limite de temps/jour en minutes (0 = pas de limite)
 
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',

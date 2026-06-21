@@ -90,7 +90,9 @@ function getReturnScreen() {
 }
 
 export default function ScreenParent() {
-  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId, toggleDyslexiaFont } = useGame()
+  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId, toggleDyslexiaFont, setTimeLimit, resetScreenTime } = useGame()
+  const screenMin = Math.floor((gameState.screenTimeToday || 0) / 60)
+  const timeLimit = gameState.timeLimitMin || 0
   const premium = gameState.premium ?? false
   const weakItems = topWeakItems(gameState.reviewStats)
   const audioSettings = gameState.audioSettings ?? {}
@@ -159,8 +161,37 @@ export default function ScreenParent() {
         ← Retour
       </button>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Profils enfants</h2>
+      <details className="parent-card parent-section" open>
+        <summary className="parent-card-title">⏱️ Temps d'écran</summary>
+        <ul className="parent-stat-list">
+          <li className="parent-stat-row">
+            <span>Aujourd'hui</span>
+            <strong>{screenMin} min</strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Limite / jour</span>
+            <strong>{timeLimit > 0 ? `${timeLimit} min` : 'aucune'}</strong>
+          </li>
+        </ul>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {[0, 15, 30, 45, 60].map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setTimeLimit(m)}
+              className={`parent-toggle-btn ${timeLimit === m ? 'is-on' : ''}`}
+            >
+              {m === 0 ? 'Aucune' : `${m} min`}
+            </button>
+          ))}
+        </div>
+        <button type="button" className="parent-audio-test-btn mt-3 w-full" onClick={resetScreenTime}>
+          Réinitialiser le temps du jour
+        </button>
+      </details>
+
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Profils enfants</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Profil actif</span>
@@ -180,11 +211,11 @@ export default function ScreenParent() {
           👧👦 Gérer / changer d'enfant
         </button>
         <p className="parent-card-hint mt-1">Chaque enfant a sa propre progression, ferme et étoiles.</p>
-      </section>
+      </details>
 
       {weakItems.length > 0 ? (
-        <section className="parent-card">
-          <h2 className="parent-card-title">Points à travailler</h2>
+        <details className="parent-card parent-section">
+          <summary className="parent-card-title">Points à travailler</summary>
           <ul className="parent-stat-list">
             {weakItems.map((it) => (
               <li key={it.id} className="parent-stat-row">
@@ -196,11 +227,11 @@ export default function ScreenParent() {
           <p className="parent-card-hint mt-2">
             Ces exercices sont re-proposés plus souvent à l'enfant (révision adaptative).
           </p>
-        </section>
+        </details>
       ) : null}
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Accessibilité</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Accessibilité</summary>
         <button
           type="button"
           className={`parent-toggle-btn ${gameState.dyslexiaFont ? 'is-on' : ''}`}
@@ -209,10 +240,10 @@ export default function ScreenParent() {
           Police lecture facile : {gameState.dyslexiaFont ? 'ON' : 'OFF'}
         </button>
         <p className="parent-card-hint mt-1">Police plus lisible et espacée (aide à la lecture / dyslexie).</p>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Version complète</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Version complète</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Statut</span>
@@ -236,10 +267,10 @@ export default function ScreenParent() {
           Premium TEST : {premium ? 'ON' : 'OFF'}
         </button>
         <p className="parent-card-hint mt-1">Bouton de test (à retirer en production) pour simuler l'abonnement.</p>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Réglages audio</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Réglages audio</summary>
         <ul className="parent-setting-list">
           <li className="parent-setting-row">
             <span>Musique</span>
@@ -322,10 +353,10 @@ export default function ScreenParent() {
         <p className="parent-card-hint">
           Musique : public/audio/music/background.mp3 — activée par défaut, démarrage au premier tap.
         </p>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Réussites et badges</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Réussites et badges</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Exercices réussis</span>
@@ -428,10 +459,10 @@ export default function ScreenParent() {
         >
           Voir les badges (enfant)
         </button>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Puzzles procéduraux</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Puzzles procéduraux</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Puzzles procéduraux — Petite</span>
@@ -465,10 +496,10 @@ export default function ScreenParent() {
         <p className="parent-card-hint">
           Rotation principale : procédural uniquement. Legacy (Poussin, Fleur, Maison) si catalogue vide.
         </p>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Progression CP</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Progression CP</summary>
         <ul className="parent-stat-list">
           {CP_SUBJECTS.map((key) => {
             const prog = getCpActivityProgress(gameState.learningProgress, key)
@@ -502,10 +533,10 @@ export default function ScreenParent() {
             </ul>
           </>
         ) : null}
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Progression CE1</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Progression CE1</summary>
         <ul className="parent-stat-list">
           {CE1_SUBJECTS.map((key) => {
             const prog = getCe1ActivityProgress(gameState.learningProgress, key)
@@ -539,10 +570,10 @@ export default function ScreenParent() {
             </ul>
           </>
         ) : null}
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Progression CE2</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Progression CE2</summary>
         <ul className="parent-stat-list">
           {CE2_SUBJECTS.map((key) => {
             const prog = getCe2ActivityProgress(gameState.learningProgress, key)
@@ -576,13 +607,13 @@ export default function ScreenParent() {
             </ul>
           </>
         ) : null}
-      </section>
+      </details>
 
       {[['cm1', 'CM1', '9–10 ans'], ['cm2', 'CM2', '10–11 ans']].map(([lvl, label, age]) => {
         const history = (gameState.achievements?.tests?.history ?? []).filter((t) => t.level === lvl).slice(-5).reverse()
         return (
-          <section className="parent-card" key={`${lvl}-prog`}>
-            <h2 className="parent-card-title">Progression {label}</h2>
+          <details className="parent-card parent-section" key={`${lvl}-prog`}>
+            <summary className="parent-card-title">Progression {label}</summary>
             <ul className="parent-stat-list">
               {GRADE_SUBJECTS.map((key) => {
                 const prog = getGradeActivityProgress(gameState.learningProgress, lvl, key)
@@ -611,12 +642,12 @@ export default function ScreenParent() {
                 </ul>
               </>
             ) : null}
-          </section>
+          </details>
         )
       })}
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Contenu pédagogique — CP</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Contenu pédagogique — CP</summary>
         <ul className="parent-stat-list">
           {CP_LABELS.map(({ key, label }) => (
             <li key={key} className="parent-stat-row">
@@ -625,10 +656,10 @@ export default function ScreenParent() {
             </li>
           ))}
         </ul>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Maternelle — Petite Section</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Maternelle — Petite Section</summary>
         <ul className="parent-stat-list">
           {PETITE_LABELS.map(({ key, label }) => (
             <li key={key} className="parent-stat-row">
@@ -653,10 +684,10 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Maternelle — Moyenne Section</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Maternelle — Moyenne Section</summary>
         <ul className="parent-stat-list">
           {MOYENNE_LABELS.map(({ key, label }) => (
             <li key={key} className="parent-stat-row">
@@ -681,10 +712,10 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Maternelle — Grande Section</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Maternelle — Grande Section</summary>
         <ul className="parent-stat-list">
           {GRANDE_LABELS.map(({ key, label }) => (
             <li key={key} className="parent-stat-row">
@@ -709,10 +740,10 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Fichiers audio attendus</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Fichiers audio attendus</summary>
         <p className="parent-card-hint">
           Audio : les MP3 maison peuvent être ajoutés dans public/audio/voix/. En attendant, le jeu
           utilise une voix automatique du navigateur.
@@ -726,16 +757,16 @@ export default function ScreenParent() {
             </li>
           ))}
         </ul>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">imageKey utilisés</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">imageKey utilisés</summary>
         <p className="parent-card-hint">{imageKeys.length} clé(s) d&apos;image</p>
         <p className="parent-tag-list">{imageKeys.join(', ')}</p>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Animaux</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Animaux</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Animaux affamés</span>
@@ -754,10 +785,10 @@ export default function ScreenParent() {
           Les animaux débloqués ont faim toutes les 24 h. Dans « Explorer la ferme », touche un
           animal affamé pour le nourrir. Tout nourrir donne +{3} ⭐ (une fois par cycle).
         </p>
-      </section>
+      </details>
 
-      <section className="parent-card">
-        <h2 className="parent-card-title">Progression locale</h2>
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">Progression locale</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Étoiles</span>
@@ -792,7 +823,7 @@ export default function ScreenParent() {
           </button>
           <p className="parent-coming-soon">À venir</p>
         </div>
-      </section>
+      </details>
     </MobileScreenLayout>
   )
 }

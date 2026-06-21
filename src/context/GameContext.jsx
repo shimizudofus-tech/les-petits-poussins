@@ -591,6 +591,31 @@ export function GameProvider({ children }) {
     setGameState((prev) => ({ ...prev, dyslexiaFont: !prev.dyslexiaFont }))
   }, [])
 
+  const setTimeLimit = useCallback((minutes) => {
+    setGameState((prev) => ({ ...prev, timeLimitMin: Math.max(0, minutes | 0) }))
+  }, [])
+
+  const resetScreenTime = useCallback(() => {
+    setGameState((prev) => ({
+      ...prev,
+      screenTimeToday: 0,
+      screenTimeDate: new Date().toISOString().slice(0, 10),
+    }))
+  }, [])
+
+  // Compteur de temps d'écran (toutes les 5 s, seulement onglet visible).
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
+      setGameState((prev) => {
+        const today = new Date().toISOString().slice(0, 10)
+        if (prev.screenTimeDate !== today) return { ...prev, screenTimeDate: today, screenTimeToday: 5 }
+        return { ...prev, screenTimeToday: (prev.screenTimeToday || 0) + 5 }
+      })
+    }, 5000)
+    return () => clearInterval(id)
+  }, [])
+
   // Récompense quotidienne (streak) : une fois par jour au lancement.
   const dailyRewardRef = useRef(false)
   useEffect(() => {
@@ -732,6 +757,8 @@ export function GameProvider({ children }) {
         addProfile,
         deleteProfile,
         toggleDyslexiaFont,
+        setTimeLimit,
+        resetScreenTime,
         updateAudioSettings,
         setExerciseContext,
         registerExerciseAdvance,
