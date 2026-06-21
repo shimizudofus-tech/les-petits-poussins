@@ -21,6 +21,9 @@ export function createInitialGameState() {
     animalCare: {},
     feedRewardClaimedAt: 0,
     reviewStats: {}, // { [exerciseId]: nb d'erreurs } — révision adaptative
+    lastRewardDate: '', // récompense quotidienne (YYYY-MM-DD)
+    dayStreak: 0, // jours consécutifs
+    dyslexiaFont: false, // police "lecture facile"
 
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',

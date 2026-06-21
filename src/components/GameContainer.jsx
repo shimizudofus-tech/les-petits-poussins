@@ -51,7 +51,7 @@ function ScreenFallback() {
 }
 
 export default function GameContainer() {
-  const { gameState, profiles, switchScreen } = useGame()
+  const { gameState, profiles, switchScreen, showToast } = useGame()
   const screen = resolveScreen(gameState.currentScreen)
   const screenKnown = isValidScreen(gameState.currentScreen)
 
@@ -63,6 +63,22 @@ export default function GameContainer() {
     if ((profiles?.length ?? 0) > 1) switchScreen(SCREENS.PROFILES)
   }, [profiles, switchScreen])
 
+  // Récap fin de session : étoiles gagnées en quittant un exercice.
+  const prevScreenRef = useRef(screen)
+  const entryStarsRef = useRef(gameState.stars)
+  useEffect(() => {
+    const prev = prevScreenRef.current
+    const wasExercise = EXERCISE_SCREENS.has(prev)
+    const nowExercise = EXERCISE_SCREENS.has(screen)
+    if (!wasExercise && nowExercise) entryStarsRef.current = gameState.stars
+    if (wasExercise && !nowExercise) {
+      const gained = gameState.stars - entryStarsRef.current
+      if (gained > 0) showToast(`🎉 Bravo ! +${gained} ⭐ gagnées`, '#7c4dff')
+    }
+    prevScreenRef.current = screen
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen])
+
   const animal = gameState.collection?.[gameState.currentAnimalKey]
   const stage = animal?.currentStage ?? 'egg'
   const farmLevel = computeFarmLevel(gameState.farmUpgrades)
@@ -73,7 +89,7 @@ export default function GameContainer() {
   }, [screen])
 
   return (
-    <div className="game-container phone-frame">
+    <div className={`game-container phone-frame${gameState.dyslexiaFont ? ' font-dys' : ''}`}>
       <div className="game-shell phone-frame">
         <EvolvingBackground stage={stage} farmLevel={farmLevel} />
 

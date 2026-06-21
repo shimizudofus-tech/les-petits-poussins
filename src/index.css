@@ -4248,6 +4248,14 @@ body {
   opacity: 0.62;
   filter: saturate(0.65);
 }
+
+/* Police "lecture facile" (dyslexie) : plus lisible + espacement aéré */
+.font-dys,
+.font-dys * {
+  font-family: 'Comic Sans MS', 'Trebuchet MS', 'Verdana', sans-serif !important;
+  letter-spacing: 0.04em;
+  word-spacing: 0.08em;
+}
 .kid-card__icon {
   flex-shrink: 0;
   width: 58px;

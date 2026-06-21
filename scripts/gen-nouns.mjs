@@ -34,6 +34,15 @@ const NOUNS = {
   jardin: 'Le jardin.', bonbon: 'Le bonbon.', manteau: 'Le manteau.', fromage: 'Le fromage.',
   voiture: 'La voiture.', chateau: 'Le château.', chaussure: 'La chaussure.',
   parapluie: 'Le parapluie.', tonnerre: 'Le tonnerre.',
+  // CM1 / CM2
+  dragon: 'Le dragon.', guitare: 'La guitare.', horloge: "L'horloge.", pyjama: 'Le pyjama.',
+  tresor: 'Le trésor.', fantome: 'Le fantôme.', escargot: "L'escargot.", chocolat: 'Le chocolat.',
+  aquarium: "L'aquarium.", libellule: 'La libellule.', citrouille: 'La citrouille.',
+  balancoire: 'La balançoire.', ascenseur: "L'ascenseur.", chevalier: 'Le chevalier.',
+  tournevis: 'Le tournevis.', perroquet: 'Le perroquet.', squelette: 'Le squelette.',
+  parapente: 'Le parapente.', trampoline: 'Le trampoline.', aspirateur: "L'aspirateur.",
+  gymnastique: 'La gymnastique.', rhinoceros: 'Le rhinocéros.', hippopotame: "L'hippopotame.",
+  helicoptere: "L'hélicoptère.", dictionnaire: 'Le dictionnaire.',
   // sans article (prénoms)
   papa: 'Papa.', maman: 'Maman.',
 }

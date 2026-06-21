@@ -3,6 +3,14 @@ import { computeFarmLevel } from '../../data/farmUpgrades'
 import { SCREENS, useGame } from '../../context/GameContext'
 import { topWeakItems } from '../../utils/review'
 import {
+  GRADE_SUBJECTS,
+  GRADE_SUBJECT_LABELS,
+  MAX_GRADE_DIFFICULTY,
+  CORRECTS_TO_UNLOCK_GRADE,
+  getGradeActivityProgress,
+  formatGradeTestHistoryEntry,
+} from '../../utils/gradeProgress'
+import {
   getExerciseContentStats,
   getExpectedAudioFiles,
   getMaternelleGrandeStats,
@@ -82,7 +90,7 @@ function getReturnScreen() {
 }
 
 export default function ScreenParent() {
-  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId } = useGame()
+  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId, toggleDyslexiaFont } = useGame()
   const premium = gameState.premium ?? false
   const weakItems = topWeakItems(gameState.reviewStats)
   const audioSettings = gameState.audioSettings ?? {}
@@ -190,6 +198,18 @@ export default function ScreenParent() {
           </p>
         </section>
       ) : null}
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Accessibilité</h2>
+        <button
+          type="button"
+          className={`parent-toggle-btn ${gameState.dyslexiaFont ? 'is-on' : ''}`}
+          onClick={toggleDyslexiaFont}
+        >
+          Police lecture facile : {gameState.dyslexiaFont ? 'ON' : 'OFF'}
+        </button>
+        <p className="parent-card-hint mt-1">Police plus lisible et espacée (aide à la lecture / dyslexie).</p>
+      </section>
 
       <section className="parent-card">
         <h2 className="parent-card-title">Version complète</h2>
@@ -557,6 +577,43 @@ export default function ScreenParent() {
           </>
         ) : null}
       </section>
+
+      {[['cm1', 'CM1', '9–10 ans'], ['cm2', 'CM2', '10–11 ans']].map(([lvl, label, age]) => {
+        const history = (gameState.achievements?.tests?.history ?? []).filter((t) => t.level === lvl).slice(-5).reverse()
+        return (
+          <section className="parent-card" key={`${lvl}-prog`}>
+            <h2 className="parent-card-title">Progression {label}</h2>
+            <ul className="parent-stat-list">
+              {GRADE_SUBJECTS.map((key) => {
+                const prog = getGradeActivityProgress(gameState.learningProgress, lvl, key)
+                const atMax = prog.unlockedDifficulty >= MAX_GRADE_DIFFICULTY
+                return (
+                  <li key={`${lvl}-${key}`} className="parent-stat-row">
+                    <span>{GRADE_SUBJECT_LABELS[key] ?? key}</span>
+                    <strong>
+                      Niveau {prog.unlockedDifficulty}/{MAX_GRADE_DIFFICULTY}
+                      {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_GRADE}`}
+                    </strong>
+                  </li>
+                )
+              })}
+            </ul>
+            <p className="parent-card-hint mt-2">{label} ({age}) — maths, lecture et dictée plus avancées.</p>
+            {history.length > 0 ? (
+              <>
+                <h3 className="parent-card-subtitle mt-3">Derniers tests {label}</h3>
+                <ul className="parent-stat-list">
+                  {history.map((test, i) => (
+                    <li key={`${lvl}-test-${test.finishedAt}-${i}`} className="parent-stat-row">
+                      <span>{formatGradeTestHistoryEntry(test, label)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </section>
+        )
+      })}
 
       <section className="parent-card">
         <h2 className="parent-card-title">Contenu pédagogique — CP</h2>

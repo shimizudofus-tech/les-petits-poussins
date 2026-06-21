@@ -34,7 +34,7 @@ function normalizeKey(audioKey) {
 
 // Version audio : à incrémenter à chaque régénération des voix pour casser
 // le cache navigateur (les fichiers gardent le même nom).
-const AUDIO_VERSION = '11'
+const AUDIO_VERSION = '12'
 
 function getMp3Url(audioKey) {
   return `${import.meta.env.BASE_URL}audio/voix/${normalizeKey(audioKey)}.mp3?v=${AUDIO_VERSION}`

@@ -587,6 +587,33 @@ export function GameProvider({ children }) {
     }
   }, [activeProfileId, switchProfile])
 
+  const toggleDyslexiaFont = useCallback(() => {
+    setGameState((prev) => ({ ...prev, dyslexiaFont: !prev.dyslexiaFont }))
+  }, [])
+
+  // Récompense quotidienne (streak) : une fois par jour au lancement.
+  const dailyRewardRef = useRef(false)
+  useEffect(() => {
+    if (dailyRewardRef.current) return
+    dailyRewardRef.current = true
+    const today = new Date().toISOString().slice(0, 10)
+    setGameState((prev) => {
+      if (prev.lastRewardDate === today) return prev
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+      const streak = prev.lastRewardDate === yesterday ? (prev.dayStreak || 0) + 1 : 1
+      const reward = Math.min(2 + streak, 10)
+      queueMicrotask(() =>
+        showModal({
+          icon: '🎁',
+          title: `Cadeau du jour — Jour ${streak} !`,
+          body: `+${reward} ⭐ pour ta visite. Reviens demain pour plus !`,
+          buttons: [{ label: 'Merci !', type: 'primary' }],
+        }),
+      )
+      return { ...prev, stars: (prev.stars || 0) + reward, lastRewardDate: today, dayStreak: streak }
+    })
+  }, [showModal])
+
   const feedAnimal = useCallback(() => {
     setGameState((prev) => {
       if (prev.stars < 1) {
@@ -704,6 +731,7 @@ export function GameProvider({ children }) {
         switchProfile,
         addProfile,
         deleteProfile,
+        toggleDyslexiaFont,
         updateAudioSettings,
         setExerciseContext,
         registerExerciseAdvance,
