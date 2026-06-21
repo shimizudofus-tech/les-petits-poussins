@@ -12,11 +12,9 @@ import {
 } from '../../utils/gradeProgress'
 import {
   getExerciseContentStats,
-  getExpectedAudioFiles,
   getMaternelleGrandeStats,
   getMaternelleMoyenneStats,
   getMaternellePetiteStats,
-  getUsedImageKeys,
   PARENT_RETURN_SESSION_KEY,
   getPuzzleContentStats,
 } from '../../utils/parentContentStats'
@@ -101,8 +99,6 @@ export default function ScreenParent() {
   const petiteStats = getMaternellePetiteStats()
   const moyenneStats = getMaternelleMoyenneStats()
   const grandeStats = getMaternelleGrandeStats()
-  const audioFiles = getExpectedAudioFiles()
-  const imageKeys = getUsedImageKeys()
   const puzzleStats = getPuzzleContentStats()
 
   const currentAnimal = gameState.collection[gameState.currentAnimalKey]
@@ -740,29 +736,6 @@ export default function ScreenParent() {
             )
           })}
         </ul>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Fichiers audio attendus</summary>
-        <p className="parent-card-hint">
-          Audio : les MP3 maison peuvent être ajoutés dans public/audio/voix/. En attendant, le jeu
-          utilise une voix automatique du navigateur.
-        </p>
-        <p className="parent-card-hint">{audioFiles.length} fichier(s) MP3 référencé(s)</p>
-        <ul className="parent-detail-list">
-          {audioFiles.map(({ audioKey, path }) => (
-            <li key={audioKey} className="parent-detail-item">
-              <span className="parent-detail-key">{audioKey}</span>
-              <span className="parent-detail-path">→ {path}</span>
-            </li>
-          ))}
-        </ul>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">imageKey utilisés</summary>
-        <p className="parent-card-hint">{imageKeys.length} clé(s) d&apos;image</p>
-        <p className="parent-tag-list">{imageKeys.join(', ')}</p>
       </details>
 
       <details className="parent-card parent-section">
