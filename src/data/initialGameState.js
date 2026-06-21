@@ -27,6 +27,7 @@ export function createInitialGameState() {
     screenTimeToday: 0, // secondes passées aujourd'hui
     screenTimeDate: '', // jour du compteur (YYYY-MM-DD)
     timeLimitMin: 0, // limite de temps/jour en minutes (0 = pas de limite)
+    tutorialDone: false, // tuto 1ère connexion vu/passé
 
     currentScreen: SCREENS.TAMAGOTCHI,
     maternelleSection: 'petite',

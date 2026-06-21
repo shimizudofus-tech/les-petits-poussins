@@ -603,6 +603,16 @@ export function GameProvider({ children }) {
     }))
   }, [])
 
+  // Fin du tuto 1ère connexion. rewarded=true (terminé) → +15 ⭐.
+  const endTutorial = useCallback((rewarded) => {
+    setGameState((prev) => {
+      if (prev.tutorialDone) return prev
+      const bonus = rewarded ? 15 : 0
+      if (bonus) queueMicrotask(() => showToast('🎉 Tutoriel terminé : +15 ⭐ !', '#7c4dff'))
+      return { ...prev, tutorialDone: true, stars: (prev.stars || 0) + bonus }
+    })
+  }, [showToast])
+
   // Compteur de temps d'écran (toutes les 5 s, seulement onglet visible).
   useEffect(() => {
     const id = setInterval(() => {
@@ -759,6 +769,7 @@ export function GameProvider({ children }) {
         toggleDyslexiaFont,
         setTimeLimit,
         resetScreenTime,
+        endTutorial,
         updateAudioSettings,
         setExerciseContext,
         registerExerciseAdvance,

@@ -4250,6 +4250,57 @@ body {
   filter: saturate(0.65);
 }
 
+/* Tutoriel 1ère connexion */
+.tuto-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(30, 20, 10, 0.66);
+  backdrop-filter: blur(5px);
+}
+.tuto-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  padding: 28px 22px 22px;
+  border-radius: 24px;
+  background: #fffdf6;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+.tuto-skip {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  color: #8d6e3a;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.tuto-dots {
+  display: flex;
+  gap: 6px;
+}
+.tuto-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(120, 100, 60, 0.3);
+}
+.tuto-dot--on {
+  background: #ff9f1c;
+}
+
 /* Minuteur parental : voile de blocage plein écran */
 .time-lock-overlay {
   position: absolute;

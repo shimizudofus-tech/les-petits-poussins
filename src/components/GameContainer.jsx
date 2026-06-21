@@ -9,6 +9,7 @@ import ScreenMinigameCe2 from './screens/ScreenMinigameCe2'
 import ScreenMinigameGrade from './screens/ScreenMinigameGrade'
 import ScreenTracing from './screens/ScreenTracing'
 import ScreenProfiles from './screens/ScreenProfiles'
+import TutorialOverlay from './TutorialOverlay'
 import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
 import ScreenFarmExplore from './screens/ScreenFarmExplore'
@@ -92,6 +93,10 @@ export default function GameContainer() {
   const limitSec = (gameState.timeLimitMin || 0) * 60
   const locked = limitSec > 0 && (gameState.screenTimeToday || 0) >= limitSec && screen !== SCREENS.PARENT
 
+  // Tuto 1ère connexion : sur l'accueil, tant que pas vu/passé.
+  const showTutorial =
+    !gameState.tutorialDone && !locked && screen === SCREENS.TAMAGOTCHI
+
   return (
     <div className={`game-container phone-frame${gameState.dyslexiaFont ? ' font-dys' : ''}`}>
       <div className="game-shell phone-frame">
@@ -123,6 +128,8 @@ export default function GameContainer() {
           </div>
         </div>
       </div>
+
+      {showTutorial ? <TutorialOverlay /> : null}
 
       {locked ? (
         <div className="time-lock-overlay">
