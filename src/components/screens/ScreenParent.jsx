@@ -81,7 +81,7 @@ function getReturnScreen() {
 }
 
 export default function ScreenParent() {
-  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe } = useGame()
+  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId } = useGame()
   const premium = gameState.premium ?? false
   const audioSettings = gameState.audioSettings ?? {}
   const achievementSummary = getAchievementSummary(gameState.achievements)
@@ -148,6 +148,29 @@ export default function ScreenParent() {
       >
         ← Retour
       </button>
+
+      <section className="parent-card">
+        <h2 className="parent-card-title">Profils enfants</h2>
+        <ul className="parent-stat-list">
+          <li className="parent-stat-row">
+            <span>Profil actif</span>
+            <strong>
+              {(() => {
+                const a = (profiles ?? []).find((p) => p.id === activeProfileId)
+                return a ? `${a.avatar} ${a.name}` : '—'
+              })()}
+            </strong>
+          </li>
+          <li className="parent-stat-row">
+            <span>Nombre d'enfants</span>
+            <strong>{profiles?.length ?? 1}</strong>
+          </li>
+        </ul>
+        <button type="button" className="parent-audio-test-btn mt-3 w-full" onClick={() => switchScreen(SCREENS.PROFILES)}>
+          👧👦 Gérer / changer d'enfant
+        </button>
+        <p className="parent-card-hint mt-1">Chaque enfant a sa propre progression, ferme et étoiles.</p>
+      </section>
 
       <section className="parent-card">
         <h2 className="parent-card-title">Version complète</h2>

@@ -16,6 +16,7 @@ import { createDefaultCe1Progress, CE1_SUBJECTS } from './ce1Progress'
 import { createDefaultCe2Progress, CE2_SUBJECTS } from './ce2Progress'
 import { createDefaultGradeProgress, GRADE_SUBJECTS } from './gradeProgress'
 import { mergeAchievements } from './achievements'
+import { ensureProfiles, getActiveStateKey } from './profiles'
 
 export const STORAGE_KEY = 'les-petits-poussins-game-state'
 
@@ -164,7 +165,8 @@ function mergeCurrentSubject(saved, initial) {
 
 export function loadGameState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    ensureProfiles()
+    const raw = localStorage.getItem(getActiveStateKey())
     if (!raw) return createInitialGameState()
 
     const saved = JSON.parse(raw)
@@ -198,7 +200,7 @@ export function loadGameState() {
 
 export function saveGameState(gameState) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState))
+    localStorage.setItem(getActiveStateKey(), JSON.stringify(gameState))
   } catch {
     // Quota dépassé ou localStorage indisponible — on ignore silencieusement
   }
@@ -206,7 +208,7 @@ export function saveGameState(gameState) {
 
 export function clearSavedGameState() {
   try {
-    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(getActiveStateKey())
   } catch {
     // localStorage indisponible — on ignore
   }

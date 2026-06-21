@@ -10,6 +10,7 @@ export const SCREENS = {
   MINIGAME_CM1: 'minigame-cm1',
   MINIGAME_CM2: 'minigame-cm2',
   TRACING: 'tracing',
+  PROFILES: 'profiles',
   UPGRADE: 'upgrade',
   COLLECTION: 'collection',
   FARM_EXPLORE: 'farm-explore',

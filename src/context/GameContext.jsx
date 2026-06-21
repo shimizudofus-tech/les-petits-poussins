@@ -24,6 +24,13 @@ import { setSoftAudioEnabled, setSoftAudioVolume, initClickSfx } from '../utils/
 import { checkEvolution } from '../utils/evolution'
 import { PARENT_RETURN_SESSION_KEY } from '../utils/parentContentStats'
 import { clearSavedGameState, loadGameState, saveGameState } from '../utils/persistence'
+import {
+  ensureProfiles,
+  getProfiles,
+  setActiveProfileId,
+  addProfile as addProfileUtil,
+  deleteProfile as deleteProfileUtil,
+} from '../utils/profiles'
 
 export { SCREENS }
 
@@ -44,6 +51,9 @@ const GameContext = createContext(null)
 
 export function GameProvider({ children }) {
   const [gameState, setGameState] = useState(loadGameState)
+  const initialProfiles = ensureProfiles()
+  const [profiles, setProfiles] = useState(initialProfiles.list)
+  const [activeProfileId, setActiveProfileIdState] = useState(initialProfiles.active)
   const [toast, setToast] = useState(null)
   const [modal, setModal] = useState(null)
   const [feedback, setFeedback] = useState(null)
@@ -538,6 +548,37 @@ export function GameProvider({ children }) {
     queueMicrotask(() => showToast('Progression réinitialisée', '#66bb6a'))
   }, [showToast])
 
+  // ── Multi-profils ──
+  // La sauvegarde du profil courant est déjà persistée à chaque changement
+  // d'état → on bascule juste la clé active puis on recharge l'état du profil.
+  const switchProfile = useCallback((id) => {
+    setActiveProfileId(id)
+    setActiveProfileIdState(id)
+    setProfiles(getProfiles())
+    setModal(null)
+    setFeedback(null)
+    const next = loadGameState()
+    next.currentScreen = SCREENS.TAMAGOTCHI
+    setGameState(next)
+  }, [])
+
+  const addProfile = useCallback((name) => {
+    const profile = addProfileUtil(name)
+    setProfiles(getProfiles())
+    switchProfile(profile.id) // nouveau profil → état neuf
+    return profile
+  }, [switchProfile])
+
+  const deleteProfile = useCallback((id) => {
+    const remaining = deleteProfileUtil(id)
+    setProfiles(remaining)
+    if (id === activeProfileId && remaining[0]) {
+      switchProfile(remaining[0].id)
+    } else {
+      setActiveProfileIdState(getProfiles().find((p) => p.id === activeProfileId) ? activeProfileId : remaining[0]?.id ?? null)
+    }
+  }, [activeProfileId, switchProfile])
+
   const feedAnimal = useCallback(() => {
     setGameState((prev) => {
       if (prev.stars < 1) {
@@ -650,6 +691,11 @@ export function GameProvider({ children }) {
         selectAnimal,
         setAnimalDisplayStage,
         resetProgress,
+        profiles,
+        activeProfileId,
+        switchProfile,
+        addProfile,
+        deleteProfile,
         updateAudioSettings,
         setExerciseContext,
         registerExerciseAdvance,
