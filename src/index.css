@@ -3420,17 +3420,18 @@ body {
 .parent-gear-btn {
   border: none;
   background: transparent;
-  font-size: 0.72rem;
+  font-size: 1.5rem;
   line-height: 1;
-  padding: 2px 3px;
-  opacity: 0.32;
+  padding: 4px 6px;
+  opacity: 0.6;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.1s;
 }
 
 .parent-gear-btn:hover,
 .parent-gear-btn:active {
-  opacity: 0.6;
+  opacity: 0.95;
+  transform: scale(1.1);
 }
 
 .parent-back-btn {
