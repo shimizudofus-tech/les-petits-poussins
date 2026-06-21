@@ -4287,6 +4287,16 @@ body {
   font-weight: 800;
   cursor: pointer;
 }
+.tuto-replay {
+  border: 2px solid #c8902a;
+  background: rgba(255, 210, 59, 0.25);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #5d3a00;
+  cursor: pointer;
+}
 .tuto-dots {
   display: flex;
   gap: 6px;
