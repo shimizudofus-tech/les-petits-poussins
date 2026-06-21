@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import ScreenTitle from './ScreenTitle'
 import { SCREENS, useGame } from '../../context/GameContext'
-import { playWord, playSuccess } from '../../utils/audio'
+import { playWord } from '../../utils/audio'
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const DIGITS = '0123456789'.split('')
@@ -20,11 +20,16 @@ export default function ScreenTracing() {
   const [index, setIndex] = useState(0)
   const [strokes, setStrokes] = useState([]) // [[{x,y}...], ...]
   const [len, setLen] = useState(0)
+  const [bbox, setBbox] = useState({ minX: 1e9, minY: 1e9, maxX: -1e9, maxY: -1e9 })
   const drawingRef = useRef(false)
   const svgRef = useRef(null)
 
   const glyph = GLYPHS[index % GLYPHS.length]
-  const canFinish = len >= REQUIRED_LEN
+  // Valider seulement si le tracé est assez long ET couvre la zone de la lettre
+  // (hauteur + un peu de largeur) → un gribouillis au hasard ne suffit pas.
+  const spanX = bbox.maxX - bbox.minX
+  const spanY = bbox.maxY - bbox.minY
+  const canFinish = len >= REQUIRED_LEN && spanY >= VB * 0.34 && spanX >= VB * 0.1
   const pct = Math.min(100, Math.round((len / REQUIRED_LEN) * 100))
 
   const polylines = useMemo(
@@ -50,6 +55,12 @@ export default function ScreenTracing() {
   const onMove = (e) => {
     if (!drawingRef.current) return
     const p = toPoint(e)
+    setBbox((b) => ({
+      minX: Math.min(b.minX, p.x),
+      minY: Math.min(b.minY, p.y),
+      maxX: Math.max(b.maxX, p.x),
+      maxY: Math.max(b.maxY, p.y),
+    }))
     setStrokes((prev) => {
       if (!prev.length) return prev
       const last = prev[prev.length - 1]
@@ -70,6 +81,7 @@ export default function ScreenTracing() {
   const reset = () => {
     setStrokes([])
     setLen(0)
+    setBbox({ minX: 1e9, minY: 1e9, maxX: -1e9, maxY: -1e9 })
   }
 
   const nextGlyph = () => {
@@ -81,8 +93,7 @@ export default function ScreenTracing() {
 
   const handleValidate = () => {
     if (!canFinish) return
-    showFeedback(true)
-    playSuccess()
+    showFeedback(true) // joue déjà le son de réussite (pas de double son)
     setGameState((s) => ({ ...s, stars: (s.stars ?? 0) + 1 }))
     setTimeout(nextGlyph, 1400)
   }
