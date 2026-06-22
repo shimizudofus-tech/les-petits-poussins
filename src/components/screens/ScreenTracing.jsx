@@ -1,36 +1,73 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import ScreenTitle from './ScreenTitle'
 import { SCREENS, useGame } from '../../context/GameContext'
 import { playWord } from '../../utils/audio'
+import { GLYPH_STROKES } from '../../data/glyphStrokes'
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const DIGITS = '0123456789'.split('')
 const GLYPHS = [...LETTERS, ...DIGITS]
 
 const VB = 300
-const REQUIRED_LEN = 230 // longueur de tracé minimale pour valider
+const TOL = VB * 0.13 // tolérance autour du chemin (px)
+const MIN_COVERAGE = 0.7 // % du chemin à suivre
+const MIN_ACCURACY = 0.5 // % des points tracés proches du chemin
 
 function audioKeyFor(glyph) {
-  if (/[0-9]/.test(glyph)) return glyph
-  return `lettre_${glyph.toLowerCase()}`
+  return /[0-9]/.test(glyph) ? glyph : `lettre_${glyph.toLowerCase()}`
+}
+
+// Normalisé (0..1) → coordonnées SVG.
+function scale(nx, ny) {
+  return { x: VB * (0.2 + nx * 0.6), y: VB * (0.12 + ny * 0.8) }
 }
 
 export default function ScreenTracing() {
-  const { gameState, setGameState, switchScreen, showFeedback } = useGame()
+  const { setGameState, switchScreen, showFeedback } = useGame()
   const [index, setIndex] = useState(0)
-  const [strokes, setStrokes] = useState([]) // [[{x,y}...], ...]
-  const [len, setLen] = useState(0)
-  const [bbox, setBbox] = useState({ minX: 1e9, minY: 1e9, maxX: -1e9, maxY: -1e9 })
+  const [strokes, setStrokes] = useState([])
+  const [progress, setProgress] = useState({ cov: 0, acc: 0 })
   const drawingRef = useRef(false)
   const svgRef = useRef(null)
+  const coveredRef = useRef(new Set())
+  const hitsRef = useRef(0)
+  const totalRef = useRef(0)
 
   const glyph = GLYPHS[index % GLYPHS.length]
-  // Valider seulement si le tracé est assez long ET couvre la zone de la lettre
-  // (hauteur + un peu de largeur) → un gribouillis au hasard ne suffit pas.
-  const spanX = bbox.maxX - bbox.minX
-  const spanY = bbox.maxY - bbox.minY
-  const canFinish = len >= REQUIRED_LEN && spanY >= VB * 0.34 && spanX >= VB * 0.1
-  const pct = Math.min(100, Math.round((len / REQUIRED_LEN) * 100))
+  const isDigit = /[0-9]/.test(glyph)
+
+  // Traits guides (mis à l'échelle) + points cibles densifiés pour le scoring.
+  const { guideScaled, targets } = useMemo(() => {
+    const raw = GLYPH_STROKES[glyph] || []
+    const gs = raw.map((stroke) => stroke.map(([nx, ny]) => scale(nx, ny)))
+    const pts = []
+    for (const stroke of gs) {
+      for (let i = 0; i < stroke.length - 1; i++) {
+        const a = stroke[i]
+        const b = stroke[i + 1]
+        const d = Math.hypot(b.x - a.x, b.y - a.y)
+        const n = Math.max(1, Math.ceil(d / 14))
+        for (let k = 0; k <= n; k++) {
+          const t = k / n
+          pts.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t })
+        }
+      }
+    }
+    return { guideScaled: gs, targets: pts }
+  }, [glyph])
+
+  // Reset à chaque changement de glyphe.
+  useEffect(() => {
+    setStrokes([])
+    setProgress({ cov: 0, acc: 0 })
+    coveredRef.current = new Set()
+    hitsRef.current = 0
+    totalRef.current = 0
+  }, [glyph])
+
+  const cov = progress.cov
+  const canFinish = targets.length > 0 && cov >= MIN_COVERAGE && progress.acc >= MIN_ACCURACY
+  const pct = Math.round(cov * 100)
 
   const polylines = useMemo(
     () => strokes.map((s) => s.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')),
@@ -39,10 +76,24 @@ export default function ScreenTracing() {
 
   const toPoint = (e) => {
     const r = svgRef.current.getBoundingClientRect()
-    return {
-      x: ((e.clientX - r.left) / r.width) * VB,
-      y: ((e.clientY - r.top) / r.height) * VB,
+    return { x: ((e.clientX - r.left) / r.width) * VB, y: ((e.clientY - r.top) / r.height) * VB }
+  }
+
+  const scorePoint = (p) => {
+    let near = false
+    for (let i = 0; i < targets.length; i++) {
+      const t = targets[i]
+      if (Math.hypot(p.x - t.x, p.y - t.y) < TOL) {
+        coveredRef.current.add(i)
+        near = true
+      }
     }
+    totalRef.current += 1
+    if (near) hitsRef.current += 1
+    setProgress({
+      cov: targets.length ? coveredRef.current.size / targets.length : 0,
+      acc: totalRef.current ? hitsRef.current / totalRef.current : 0,
+    })
   }
 
   const onDown = (e) => {
@@ -50,28 +101,22 @@ export default function ScreenTracing() {
     svgRef.current.setPointerCapture?.(e.pointerId)
     const p = toPoint(e)
     setStrokes((prev) => [...prev, [p]])
+    scorePoint(p)
   }
 
   const onMove = (e) => {
     if (!drawingRef.current) return
     const p = toPoint(e)
-    setBbox((b) => ({
-      minX: Math.min(b.minX, p.x),
-      minY: Math.min(b.minY, p.y),
-      maxX: Math.max(b.maxX, p.x),
-      maxY: Math.max(b.maxY, p.y),
-    }))
     setStrokes((prev) => {
       if (!prev.length) return prev
       const last = prev[prev.length - 1]
       const prevPt = last[last.length - 1]
-      const d = Math.hypot(p.x - prevPt.x, p.y - prevPt.y)
-      if (d < 3) return prev // ignore micro-mouvements
-      setLen((L) => L + d)
+      if (Math.hypot(p.x - prevPt.x, p.y - prevPt.y) < 3) return prev
       const next = prev.slice(0, -1)
       next.push([...last, p])
       return next
     })
+    scorePoint(p)
   }
 
   const onUp = () => {
@@ -80,25 +125,22 @@ export default function ScreenTracing() {
 
   const reset = () => {
     setStrokes([])
-    setLen(0)
-    setBbox({ minX: 1e9, minY: 1e9, maxX: -1e9, maxY: -1e9 })
+    setProgress({ cov: 0, acc: 0 })
+    coveredRef.current = new Set()
+    hitsRef.current = 0
+    totalRef.current = 0
   }
 
-  const nextGlyph = () => {
-    reset()
-    setIndex((i) => (i + 1) % GLYPHS.length)
-  }
+  const nextGlyph = () => setIndex((i) => (i + 1) % GLYPHS.length)
 
   const handleListen = () => playWord(audioKeyFor(glyph))
 
   const handleValidate = () => {
     if (!canFinish) return
-    showFeedback(true) // joue déjà le son de réussite (pas de double son)
+    showFeedback(true)
     setGameState((s) => ({ ...s, stars: (s.stars ?? 0) + 1 }))
     setTimeout(nextGlyph, 1400)
   }
-
-  const isDigit = /[0-9]/.test(glyph)
 
   return (
     <main className="screen flex h-full min-h-0 w-full max-w-full flex-col overflow-y-auto overflow-x-hidden pb-4">
@@ -125,21 +167,22 @@ export default function ScreenTracing() {
           role="img"
           aria-label={`Trace ${glyph}`}
         >
-          {/* guide : glyphe en pointillés */}
-          <text
-            x={VB / 2}
-            y={VB * 0.78}
-            textAnchor="middle"
-            fontSize={VB * 0.86}
-            fontWeight="800"
-            fontFamily="system-ui, sans-serif"
-            fill="#f1eaf6"
-            stroke="#c9b6e0"
-            strokeWidth="3"
-            strokeDasharray="5 9"
-          >
-            {glyph}
-          </text>
+          {/* guide : chemin de la lettre en pointillés + point de départ vert */}
+          {guideScaled.map((stroke, i) => (
+            <g key={`g-${i}`}>
+              <polyline
+                points={stroke.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}
+                fill="none"
+                stroke="#c9b6e0"
+                strokeWidth="16"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="2 14"
+                opacity="0.8"
+              />
+              <circle cx={stroke[0].x} cy={stroke[0].y} r="9" fill="#66bb6a" />
+            </g>
+          ))}
           {/* tracé de l'enfant */}
           {polylines.map((pts, i) => (
             <polyline
@@ -156,7 +199,7 @@ export default function ScreenTracing() {
       </div>
 
       {!canFinish && (
-        <p className="zone-coloring-hint">✏️ Trace la {isDigit ? 'chiffre' : 'lettre'} ({pct}%)</p>
+        <p className="zone-coloring-hint">✏️ Suis le chemin ({pct}%)</p>
       )}
 
       <div className="petite-actions mt-2 flex justify-center gap-3">
