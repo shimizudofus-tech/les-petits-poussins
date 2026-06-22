@@ -311,6 +311,13 @@ body {
   box-shadow: 0 5px 0 #1565c0, 0 8px 20px rgba(21, 101, 192, 0.2);
 }
 
+/* Supprime le délai de clic mobile (300ms) + double-tap-zoom qui obligeaient
+   parfois à toucher 2 fois les boutons (ex. « Retour à la ferme »). */
+button,
+[role='button'] {
+  touch-action: manipulation;
+}
+
 .close-btn {
   background: linear-gradient(135deg, #ff8f8f, #ef5350);
   border-radius: 18px;
