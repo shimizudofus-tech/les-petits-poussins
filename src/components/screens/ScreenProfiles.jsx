@@ -76,7 +76,7 @@ export default function ScreenProfiles() {
 
       <button
         type="button"
-        onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
+        onPointerUp={() => switchScreen(SCREENS.TAMAGOTCHI)}
         className="close-btn mx-auto mt-5 w-full max-w-[360px] shrink-0 cursor-pointer rounded-[18px] border-none px-6 py-3 font-sans text-[0.95rem] font-extrabold text-white"
       >
         ← Retour

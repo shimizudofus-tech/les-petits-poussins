@@ -42,7 +42,7 @@ function ScreenFallback() {
       <p className="text-sm font-extrabold text-[#5d3a00]">Écran indisponible</p>
       <button
         type="button"
-        onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
+        onPointerUp={() => switchScreen(SCREENS.TAMAGOTCHI)}
         className="farm-explore-back w-full max-w-[280px]"
       >
         Retour à la ferme
@@ -137,7 +137,7 @@ export default function GameContainer() {
             <div className="text-5xl">⏸️</div>
             <h2 className="text-xl font-black text-[#5d3a00]">C'est l'heure de la pause !</h2>
             <p className="text-sm font-bold text-[#6d4c41]">Tu as bien joué aujourd'hui. À bientôt 👋</p>
-            <button type="button" className="kid-btn kid-btn--ghost" onClick={() => switchScreen(SCREENS.PARENT)}>
+            <button type="button" className="kid-btn kid-btn--ghost" onPointerUp={() => switchScreen(SCREENS.PARENT)}>
               Espace parent
             </button>
           </div>

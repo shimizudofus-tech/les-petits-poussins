@@ -203,7 +203,7 @@ export default function ScreenParent() {
             <strong>{profiles?.length ?? 1}</strong>
           </li>
         </ul>
-        <button type="button" className="parent-audio-test-btn mt-3 w-full" onClick={() => switchScreen(SCREENS.PROFILES)}>
+        <button type="button" className="parent-audio-test-btn mt-3 w-full" onPointerUp={() => switchScreen(SCREENS.PROFILES)}>
           👧👦 Gérer / changer d'enfant
         </button>
         <p className="parent-card-hint mt-1">Chaque enfant a sa propre progression, ferme et étoiles.</p>
@@ -450,7 +450,7 @@ export default function ScreenParent() {
 
         <button
           type="button"
-          onClick={() => switchScreen(SCREENS.BADGES)}
+          onPointerUp={() => switchScreen(SCREENS.BADGES)}
           className="parent-audio-test-btn mt-3 w-full"
         >
           Voir les badges (enfant)

@@ -50,7 +50,7 @@ export default function ScreenBadges() {
 
       <button
         type="button"
-        onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
+        onPointerUp={() => switchScreen(SCREENS.TAMAGOTCHI)}
         className="badges-back-btn mt-4 w-full"
       >
         ← Retour à la ferme

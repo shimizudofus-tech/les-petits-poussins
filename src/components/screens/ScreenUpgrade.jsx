@@ -24,7 +24,7 @@ export default function ScreenUpgrade() {
       <div className="flex items-center gap-2">
         <button
           type="button"
-          onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
+          onPointerUp={() => switchScreen(SCREENS.TAMAGOTCHI)}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/40 text-base font-black text-[#5d3a00] active:scale-90"
           aria-label="Retour"
         >

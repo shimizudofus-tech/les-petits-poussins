@@ -15,7 +15,7 @@ export default function BottomNav() {
         <button
           key={screen}
           type="button"
-          onClick={() => switchScreen(screen)}
+          onPointerUp={() => switchScreen(screen)}
           className={`bottom-nav-btn flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 transition-transform duration-100 ${
             gameState.currentScreen === screen ? 'active' : ''
           }`}
