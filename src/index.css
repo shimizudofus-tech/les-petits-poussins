@@ -319,14 +319,19 @@ button,
 }
 
 .close-btn {
+  /* padding/min-height explicites : les utilitaires Tailwind py-3/px-6 ne
+     s'appliquaient pas → bouton écrasé (~20px) et quasi incliquable. */
+  padding: 12px 24px;
+  min-height: 46px;
   background: linear-gradient(135deg, #ff8f8f, #ef5350);
   border-radius: 18px;
   box-shadow: 0 8px 20px rgba(229, 57, 53, 0.34);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: filter 0.12s ease, box-shadow 0.12s ease;
 }
 
+/* press sans déplacement géométrique (évite que le clic rate la cible) */
 .close-btn:active {
-  transform: translateY(2px) scale(0.985);
+  filter: brightness(0.94);
   box-shadow: 0 3px 9px rgba(229, 57, 53, 0.3);
 }
 
