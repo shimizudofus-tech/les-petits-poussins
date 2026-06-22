@@ -42,7 +42,9 @@ export default function Feedback() {
         className="feedback-content"
         style={{ background: feedback.correct ? '#43a047' : '#e53935' }}
       >
-        {feedback.correct ? '🎉 Bravo ! +2 ⭐' : '😅 Essaie encore !'}
+        {feedback.correct
+          ? `🎉 ${feedback.message ?? 'Bravo !'} +2 ⭐`
+          : `😅 ${feedback.message ?? 'Essaie encore !'}`}
       </div>
     </div>
   )

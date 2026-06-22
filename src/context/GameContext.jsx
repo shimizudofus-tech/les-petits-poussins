@@ -17,7 +17,7 @@ import {
   cancelTestInState,
 } from '../utils/achievements'
 import { setVoiceDisabledHandler } from '../utils/audio'
-import { playError, playSuccess } from '../utils/audioManager'
+import { playWord } from '../utils/audioManager'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
 import { setMusicVolume, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
 import { setSoftAudioEnabled, setSoftAudioVolume, initClickSfx } from '../utils/softAudio'
@@ -34,14 +34,19 @@ import {
 
 export { SCREENS }
 
-// Joyful, kid-friendly encouragements rotated on each answer so the maternelle
-// feedback stays lively instead of repeating the same word every time.
-const KID_CHEERS = ['Bravo !', 'Super !', 'Génial !', 'Bien joué !', 'Hourra !', 'Trop fort !', 'Champion !', 'Magnifique !']
-const KID_RETRIES = ['Encore !', 'Presque !', 'Réessaie !', 'On continue !']
+// Encouragements : le texte affiché ET la voix correspondent (même entrée),
+// donc on n'a que des messages qui ont un MP3 de voix.
+const SUCCESS_CHEERS = [
+  { key: 'bravo', text: 'Bravo !' },
+  { key: 'excellent', text: 'Excellent !' },
+  { key: 'bien_joue', text: 'Bien joué !' },
+  { key: 'continue_comme_ca', text: 'Continue comme ça !' },
+]
+const FAIL_CHEER = { key: 'oups', text: 'Essaie encore !' }
 
 function pickCheer(correct) {
-  const pool = correct ? KID_CHEERS : KID_RETRIES
-  return pool[Math.floor(Math.random() * pool.length)]
+  if (!correct) return FAIL_CHEER
+  return SUCCESS_CHEERS[Math.floor(Math.random() * SUCCESS_CHEERS.length)]
 }
 
 // Coût en étoiles pour prendre un nouvel animal (l'adulte reste jusque-là).
@@ -301,15 +306,12 @@ export function GameProvider({ children }) {
   const showFeedback = useCallback(
     (correct, meta) => {
       if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
-      setFeedback({ correct, message: pickCheer(correct) })
+      const cheer = pickCheer(correct)
+      setFeedback({ correct, message: cheer.text })
       const inTest = Boolean(activeTestRef.current)
-      if (correct) {
-        playSuccess()
-        if (!inTest) {
-          setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
-        }
-      } else {
-        playError()
+      playWord(cheer.key) // voix = texte affiché
+      if (correct && !inTest) {
+        setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
       }
       if (meta?.skipAchievement !== true) {
         recordExerciseResult({
