@@ -1,7 +1,8 @@
 import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
 import { generateAnimalSpriteDataUrl, generateMysterySprite, generateEggSprite } from './puzzleSceneGenerator'
 
-const EGG_ANIMALS = new Set(['chicken', 'duck'])
+// Oiseaux → œuf ; les mammifères arrivent dans un cadeau.
+const EGG_ANIMALS = new Set(['chicken', 'duck', 'turkey'])
 
 const SPRITE_ANIMAL_KEY = {
   pig: 'pig', cow: 'cow', sheep: 'sheep', rabbit: 'rabbit', duck: 'duck',
