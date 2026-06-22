@@ -47,7 +47,7 @@ export default function ScreenMinigameMaternelle() {
 
       <button
         type="button"
-        onPointerUp={() => switchScreen(SCREENS.LEVEL_SELECT)}
+        onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
         className="close-btn mx-4 mb-3 mt-2 shrink-0 cursor-pointer rounded-[18px] border-none px-6 py-3 font-sans text-[0.95rem] font-extrabold text-white transition-transform duration-100 active:translate-y-[3px]"
       >
         ← Retour

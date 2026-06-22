@@ -114,7 +114,7 @@ export default function ScreenMinigameCe2() {
   }
 
   return (
-    <main className="screen screen-minigame-cp flex h-full min-h-0 w-full max-w-full flex-col overflow-y-auto overflow-x-hidden pb-4">
+    <main className="screen screen-minigame-cp flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden overflow-x-hidden pb-4">
       <ScreenTitle>✏️ CE2 — École</ScreenTitle>
 
       <SubjectTabs tabs={CE2_TABS} active={subject} onSelect={handleSubject} />
@@ -136,7 +136,7 @@ export default function ScreenMinigameCe2() {
         </button>
       ) : null}
 
-      <div className="exercise-area flex flex-1 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5">
+      <div className="exercise-area flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5">
         {testResult && !isCe2TestActive ? (
           <CpTestResult
             result={testResult}
@@ -161,7 +161,7 @@ export default function ScreenMinigameCe2() {
 
       <button
         type="button"
-        onPointerUp={() => switchScreen(SCREENS.LEVEL_SELECT)}
+        onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
         className="close-btn mx-4 mb-3 mt-2 shrink-0 cursor-pointer rounded-[18px] border-none px-6 py-3 font-sans text-[0.95rem] font-extrabold text-white transition-transform duration-100 active:translate-y-[3px]"
       >
         ← Retour

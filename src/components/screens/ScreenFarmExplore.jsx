@@ -210,7 +210,7 @@ export default function ScreenFarmExplore() {
         <>
           <button
             type="button"
-            onPointerUp={() => switchScreen(SCREENS.TAMAGOTCHI)}
+            onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
             className="farm-explore-back flex-1"
           >
             ← Retour

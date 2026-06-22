@@ -209,7 +209,7 @@ export default function ScreenCollection() {
 
         <button
           type="button"
-          onPointerUp={() => switchScreen(SCREENS.BADGES)}
+          onClick={() => switchScreen(SCREENS.BADGES)}
           className="collection-badges-btn"
         >
           🏅 Voir mes badges

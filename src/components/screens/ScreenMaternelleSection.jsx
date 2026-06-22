@@ -198,7 +198,7 @@ export default function ScreenMaternelleSection() {
   return (
     <main
       className={`screen screen-maternelle-section flex h-full min-h-0 w-full max-w-full flex-col overflow-x-hidden ${
-        isPuzzle ? 'screen-maternelle-section--puzzle overflow-hidden pb-1' : 'overflow-y-auto pb-4'
+        isPuzzle ? 'screen-maternelle-section--puzzle overflow-hidden pb-1' : 'overflow-hidden pb-4'
       }`}
     >
       <ScreenTitle>
@@ -241,7 +241,7 @@ export default function ScreenMaternelleSection() {
             className={
               isPuzzle
                 ? 'exercise-area exercise-area--puzzle flex min-h-0 flex-1 flex-col overflow-hidden'
-                : 'exercise-area flex flex-1 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5'
+                : 'exercise-area flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5'
             }
           >
             {renderExercise()}
@@ -252,7 +252,7 @@ export default function ScreenMaternelleSection() {
       {!isPuzzle ? (
         <button
           type="button"
-          onPointerUp={() => switchScreen(SCREENS.LEVEL_SELECT)}
+          onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
           className="close-btn mx-4 mb-3 mt-2 shrink-0 cursor-pointer rounded-[18px] border-none px-6 py-3 font-sans text-[0.95rem] font-extrabold text-white transition-transform duration-100 active:translate-y-[3px]"
         >
           ← Retour

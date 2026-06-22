@@ -59,7 +59,7 @@ export default function ScreenLevelSelect() {
     <div className="px-4 pb-3 pt-1">
       <button
         type="button"
-        onPointerUp={() => switchScreen(SCREENS.TAMAGOTCHI)}
+        onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
         className="close-btn mx-auto block w-[90%] max-w-full cursor-pointer rounded-[18px] border-none px-6 py-3 font-sans text-sm font-extrabold text-white transition-transform duration-100 active:translate-y-[3px]"
       >
         🏡 Retour à la ferme
@@ -101,7 +101,7 @@ export default function ScreenLevelSelect() {
         <div
           role="button"
           tabIndex={0}
-          onPointerUp={() => switchScreen(SCREENS.TRACING)}
+          onClick={() => switchScreen(SCREENS.TRACING)}
           onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.TRACING)}
           className="kid-card"
         >

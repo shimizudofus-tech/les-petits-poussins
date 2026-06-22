@@ -93,7 +93,7 @@ export default function ScreenTamagotchi() {
       )}
       <button
         type="button"
-        onPointerUp={() => switchScreen(SCREENS.LEVEL_SELECT)}
+        onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
         className="kid-btn kid-btn--play"
       >
         🎮 Jouer &amp; Apprendre
@@ -101,21 +101,21 @@ export default function ScreenTamagotchi() {
       <div className="flex gap-2">
         <button
           type="button"
-          onPointerUp={() => switchScreen(SCREENS.COLLECTION)}
+          onClick={() => switchScreen(SCREENS.COLLECTION)}
           className="kid-btn kid-btn--ghost flex-1"
         >
           📖 Collection
         </button>
         <button
           type="button"
-          onPointerUp={() => switchScreen(SCREENS.FARM_EXPLORE)}
+          onClick={() => switchScreen(SCREENS.FARM_EXPLORE)}
           className="kid-btn kid-btn--ghost flex-1"
         >
           🌾 Explorer
         </button>
         <button
           type="button"
-          onPointerUp={() => switchScreen(SCREENS.UPGRADE)}
+          onClick={() => switchScreen(SCREENS.UPGRADE)}
           className="kid-btn kid-btn--ghost flex-1"
         >
           ✨ Améliorer
