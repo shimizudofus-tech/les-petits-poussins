@@ -115,6 +115,23 @@ export default function ScreenLevelSelect() {
           </div>
         </div>
 
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => switchScreen(SCREENS.MINIGAMES)}
+          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.MINIGAMES)}
+          className="kid-card"
+        >
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #e8eaf6, #9fa8da)' }}>
+            🎲
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xl font-black text-[#3e2700]">Mini-jeux</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">Mémoire, réflexes…</div>
+            <span className="kid-card__badge">Gagne des étoiles</span>
+          </div>
+        </div>
+
         <p className="screen-section-label mt-1">
           Primaire {!premium && <span className="text-[0.7rem] font-bold text-[#b8860b]">🔒 version complète</span>}
         </p>

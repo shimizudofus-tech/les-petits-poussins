@@ -9,6 +9,7 @@ import ScreenMinigameCe2 from './screens/ScreenMinigameCe2'
 import ScreenMinigameGrade from './screens/ScreenMinigameGrade'
 import ScreenTracing from './screens/ScreenTracing'
 import ScreenProfiles from './screens/ScreenProfiles'
+import ScreenMiniGames from './screens/ScreenMiniGames'
 import TutorialOverlay from './TutorialOverlay'
 import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
@@ -118,6 +119,7 @@ export default function GameContainer() {
                 {screen === SCREENS.MINIGAME_CM2 && <ScreenMinigameGrade level="cm2" levelLabel="CM2" title="✏️ CM2 — École" />}
                 {screen === SCREENS.TRACING && <ScreenTracing />}
                 {screen === SCREENS.PROFILES && <ScreenProfiles />}
+                {screen === SCREENS.MINIGAMES && <ScreenMiniGames />}
                 {screen === SCREENS.UPGRADE && <ScreenUpgrade />}
                 {screen === SCREENS.COLLECTION && <ScreenCollection />}
                 {screen === SCREENS.FARM_EXPLORE && <ScreenFarmExplore />}
