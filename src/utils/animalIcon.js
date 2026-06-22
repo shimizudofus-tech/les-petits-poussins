@@ -1,5 +1,5 @@
 import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
-import { generateAnimalSpriteDataUrl, generateMysterySprite } from './puzzleSceneGenerator'
+import { generateAnimalSpriteDataUrl, generateMysterySprite, generateEggSprite } from './puzzleSceneGenerator'
 
 const EGG_ANIMALS = new Set(['chicken', 'duck'])
 
@@ -22,12 +22,16 @@ export function isImageIcon(icon) {
   )
 }
 
-export function resolveStageIcon(animalKey, stage, fallbackIcon) {
+// openLevel (0..3) : pour l'œuf/cadeau, ouverture progressive selon la croissance.
+export function resolveStageIcon(animalKey, stage, fallbackIcon, openLevel = 0) {
+  if (stage === 'egg') {
+    // Œuf qui se fissure (poule/canard) ou cadeau qui s'ouvre (autres).
+    return EGG_ANIMALS.has(animalKey)
+      ? generateEggSprite(openLevel)
+      : generateMysterySprite(openLevel)
+  }
   if (animalKey === 'chicken' && CHICKEN_STAGE_ICONS[stage]) {
     return CHICKEN_STAGE_ICONS[stage]
-  }
-  if (stage === 'egg') {
-    return EGG_ANIMALS.has(animalKey) ? CHICKEN_STAGE_ICONS.egg : generateMysterySprite()
   }
   const spriteKey = SPRITE_ANIMAL_KEY[animalKey]
   if (spriteKey && (stage === 'baby' || stage === 'adult')) {

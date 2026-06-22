@@ -756,7 +756,13 @@ export function generateAnimalSpriteSvg(animal = 'chick', stage = 'adult') {
 }
 
 // "Surprise" : cadeau enveloppé mignon (remplace l'œuf pour les mammifères).
-function mysterySpriteSvg() {
+// Cadeau qui s'ouvre selon open (0..3) : le couvercle se soulève + lueur.
+function mysterySpriteSvg(open = 0) {
+  const lvl = Math.max(0, Math.min(3, open | 0))
+  const lift = lvl * 11
+  const sparkleExtra = lvl >= 2
+    ? `<g fill="#FFF0A8" opacity="0.95"><path d="M-30,-46 l2,6 6,2 -6,2 -2,6 -2,-6 -6,-2 6,-2 Z"/><path d="M30,-50 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2 Z"/></g>`
+    : ''
   return [
     svgOpen(140, 150),
     `<defs>`,
@@ -765,21 +771,50 @@ function mysterySpriteSvg() {
     `</defs>`,
     `<ellipse cx="70" cy="138" rx="34" ry="7" fill="#000" opacity="0.1"/>`,
     `<g transform="translate(70,90)">`,
-    // sparkles
     `<g fill="#FFE08A"><path d="M-44,-44 l3,7 7,3 -7,3 -3,7 -3,-7 -7,-3 7,-3 Z"/><path d="M42,-20 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2 Z"/><path d="M40,30 l2,4 4,2 -4,2 -2,4 -2,-4 -4,-2 4,-2 Z"/></g>`,
-    // box body
+    sparkleExtra,
+    // intérieur sombre + lueur quand entrouvert
+    lvl > 0 ? `<rect x="-32" y="${-8 - lift}" width="64" height="${lift + 6}" rx="4" fill="#2e2016" opacity="0.55"/>` : '',
+    lvl >= 2 ? `<ellipse cx="0" cy="${-8 - lift}" rx="30" ry="9" fill="#FFE7A8" opacity="0.8"/>` : '',
+    // corps de la boîte
     `<rect x="-36" y="-8" width="72" height="50" rx="8" fill="url(#giftBox)" stroke="#D14E7C" stroke-width="3"/>`,
     `<ellipse cx="-20" cy="6" rx="10" ry="14" fill="#fff" opacity="0.12"/>`,
-    // lid
+    // ruban vertical (boîte)
+    `<rect x="-7" y="-8" width="14" height="50" fill="#FFD23B" stroke="#E9A400" stroke-width="2.5"/>`,
+    lvl < 3 ? `<text x="0" y="22" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="26" font-weight="900" fill="#FFFFFF" opacity="0.9">?</text>` : '',
+    // couvercle (se soulève + s'incline)
+    `<g transform="translate(0,${-lift}) rotate(${lvl * 5})">`,
     `<rect x="-42" y="-22" width="84" height="20" rx="7" fill="url(#giftLid)" stroke="#D14E7C" stroke-width="3"/>`,
-    // vertical ribbon
-    `<rect x="-7" y="-22" width="14" height="64" fill="#FFD23B" stroke="#E9A400" stroke-width="2.5"/>`,
-    // bow
+    `<rect x="-7" y="-22" width="14" height="20" fill="#FFD23B" stroke="#E9A400" stroke-width="2.5"/>`,
     `<path d="M0,-22 Q-26,-46 -30,-26 Q-30,-14 0,-22 Z" fill="#FFD23B" stroke="#E9A400" stroke-width="2.5"/>`,
     `<path d="M0,-22 Q26,-46 30,-26 Q30,-14 0,-22 Z" fill="#FFD23B" stroke="#E9A400" stroke-width="2.5"/>`,
     `<circle cx="0" cy="-24" r="6" fill="#FFE074" stroke="#E9A400" stroke-width="2.5"/>`,
-    // question mark on the box
-    `<text x="0" y="18" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="30" font-weight="900" fill="#FFFFFF" opacity="0.95">?</text>`,
+    `</g>`,
+    `</g>`,
+    svgClose(),
+  ].join('')
+}
+
+// Œuf qui se fissure selon open (0..3).
+function eggSpriteSvg(open = 0) {
+  const lvl = Math.max(0, Math.min(3, open | 0))
+  const cracks = {
+    1: 'M-6,2 L-1,-5 L4,3 L9,-4',
+    2: 'M-30,4 L-20,-6 L-9,4 L2,-7 L13,3 L25,-6 L33,2',
+    3: 'M-32,4 L-21,-7 L-9,5 L2,-8 L14,4 L26,-7 L34,3',
+  }
+  return [
+    svgOpen(140, 150),
+    `<defs><radialGradient id="eggG" cx="0.4" cy="0.3" r="0.95"><stop offset="0" stop-color="#FFF7E2"/><stop offset="1" stop-color="#EFD9A4"/></radialGradient></defs>`,
+    `<ellipse cx="70" cy="140" rx="30" ry="7" fill="#000" opacity="0.1"/>`,
+    `<g transform="translate(70,82)">`,
+    `<ellipse cx="0" cy="6" rx="40" ry="50" fill="url(#eggG)" stroke="#D9C089" stroke-width="3.5"/>`,
+    // taches
+    `<g fill="#E7C887" opacity="0.7"><ellipse cx="-14" cy="22" rx="6" ry="8"/><ellipse cx="16" cy="-6" rx="5" ry="7"/><ellipse cx="8" cy="30" rx="4" ry="5"/></g>`,
+    `<ellipse cx="-13" cy="-12" rx="11" ry="16" fill="#fff" opacity="0.3"/>`,
+    lvl >= 1 ? `<path d="${cracks[lvl]}" fill="none" stroke="#B08A45" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+    // petite ouverture sombre quand presque éclos
+    lvl >= 3 ? `<path d="${cracks[3]}" fill="none" stroke="#3a2a1a" stroke-width="6" opacity="0.35" stroke-linejoin="round"/>` : '',
     `</g>`,
     svgClose(),
   ].join('')
@@ -810,10 +845,20 @@ export function generateAnimalSpriteDataUrl(animal = 'chick', stage = 'adult') {
   return url
 }
 
-export function generateMysterySprite() {
-  const key = 'mystery:stable'
+export function generateMysterySprite(open = 0) {
+  const lvl = Math.max(0, Math.min(3, open | 0))
+  const key = `mystery:${lvl}`
   if (dataUrlCache.has(key)) return dataUrlCache.get(key)
-  const url = toDataUrl(mysterySpriteSvg())
+  const url = toDataUrl(mysterySpriteSvg(lvl))
+  dataUrlCache.set(key, url)
+  return url
+}
+
+export function generateEggSprite(open = 0) {
+  const lvl = Math.max(0, Math.min(3, open | 0))
+  const key = `egg:${lvl}`
+  if (dataUrlCache.has(key)) return dataUrlCache.get(key)
+  const url = toDataUrl(eggSpriteSvg(lvl))
   dataUrlCache.set(key, url)
   return url
 }

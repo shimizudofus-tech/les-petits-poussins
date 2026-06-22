@@ -16,12 +16,6 @@ export default function ScreenTamagotchi() {
   const stageInfo = animal.stages[displayStage]
   const isFullyGrown = animal.currentStage === 'adult' || animal.completed
 
-  const spriteSrc = resolveStageIcon(
-    gameState.currentAnimalKey,
-    displayStage,
-    stageInfo.icon,
-  )
-
   // Tant qu'il est dans l'œuf/la boîte : on ne révèle pas le nom de l'animal.
   const isEgg = animal.currentStage === 'egg'
   const displayName = isEgg ? 'Œuf mystère' : (stageInfo?.name || animal.name)
@@ -40,6 +34,15 @@ export default function ScreenTamagotchi() {
     growthCaption = '🐣 Devient grand'
   }
   const stageRank = animal.currentStage === 'egg' ? 0 : animal.currentStage === 'baby' ? 1 : 2
+
+  // Niveau d'ouverture de l'œuf/cadeau selon la progression (0..3).
+  const openLevel = growthPct >= 85 ? 3 : growthPct >= 55 ? 2 : growthPct >= 25 ? 1 : 0
+  const spriteSrc = resolveStageIcon(
+    gameState.currentAnimalKey,
+    displayStage,
+    stageInfo.icon,
+    openLevel,
+  )
 
   const handleFeed = () => {
     if (gameState.stars >= 1) {
