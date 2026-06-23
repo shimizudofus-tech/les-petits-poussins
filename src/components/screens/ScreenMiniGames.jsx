@@ -153,9 +153,11 @@ export default function ScreenMiniGames() {
     showToast(`${msg} +${stars} ⭐`, '#7c4dff')
   }
 
-  const openGame = (g) => {
+  const openGame = (g) => setGameId(g.id)
+
+  const speakGame = (e, g) => {
+    e.stopPropagation()
     if (getActiveAudioSettings().voiceEnabled) speakFallback(`${g.name}. ${g.action} ${g.benefit}`)
-    setGameId(g.id)
   }
 
   const back = () => {
@@ -180,6 +182,14 @@ export default function ScreenMiniGames() {
                   <div className="text-[0.68rem] font-semibold text-[#8d6e3a]">💡 {g.benefit}</div>
                   <span className="kid-card__badge">{g.badge}</span>
                 </div>
+                <button
+                  type="button"
+                  className="minigame-listen-btn shrink-0"
+                  onClick={(e) => speakGame(e, g)}
+                  aria-label={`Écouter : ${g.name}`}
+                >
+                  🔊
+                </button>
               </div>
             ))}
           </div>

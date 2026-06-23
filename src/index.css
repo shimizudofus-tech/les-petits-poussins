@@ -4312,6 +4312,17 @@ button,
 .whack-hole:active {
   filter: brightness(1.1);
 }
+.minigame-listen-btn {
+  align-self: center;
+  border: 2px solid #c8902a;
+  background: rgba(255, 210, 59, 0.3);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.minigame-listen-btn:active { filter: brightness(0.92); }
+
 .minigame-simon {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
