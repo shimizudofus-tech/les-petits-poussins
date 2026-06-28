@@ -3,7 +3,7 @@ import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
 import { clampFarmUpgrades, DEFAULT_FARM_UPGRADES } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
 import { mergeAudioSettings } from './audioSettings'
-import { resolveScreen } from '../constants/screens'
+import { SCREENS } from '../constants/screens'
 import {
   createDefaultLearningProgress,
   createSectionProgress,
@@ -185,7 +185,8 @@ export function loadGameState() {
       coloring: { ...initial.coloring, ...saved.coloring },
       dictee: { ...initial.dictee, ...saved.dictee },
       farmUpgrades: mergeFarmUpgrades(saved, initial),
-      currentScreen: resolveScreen(saved.currentScreen ?? initial.currentScreen),
+      // Au lancement on revient toujours à l'accueil (pas l'écran quitté).
+      currentScreen: SCREENS.TAMAGOTCHI,
       farmLayout:
         Array.isArray(saved.farmLayout) && saved.farmLayout.length === 9
           ? saved.farmLayout.map((cell) =>
