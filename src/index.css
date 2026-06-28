@@ -470,6 +470,33 @@ button,
   line-height: 1.2;
 }
 
+/* Carte « petit problème » (énoncés) */
+.problem-card {
+  margin: 0 14px;
+  background: linear-gradient(135deg, #fff8e1, #ffe6a7);
+  border: 2px solid #ffca28;
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 16px rgba(20, 30, 60, 0.1);
+}
+.problem-card-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #b8860b;
+  margin-bottom: 8px;
+}
+.problem-card-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #5d3a00;
+  line-height: 1.45;
+  text-align: center;
+}
+
 .answers-grid {
   display: grid;
   gap: 10px;

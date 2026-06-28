@@ -33,11 +33,11 @@ const RANGES = {
 
 // Quelles opérations sont proposées par niveau.
 const OPS = {
-  cp:  ['addition', 'subtraction', 'comparison', 'complement'],
-  ce1: ['addition', 'subtraction', 'multiplication', 'comparison', 'complement'],
-  ce2: ['addition', 'subtraction', 'multiplication', 'division', 'comparison'],
-  cm1: ['addition', 'subtraction', 'multiplication', 'division', 'fraction', 'comparison'],
-  cm2: ['addition', 'subtraction', 'multiplication', 'division', 'percent', 'comparison'],
+  cp:  ['addition', 'subtraction', 'comparison', 'complement', 'problem'],
+  ce1: ['addition', 'subtraction', 'multiplication', 'comparison', 'complement', 'problem'],
+  ce2: ['addition', 'subtraction', 'multiplication', 'division', 'comparison', 'problem'],
+  cm1: ['addition', 'subtraction', 'multiplication', 'division', 'fraction', 'comparison', 'problem'],
+  cm2: ['addition', 'subtraction', 'multiplication', 'division', 'percent', 'comparison', 'problem'],
 }
 
 function genAddition(level, d) {
@@ -105,6 +105,37 @@ function genPercent(level, d) {
   return { type: 'percent', question: `${pct}% de ${base}`, answer, choices: buildChoices(answer, [1, -1, 2, -2, 5, -5, 10, -10]) }
 }
 
+// Petits problèmes (énoncés courts) → réponse numérique.
+const NAMES = ['Léo', 'Mia', 'Tom', 'Lou', 'Noé', 'Jade', 'Sam', 'Emma']
+const OBJECTS = [
+  { s: 'bille', p: 'billes' }, { s: 'pomme', p: 'pommes' }, { s: 'image', p: 'images' },
+  { s: 'bonbon', p: 'bonbons' }, { s: 'crayon', p: 'crayons' }, { s: 'fleur', p: 'fleurs' },
+  { s: 'œuf', p: 'œufs' }, { s: 'autocollant', p: 'autocollants' },
+]
+
+function genProblem(level, d) {
+  const max = RANGES[level].add[d - 1]
+  const name = pick(NAMES)
+  const obj = pick(OBJECTS)
+  const kind = level === 'cp' || level === 'ce1' ? pick(['add', 'sub']) : pick(['add', 'sub', 'mul', 'div'])
+
+  if (kind === 'add') {
+    const a = rnd(2, max), b = rnd(1, max)
+    return { type: 'problem', question: `${name} a ${a} ${obj.p}. ${name} en gagne ${b}. Combien en a ${name} ?`, answer: a + b, choices: buildChoices(a + b, [1, -1, 2, -2, 10, -10]) }
+  }
+  if (kind === 'sub') {
+    const a = rnd(Math.ceil(max / 2), max), b = rnd(1, a)
+    return { type: 'problem', question: `${name} a ${a} ${obj.p}. ${name} en donne ${b}. Combien en reste-t-il ?`, answer: a - b, choices: buildChoices(a - b, [1, -1, 2, -2, 10, -10]) }
+  }
+  if (kind === 'mul') {
+    const a = rnd(2, 6), b = rnd(2, 9)
+    return { type: 'problem', question: `${a} boîtes de ${b} ${obj.p}. Combien de ${obj.p} en tout ?`, answer: a * b, choices: buildChoices(a * b, [a, -a, b, -b, 1, -1, 2]) }
+  }
+  // div
+  const b = rnd(2, 6), q = rnd(2, 8), total = b * q
+  return { type: 'problem', question: `${total} ${obj.p} partagés entre ${b} amis. Combien chacun ?`, answer: q, choices: buildChoices(q, [1, -1, 2, -2, 3]) }
+}
+
 const GENERATORS = {
   addition: genAddition,
   subtraction: genSubtraction,
@@ -114,6 +145,7 @@ const GENERATORS = {
   comparison: genComparison,
   fraction: genFraction,
   percent: genPercent,
+  problem: genProblem,
 }
 
 // Génère un exercice de maths pour un niveau donné (cp..cm2), difficulté 1..3.

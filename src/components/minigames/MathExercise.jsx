@@ -35,6 +35,16 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
       }
     }
 
+    if (source.type === 'problem') {
+      return {
+        type: 'problem',
+        question: source.question,
+        answer: source.answer,
+        options: [...source.choices].sort(() => Math.random() - 0.5),
+        columns: 4,
+      }
+    }
+
     return {
       type: 'numeric',
       question: `${source.question} = ?`,
@@ -92,6 +102,27 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
             )
           })}
         </div>
+      </>
+    )
+  }
+
+  if (exercise.type === 'problem') {
+    return (
+      <>
+        <div className="problem-card">
+          <div className="problem-card-label">
+            🧩 Petit problème
+            <button type="button" className="chalk-listen" onClick={() => playWord('choisis_bonne_reponse')} aria-label="Écouter la consigne">🔊</button>
+          </div>
+          <p className="problem-card-text">{exercise.question}</p>
+        </div>
+        <AnswerButtons
+          options={exercise.options}
+          correct={exercise.answer}
+          onCorrect={onCorrect}
+          columns={exercise.columns}
+          feedbackMeta={{ exerciseId: source?.id }}
+        />
       </>
     )
   }
