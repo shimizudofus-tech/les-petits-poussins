@@ -31,6 +31,7 @@ import { cm1LectureExercises } from './cm1/lecture'
 import { cm2MathExercises } from './cm2/maths'
 import { cm2DicteeExercises } from './cm2/dictee'
 import { cm2LectureExercises } from './cm2/lecture'
+import { generateMathExercise } from './mathGenerator'
 
 const maternellePetiteExercises = {
   coloring: petiteColoringExercises,
@@ -149,6 +150,10 @@ export function pickCpExercise(subject, maxDifficulty = 3) {
 // Picker générique par niveau primaire (cp, ce1, …).
 // weakIds : Set d'exerciceIds souvent ratés → re-proposés plus souvent (révision).
 export function pickGradeExercise(level, subject, maxDifficulty = 3, weakIds = null) {
+  // Maths : génération procédurale (contenu illimité) pour tous les niveaux primaires.
+  if (subject === 'maths') {
+    return generateMathExercise(level, maxDifficulty)
+  }
   const list = getExercises(level, subject).filter(
     (item) => (item.difficulty ?? 1) <= maxDifficulty,
   )
