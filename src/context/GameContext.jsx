@@ -17,7 +17,10 @@ import {
   cancelTestInState,
 } from '../utils/achievements'
 import { setVoiceDisabledHandler } from '../utils/audio'
+import { initBilling, checkPremium, getOfferings, purchasePackage, restorePurchases, isBillingAvailable } from '../utils/billing'
 import { playWord } from '../utils/audioManager'
+import { hapticSuccess, hapticError } from '../utils/haptics'
+import { ensureTodayMissions, MISSION_BY_ID } from '../data/missions'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
 import { setMusicVolume, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
 import { setSoftAudioEnabled, setSoftAudioVolume, initClickSfx } from '../utils/softAudio'
@@ -69,6 +72,7 @@ export function GameProvider({ children }) {
   const exerciseAdvanceRef = useRef(null)
   const achievementNotifyRef = useRef(null)
   const activeTestRef = useRef(null)
+  const recordMissionRef = useRef(null)
 
   function normalizeSubject(level, subject) {
     if (level === 'cp' && subject === 'math') return 'maths'
@@ -87,31 +91,58 @@ export function GameProvider({ children }) {
     setModal({ icon, title, body, buttons })
   }, [])
 
-  // Abonnement (1,99 €/mois). Stub : le paiement réel (Google Play Billing /
-  // RevenueCat via l'app native Capacitor) sera branché ici plus tard.
-  const subscribe = useCallback(() => {
-    showToast('Abonnement bientôt disponible 🙂', '#7c4dff')
-  }, [showToast])
-
-  // Met à jour l'accès premium (utilisé par le paiement et le bouton test parent).
   const setPremium = useCallback((value) => {
     setGameState((prev) => ({ ...prev, premium: Boolean(value) }))
   }, [])
 
-  // Fenêtre "Version complète" déclenchée quand on touche du contenu verrouillé.
+  // Init billing + sync premium status on mount.
+  useEffect(() => {
+    initBilling().then(() => checkPremium().then((ok) => ok && setPremium(true)))
+  }, [setPremium])
+
+  const subscribe = useCallback(async () => {
+    if (!isBillingAvailable()) {
+      // Billing pas encore branché (RevenueCat) → accès direct pour l'instant.
+      setPremium(true)
+      showToast('Version complète débloquée ⭐', '#43a047')
+      return
+    }
+    try {
+      const offering = await getOfferings()
+      if (!offering?.availablePackages?.length) {
+        showToast('Offre indisponible, réessaie plus tard', '#e53935')
+        return
+      }
+      const ok = await purchasePackage(offering.availablePackages[0])
+      if (ok) {
+        setPremium(true)
+        showToast('Merci ! Contenu premium débloqué ⭐', '#43a047')
+      }
+    } catch (err) {
+      if (!err?.userCancelled) showToast('Erreur de paiement', '#e53935')
+    }
+  }, [setPremium, showToast])
+
+  const handleRestore = useCallback(async () => {
+    const ok = await restorePurchases()
+    if (ok) { setPremium(true); showToast('Abonnement restauré ⭐', '#43a047') }
+    else showToast('Aucun abonnement trouvé', '#e53935')
+  }, [setPremium, showToast])
+
   const showPaywall = useCallback(
-    (body = 'Débloque CP, CE1, CE2, tous les animaux et toute la ferme !') => {
+    (body = 'Débloque tous les animaux et toute la ferme !') => {
       showModal({
         icon: '⭐',
-        title: 'Version complète — 1,99 €/mois',
-        body,
+        title: 'Version complète',
+        body: `${body}\n\n🎁 Gratuit pendant les tests !`,
         buttons: [
-          { label: "S'abonner", type: 'primary', onClick: () => subscribe() },
+          { label: 'Débloquer (gratuit pendant les tests)', type: 'primary', onClick: () => subscribe() },
+          { label: 'Restaurer', type: 'secondary', onClick: () => handleRestore() },
           { label: 'Plus tard', type: 'secondary' },
         ],
       })
     },
-    [showModal, subscribe],
+    [showModal, subscribe, handleRestore],
   )
 
   const switchScreen = useCallback((screen) => {
@@ -249,7 +280,18 @@ export function GameProvider({ children }) {
           else reviewStats[exerciseId] = Math.min(5, (reviewStats[exerciseId] ?? 0) + 1)
         }
 
-        return { ...prev, achievements, stars: prev.stars + bonusStars, reviewStats }
+        // Journal d'activité quotidien (rapport parent) — on garde 14 jours max.
+        const today = new Date().toISOString().slice(0, 10)
+        const log = { ...(prev.activityLog ?? {}) }
+        const day = log[today] ?? { success: 0, attempts: 0 }
+        log[today] = {
+          success: day.success + (resolved.success ? 1 : 0),
+          attempts: day.attempts + 1,
+        }
+        const cutoff = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10)
+        for (const d of Object.keys(log)) if (d < cutoff) delete log[d]
+
+        return { ...prev, achievements, stars: prev.stars + bonusStars, reviewStats, activityLog: log }
       })
     },
     [flushAchievementNotifications],
@@ -310,8 +352,11 @@ export function GameProvider({ children }) {
       setFeedback({ correct, message: cheer.text })
       const inTest = Boolean(activeTestRef.current)
       playWord(cheer.key) // voix = texte affiché
+      if (correct) hapticSuccess()
+      else hapticError()
       if (correct && !inTest) {
         setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
+        recordMissionRef.current?.('exercises')
       }
       if (meta?.skipAchievement !== true) {
         recordExerciseResult({
@@ -605,13 +650,12 @@ export function GameProvider({ children }) {
     }))
   }, [])
 
-  // Fin du tuto 1ère connexion. rewarded=true (terminé) → +15 ⭐.
   const endTutorial = useCallback((rewarded) => {
     setGameState((prev) => {
       if (prev.tutorialDone) return prev
-      const bonus = rewarded ? 15 : 0
+      const bonus = rewarded && !prev.tutorialRewarded ? 15 : 0
       if (bonus) queueMicrotask(() => showToast('🎉 Tutoriel terminé : +15 ⭐ !', '#7c4dff'))
-      return { ...prev, tutorialDone: true, stars: (prev.stars || 0) + bonus }
+      return { ...prev, tutorialDone: true, tutorialRewarded: prev.tutorialRewarded || bonus > 0, stars: (prev.stars || 0) + bonus }
     })
   }, [showToast])
 
@@ -651,6 +695,40 @@ export function GameProvider({ children }) {
     })
   }, [showModal])
 
+  // Missions du jour : régénère au lancement si nouveau jour.
+  const missionsInitRef = useRef(false)
+  useEffect(() => {
+    if (missionsInitRef.current) return
+    missionsInitRef.current = true
+    setGameState((prev) => ({ ...prev, ...ensureTodayMissions(prev) }))
+  }, [])
+
+  // Avance une mission ; récompense automatique à la cible atteinte.
+  const recordMission = useCallback((type) => {
+    setGameState((prev) => {
+      const base = ensureTodayMissions(prev)
+      let bonus = 0
+      let doneLabel = null
+      const missions = base.missions.map((m) => {
+        if (m.id !== type) return m
+        const def = MISSION_BY_ID[m.id]
+        if (!def || m.claimed) return m
+        const progress = Math.min(def.target, (m.progress || 0) + 1)
+        if (progress >= def.target && !m.claimed) {
+          bonus += def.reward
+          doneLabel = def.label
+          return { ...m, progress, claimed: true }
+        }
+        return { ...m, progress }
+      })
+      if (doneLabel) {
+        queueMicrotask(() => showToast(`🎯 Mission réussie ! +${bonus} ⭐`, '#7c4dff'))
+      }
+      return { ...prev, ...base, missions, stars: (prev.stars || 0) + bonus }
+    })
+  }, [showToast])
+  recordMissionRef.current = recordMission
+
   const feedAnimal = useCallback(() => {
     setGameState((prev) => {
       if (prev.stars < 1) {
@@ -685,6 +763,7 @@ export function GameProvider({ children }) {
         queueMicrotask(() => showToast(`Bravo ! ${event.name} est adulte ! 🏆`, '#7c4dff'))
       }
 
+      queueMicrotask(() => recordMissionRef.current?.('feed'))
       return {
         ...prev,
         stars: prev.stars - 1,
@@ -693,6 +772,21 @@ export function GameProvider({ children }) {
       }
     })
   }, [showToast])
+
+  // Renommer l'animal courant (personnalisation enfant).
+  const renameAnimal = useCallback((name) => {
+    const clean = String(name || '').trim().slice(0, 14)
+    if (!clean) return
+    setGameState((prev) => {
+      const key = prev.currentAnimalKey
+      const animal = prev.collection[key]
+      if (!animal) return prev
+      return {
+        ...prev,
+        collection: { ...prev.collection, [key]: { ...animal, customName: clean } },
+      }
+    })
+  }, [])
 
   useEffect(() => {
     if (suppressPersistRef.current) return
@@ -754,6 +848,9 @@ export function GameProvider({ children }) {
         showPaywall,
         setPremium,
         subscribe,
+        restorePurchases: handleRestore,
+        recordMission,
+        renameAnimal,
         showFeedback,
         setSubject,
         selectBuilderItem,

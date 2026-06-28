@@ -8,8 +8,8 @@ import { createDefaultAchievements } from '../utils/achievements'
 
 export function createInitialGameState() {
   return {
-    stars: 1000,
-    premium: false,
+    stars: 0,
+    premium: true,
     farmLevel: 1,
     hunger: 50,
     currentAnimalKey: 'chicken',
@@ -23,6 +23,9 @@ export function createInitialGameState() {
     reviewStats: {}, // { [exerciseId]: nb d'erreurs } — révision adaptative
     lastRewardDate: '', // récompense quotidienne (YYYY-MM-DD)
     dayStreak: 0, // jours consécutifs
+    missionsDate: '', // jour des missions actives (YYYY-MM-DD)
+    missions: [], // missions du jour : [{ id, progress, claimed }]
+    activityLog: {}, // { 'YYYY-MM-DD': { success, attempts } } — rapport parent
     dyslexiaFont: false, // police "lecture facile"
     screenTimeToday: 0, // secondes passées aujourd'hui
     screenTimeDate: '', // jour du compteur (YYYY-MM-DD)

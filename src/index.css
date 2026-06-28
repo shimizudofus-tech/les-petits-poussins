@@ -113,6 +113,18 @@ body {
   }
 }
 
+html.native #root {
+  border-radius: 0;
+  box-shadow: none;
+  aspect-ratio: unset;
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+}
+html.native .game-container {
+  border-radius: 0;
+}
+
 .game-container::before {
   content: '🌾 🐣 🌾 🐣 🌾';
   position: absolute;
@@ -591,6 +603,31 @@ button,
   pointer-events: none;
 }
 
+/* Confettis de réussite */
+.confetti-burst {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 401;
+}
+.confetti-piece {
+  position: absolute;
+  top: 40%;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti-fall 1.2s ease-out forwards;
+}
+@keyframes confetti-fall {
+  0% { opacity: 1; transform: translateY(-30px) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(180px) rotate(540deg) scale(0.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti-piece { animation: none; display: none; }
+}
+
 .feedback-content {
   padding: 16px 28px;
   border-radius: 20px;
@@ -862,10 +899,10 @@ button,
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 0;
   width: 100%;
-  padding: 4px 0 10px;
+  padding: 8px 0 10px;
   gap: 10px;
 }
 
@@ -1287,6 +1324,14 @@ button,
   box-shadow: 0 2px 0 #81c784;
   color: #2e7d32;
   opacity: 1;
+}
+.upgrade-row--locked { opacity: 0.6; }
+.upgrade-row-btn--locked {
+  background: #ffe0b2;
+  border-color: #ffb74d;
+  box-shadow: 0 2px 0 #ffb74d;
+  color: #b8860b;
+  font-size: 1rem;
 }
 
 .upgrade-grid {
@@ -4201,6 +4246,98 @@ button,
 }
 .status-chip--stars { color: #d9750a; }
 .status-chip--farm { color: #2e7d32; }
+.status-chip--streak { color: #e64a19; background: rgba(255, 224, 178, 0.85); }
+
+/* Bannière saisonnière */
+.seasonal-banner {
+  margin-top: 6px;
+  border-radius: 12px;
+  padding: 3px 10px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Nom d'animal éditable */
+.animal-name-btn { border: none; background: transparent; cursor: pointer; padding: 0; }
+.animal-name-btn:disabled { cursor: default; }
+.animal-name-edit { font-size: 0.78rem; opacity: 0.55; }
+.animal-name-input {
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #5d3a00;
+  border: 2px solid #ffca28;
+  border-radius: 12px;
+  padding: 4px 10px;
+  background: #fffef8;
+  outline: none;
+}
+
+/* ── Carte Missions du jour ── */
+.missions-card {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1.5px solid rgba(255, 202, 40, 0.55);
+  border-radius: 18px;
+  padding: 0.7rem 0.85rem;
+  box-shadow: 0 6px 18px rgba(20, 30, 60, 0.1);
+}
+.missions-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.missions-card__title { font-weight: 900; font-size: 0.92rem; color: #5d3a00; }
+.missions-card__alldone { font-size: 0.7rem; font-weight: 800; color: #2e7d32; }
+.missions-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.mission-row { display: flex; align-items: center; gap: 0.6rem; }
+.mission-row--done { opacity: 0.65; }
+.mission-row__icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #fff, #ffe082);
+  border-radius: 12px;
+}
+.mission-row__body { flex: 1; min-width: 0; }
+.mission-row__label { font-size: 0.74rem; font-weight: 800; color: #5d3a00; margin-bottom: 3px; }
+.mission-bar { height: 7px; border-radius: 999px; background: rgba(0, 0, 0, 0.1); overflow: hidden; }
+.mission-bar__fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #ffca28, #ff8f00);
+  transition: width 0.4s ease;
+}
+.mission-row__count { font-size: 0.74rem; font-weight: 900; color: #8d6e3a; min-width: 32px; text-align: right; }
+.mission-row__check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #43a047; color: #fff; font-size: 0.8rem;
+}
+
+/* ── Rapport hebdo parent ── */
+.week-stats { display: flex; gap: 8px; margin-bottom: 0.6rem; }
+.week-stat {
+  flex: 1; text-align: center; padding: 0.5rem 0.2rem;
+  background: rgba(255, 202, 40, 0.16); border-radius: 12px;
+}
+.week-stat__num { display: block; font-size: 1.2rem; font-weight: 900; color: #5d3a00; }
+.week-stat__lbl { display: block; font-size: 0.62rem; font-weight: 700; color: #8d6e3a; }
+.week-chart { display: flex; gap: 6px; align-items: flex-end; height: 78px; padding: 0 2px; }
+.week-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; }
+.week-bar-track {
+  flex: 1; width: 100%; display: flex; align-items: flex-end;
+  background: rgba(0, 0, 0, 0.05); border-radius: 6px; overflow: hidden;
+}
+.week-bar-fill {
+  width: 100%; border-radius: 6px;
+  background: linear-gradient(180deg, #ffca28, #ff8f00);
+  transition: height 0.4s ease;
+}
+.week-bar-label { font-size: 0.6rem; font-weight: 700; color: #8d6e3a; }
 
 /* Glass bottom nav */
 .bottom-nav.bottom-nav {
@@ -4368,6 +4505,39 @@ button,
   font-size: 2rem;
   max-width: 320px;
   margin: 8px auto 0;
+}
+
+/* Jeu des ombres */
+.shadow-target {
+  font-size: 5rem;
+  text-align: center;
+  margin: 12px auto 8px;
+  line-height: 1;
+}
+.shadow-options {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+.shadow-opt {
+  width: 84px;
+  height: 84px;
+  border-radius: 18px;
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(20, 30, 60, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.shadow-opt:active { transform: scale(0.92); }
+.shadow-silhouette {
+  font-size: 3rem;
+  line-height: 1;
+  filter: brightness(0) opacity(0.78);
 }
 
 /* Tutoriel 1ère connexion */

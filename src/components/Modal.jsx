@@ -9,7 +9,7 @@ export default function Modal() {
       <div className="modal-box">
         <div className="modal-icon">{modal.icon}</div>
         <div className="modal-title">{modal.title}</div>
-        <div className="modal-body">{modal.body}</div>
+        <div className="modal-body" style={{ whiteSpace: 'pre-line' }}>{modal.body}</div>
         <div className="modal-buttons">
           {modal.buttons.map((btn) => (
             <button

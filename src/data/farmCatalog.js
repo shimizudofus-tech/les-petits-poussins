@@ -88,6 +88,13 @@ for (const cat of FARM_CATEGORIES) {
 
 export const FARM_CATALOG = Object.values(CATALOG_BY_ID)
 
+// Set gratuit (version gratuite) : de quoi démarrer une ferme.
+// 1 maison + arbres/sapins + fleurs + buissons + clôture. Le reste = version complète.
+export const FREE_ITEM_IDS = new Set(['house', 'tree', 'pine', 'flower', 'bush', 'fence'])
+export function isItemFree(id) {
+  return FREE_ITEM_IDS.has(id)
+}
+
 // Nombre total de paliers achetables (somme des max).
 export const TOTAL_FARM_UPGRADES = FARM_CATALOG.reduce((s, it) => s + it.max, 0)
 

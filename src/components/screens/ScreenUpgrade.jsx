@@ -9,11 +9,13 @@ import {
   getItemCost,
   getOwned,
   isItemMaxed,
+  isItemFree,
 } from '../../data/farmCatalog'
 
 export default function ScreenUpgrade() {
-  const { gameState, buyFarmItem, switchScreen } = useGame()
+  const { gameState, buyFarmItem, switchScreen, showPaywall } = useGame()
   const shop = gameState.farmShop ?? {}
+  const premium = gameState.premium ?? false
   const [tab, setTab] = useState(FARM_CATEGORIES[0].key)
 
   const owned = countOwnedUpgrades(shop)
@@ -74,9 +76,10 @@ export default function ScreenUpgrade() {
           const cost = getItemCost(shop, item.id)
           const canAfford = gameState.stars >= cost
           const pct = Math.round((level / item.max) * 100)
+          const locked = !premium && !isItemFree(item.id)
 
           return (
-            <div key={item.id} className={`upgrade-row${maxed ? ' upgrade-row--max' : ''}`}>
+            <div key={item.id} className={`upgrade-row${maxed ? ' upgrade-row--max' : ''}${locked ? ' upgrade-row--locked' : ''}`}>
               <div className="upgrade-row-icon" aria-hidden="true">
                 {hasFarmArt(item.id) ? <FarmArt kind={item.id} width={40} /> : item.icon}
               </div>
@@ -87,14 +90,24 @@ export default function ScreenUpgrade() {
                 </div>
                 <span className="upgrade-row-lvl">{level} / {item.max}</span>
               </div>
-              <button
-                type="button"
-                onClick={() => buyFarmItem(item.id)}
-                disabled={maxed || !canAfford}
-                className={`upgrade-row-btn${maxed ? ' upgrade-row-btn--max' : ''}`}
-              >
-                {maxed ? '✓ Max' : <>{cost} ⭐</>}
-              </button>
+              {locked ? (
+                <button
+                  type="button"
+                  onClick={() => showPaywall('Débloque toute la ferme avec la version complète !')}
+                  className="upgrade-row-btn upgrade-row-btn--locked"
+                >
+                  🔒
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => buyFarmItem(item.id)}
+                  disabled={maxed || !canAfford}
+                  className={`upgrade-row-btn${maxed ? ' upgrade-row-btn--max' : ''}`}
+                >
+                  {maxed ? '✓ Max' : <>{cost} ⭐</>}
+                </button>
+              )}
             </div>
           )
         })}

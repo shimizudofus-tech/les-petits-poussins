@@ -1,145 +1,25 @@
 import MobileScreenLayout from '../layout/MobileScreenLayout'
-import { computeFarmLevel } from '../../data/farmUpgrades'
 import { SCREENS, useGame } from '../../context/GameContext'
-import { topWeakItems } from '../../utils/review'
-import {
-  GRADE_SUBJECTS,
-  GRADE_SUBJECT_LABELS,
-  MAX_GRADE_DIFFICULTY,
-  CORRECTS_TO_UNLOCK_GRADE,
-  getGradeActivityProgress,
-  formatGradeTestHistoryEntry,
-} from '../../utils/gradeProgress'
-import {
-  getExerciseContentStats,
-  getMaternelleGrandeStats,
-  getMaternelleMoyenneStats,
-  getMaternellePetiteStats,
-  PARENT_RETURN_SESSION_KEY,
-  getPuzzleContentStats,
-} from '../../utils/parentContentStats'
-import { CORRECTS_TO_UNLOCK, MAX_MATERNELLE_DIFFICULTY } from '../../utils/maternelleProgress'
-import {
-  CORRECTS_TO_UNLOCK_CP,
-  CP_SUBJECTS,
-  CP_SUBJECT_LABELS,
-  MAX_CP_DIFFICULTY,
-  formatCpTestHistoryEntry,
-  getCpActivityProgress,
-} from '../../utils/cpProgress'
 import { playWord } from '../../utils/audioManager'
-import { isMusicFileAvailable, startBackgroundMusic, stopBackgroundMusic } from '../../utils/music'
-import { BADGE_BY_ID } from '../../data/badges'
+import { startBackgroundMusic, stopBackgroundMusic } from '../../utils/music'
 import { getAchievementSummary } from '../../utils/achievements'
-import { getHungryKeys, nextHungerInHours } from '../../utils/animalCare'
-import {
-  CE1_SUBJECTS,
-  CE1_SUBJECT_LABELS,
-  MAX_CE1_DIFFICULTY,
-  CORRECTS_TO_UNLOCK_CE1,
-  getCe1ActivityProgress,
-  formatCe1TestHistoryEntry,
-} from '../../utils/ce1Progress'
-import {
-  CE2_SUBJECTS,
-  CE2_SUBJECT_LABELS,
-  MAX_CE2_DIFFICULTY,
-  CORRECTS_TO_UNLOCK_CE2,
-  getCe2ActivityProgress,
-  formatCe2TestHistoryEntry,
-} from '../../utils/ce2Progress'
-
-const CP_LABELS = [
-  { key: 'dictee', label: 'Dictée CP' },
-  { key: 'lecture', label: 'Lecture CP' },
-  { key: 'maths', label: 'Maths CP' },
-]
-
-const PETITE_LABELS = [
-  { key: 'coloring', label: 'Colorier' },
-  { key: 'colors', label: 'Couleurs' },
-  { key: 'shapes', label: 'Formes' },
-  { key: 'counting', label: 'Compter' },
-  { key: 'puzzles', label: 'Puzzle' },
-]
-
-const MOYENNE_LABELS = [
-  { key: 'colors', label: 'Couleurs +' },
-  { key: 'shapes', label: 'Formes +' },
-  { key: 'counting', label: 'Compter' },
-  { key: 'puzzles', label: 'Puzzle' },
-  { key: 'patterns', label: 'Suites' },
-]
-
-const GRANDE_LABELS = [
-  { key: 'letters', label: 'Lettres' },
-  { key: 'sounds', label: 'Sons' },
-  { key: 'counting', label: 'Compter 10' },
-  { key: 'puzzles', label: 'Puzzle +' },
-  { key: 'logic', label: 'Logique' },
-]
+import { getWeeklyReport } from '../../utils/weeklyReport'
+import { PARENT_RETURN_SESSION_KEY } from '../../utils/parentContentStats'
 
 function getReturnScreen() {
   const saved = sessionStorage.getItem(PARENT_RETURN_SESSION_KEY)
-  if (saved && Object.values(SCREENS).includes(saved)) {
-    return saved
-  }
+  if (saved && Object.values(SCREENS).includes(saved)) return saved
   return SCREENS.TAMAGOTCHI
 }
 
 export default function ScreenParent() {
-  const { gameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId, toggleDyslexiaFont, setTimeLimit, resetScreenTime } = useGame()
+  const { gameState, setGameState, switchScreen, resetProgress, updateAudioSettings, showToast, setPremium, subscribe, profiles, activeProfileId, toggleDyslexiaFont, setTimeLimit, resetScreenTime } = useGame()
   const screenMin = Math.floor((gameState.screenTimeToday || 0) / 60)
   const timeLimit = gameState.timeLimitMin || 0
   const premium = gameState.premium ?? false
-  const weakItems = topWeakItems(gameState.reviewStats)
   const audioSettings = gameState.audioSettings ?? {}
   const achievementSummary = getAchievementSummary(gameState.achievements)
-  const stats = getExerciseContentStats()
-  const petiteStats = getMaternellePetiteStats()
-  const moyenneStats = getMaternelleMoyenneStats()
-  const grandeStats = getMaternelleGrandeStats()
-  const puzzleStats = getPuzzleContentStats()
-
-  const currentAnimal = gameState.collection[gameState.currentAnimalKey]
-  const unlockedCount = Object.values(gameState.collection).filter((animal) => animal.unlocked).length
-  const totalAnimals = Object.keys(gameState.collection).length
-  const farmLevel = computeFarmLevel(gameState.farmUpgrades)
-  const animalCare = gameState.animalCare ?? {}
-  const hungryAnimals = getHungryKeys(gameState.collection, animalCare).length
-  const nextHungerHours = nextHungerInHours(gameState.collection, animalCare)
-  const lastMissionAt = gameState.feedRewardClaimedAt
-    ? new Date(gameState.feedRewardClaimedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
-    : '—'
-  const petiteProgress = gameState.learningProgress?.maternelle?.petite ?? {}
-  const moyenneProgress = gameState.learningProgress?.maternelle?.moyenne ?? {}
-  const grandeProgress = gameState.learningProgress?.maternelle?.grande ?? {}
-  const cpTestHistory = (gameState.achievements?.tests?.history ?? [])
-    .filter((test) => test.level === 'cp')
-    .slice(-5)
-    .reverse()
-  const ce1TestHistory = (gameState.achievements?.tests?.history ?? [])
-    .filter((test) => test.level === 'ce1')
-    .slice(-5)
-    .reverse()
-  const ce2TestHistory = (gameState.achievements?.tests?.history ?? [])
-    .filter((test) => test.level === 'ce2')
-    .slice(-5)
-    .reverse()
-
-  const handleBack = () => {
-    switchScreen(getReturnScreen())
-  }
-
-  const handleReset = () => {
-    const confirmed = window.confirm(
-      'Réinitialiser toute la progression ?\n\n' +
-        'Cette action efface les étoiles, les animaux, la ferme et toute sauvegarde locale. ' +
-        'Elle est irréversible.',
-    )
-    if (!confirmed) return
-    resetProgress()
-  }
+  const week = getWeeklyReport(gameState.activityLog)
 
   return (
     <MobileScreenLayout
@@ -149,14 +29,11 @@ export default function ScreenParent() {
       scrollable
       mainClassName="px-[var(--screen-padding)] py-3"
     >
-      <button
-        type="button"
-        onClick={handleBack}
-        className="parent-back-btn mb-3 w-full"
-      >
+      <button type="button" onClick={() => switchScreen(getReturnScreen())} className="parent-back-btn mb-3 w-full">
         ← Retour
       </button>
 
+      {/* ── Temps d'écran ── */}
       <details className="parent-card parent-section" open>
         <summary className="parent-card-title">⏱️ Temps d'écran</summary>
         <ul className="parent-stat-list">
@@ -171,12 +48,7 @@ export default function ScreenParent() {
         </ul>
         <div className="mt-2 flex flex-wrap gap-2">
           {[0, 15, 30, 45, 60].map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setTimeLimit(m)}
-              className={`parent-toggle-btn ${timeLimit === m ? 'is-on' : ''}`}
-            >
+            <button key={m} type="button" onClick={() => setTimeLimit(m)} className={`parent-toggle-btn ${timeLimit === m ? 'is-on' : ''}`}>
               {m === 0 ? 'Aucune' : `${m} min`}
             </button>
           ))}
@@ -186,8 +58,9 @@ export default function ScreenParent() {
         </button>
       </details>
 
+      {/* ── Profils ── */}
       <details className="parent-card parent-section">
-        <summary className="parent-card-title">Profils enfants</summary>
+        <summary className="parent-card-title">👧 Profils enfants</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Profil actif</span>
@@ -198,604 +71,120 @@ export default function ScreenParent() {
               })()}
             </strong>
           </li>
-          <li className="parent-stat-row">
-            <span>Nombre d'enfants</span>
-            <strong>{profiles?.length ?? 1}</strong>
-          </li>
         </ul>
         <button type="button" className="parent-audio-test-btn mt-3 w-full" onClick={() => switchScreen(SCREENS.PROFILES)}>
-          👧👦 Gérer / changer d'enfant
-        </button>
-        <p className="parent-card-hint mt-1">Chaque enfant a sa propre progression, ferme et étoiles.</p>
-      </details>
-
-      {weakItems.length > 0 ? (
-        <details className="parent-card parent-section">
-          <summary className="parent-card-title">Points à travailler</summary>
-          <ul className="parent-stat-list">
-            {weakItems.map((it) => (
-              <li key={it.id} className="parent-stat-row">
-                <span>{it.label}</span>
-                <strong>raté {it.count}×</strong>
-              </li>
-            ))}
-          </ul>
-          <p className="parent-card-hint mt-2">
-            Ces exercices sont re-proposés plus souvent à l'enfant (révision adaptative).
-          </p>
-        </details>
-      ) : null}
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Accessibilité</summary>
-        <button
-          type="button"
-          className={`parent-toggle-btn ${gameState.dyslexiaFont ? 'is-on' : ''}`}
-          onClick={toggleDyslexiaFont}
-        >
-          Police lecture facile : {gameState.dyslexiaFont ? 'ON' : 'OFF'}
-        </button>
-        <p className="parent-card-hint mt-1">Police plus lisible et espacée (aide à la lecture / dyslexie).</p>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Version complète</summary>
-        <ul className="parent-stat-list">
-          <li className="parent-stat-row">
-            <span>Statut</span>
-            <strong>{premium ? '✅ Premium (1,99 €/mois)' : 'Gratuite (essai)'}</strong>
-          </li>
-        </ul>
-        <p className="parent-card-hint mt-2">
-          Gratuit : Maternelle, 2 animaux, Explorer en lecture seule. Premium : CP/CE1/CE2,
-          tous les animaux et la ferme complète. (Paiement via Google Play à venir dans l'app Android.)
-        </p>
-        {!premium ? (
-          <button type="button" className="parent-audio-test-btn mt-3 w-full" onClick={() => subscribe()}>
-            S'abonner (1,99 €/mois)
-          </button>
-        ) : null}
-        <button
-          type="button"
-          className={`parent-toggle-btn mt-3 ${premium ? 'is-on' : ''}`}
-          onClick={() => setPremium(!premium)}
-        >
-          Premium TEST : {premium ? 'ON' : 'OFF'}
-        </button>
-        <p className="parent-card-hint mt-1">Bouton de test (à retirer en production) pour simuler l'abonnement.</p>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Réglages audio</summary>
-        <ul className="parent-setting-list">
-          <li className="parent-setting-row">
-            <span>Musique</span>
-            <button
-              type="button"
-              className={`parent-toggle-btn ${audioSettings.musicEnabled ? 'is-on' : ''}`}
-              onClick={() => {
-                const next = !audioSettings.musicEnabled
-                updateAudioSettings({ musicEnabled: next })
-                if (next) startBackgroundMusic()
-              }}
-            >
-              {audioSettings.musicEnabled ? 'ON' : 'OFF'}
-            </button>
-          </li>
-          <li className="parent-setting-row">
-            <span>Volume musique</span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={Math.round((audioSettings.musicVolume ?? 0.25) * 100)}
-              disabled={!audioSettings.musicEnabled}
-              className="parent-range"
-              onChange={(e) =>
-                updateAudioSettings({ musicVolume: Number(e.target.value) / 100 })
-              }
-            />
-          </li>
-          <li className="parent-setting-row">
-            <span>Voix</span>
-            <button
-              type="button"
-              className={`parent-toggle-btn ${audioSettings.voiceEnabled ? 'is-on' : ''}`}
-              onClick={() => updateAudioSettings({ voiceEnabled: !audioSettings.voiceEnabled })}
-            >
-              {audioSettings.voiceEnabled ? 'ON' : 'OFF'}
-            </button>
-          </li>
-          <li className="parent-setting-row">
-            <span>Volume voix</span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={Math.round((audioSettings.voiceVolume ?? 1) * 100)}
-              disabled={!audioSettings.voiceEnabled}
-              className="parent-range"
-              onChange={(e) =>
-                updateAudioSettings({ voiceVolume: Number(e.target.value) / 100 })
-              }
-            />
-          </li>
-        </ul>
-        <div className="parent-audio-test-row">
-          <button type="button" className="parent-audio-test-btn" onClick={() => playWord('rouge')}>
-            Tester voix
-          </button>
-          <button
-            type="button"
-            className="parent-audio-test-btn"
-            onClick={async () => {
-              const available = await isMusicFileAvailable()
-              if (!available) {
-                showToast('Aucune musique trouvée. Ajoute public/audio/music/background.mp3', '#8d6e3a')
-                return
-              }
-              const started = await startBackgroundMusic()
-              if (!started) {
-                showToast('Impossible de lancer la musique', '#ef5350')
-              }
-            }}
-          >
-            Tester musique
-          </button>
-          <button type="button" className="parent-audio-test-btn" onClick={() => stopBackgroundMusic()}>
-            Stop musique
-          </button>
-        </div>
-        <p className="parent-card-hint">
-          Musique : public/audio/music/background.mp3 — activée par défaut, démarrage au premier tap.
-        </p>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Réussites et badges</summary>
-        <ul className="parent-stat-list">
-          <li className="parent-stat-row">
-            <span>Exercices réussis</span>
-            <strong>{achievementSummary.totalSuccess}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Tentatives</span>
-            <strong>{achievementSummary.totalAttempts}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Meilleur streak</span>
-            <strong>{achievementSummary.bestStreak}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Badges débloqués</span>
-            <strong>
-              {achievementSummary.badgesUnlocked} / {achievementSummary.badgesTotal}
-            </strong>
-          </li>
-        </ul>
-
-        {achievementSummary.recentBadges.length > 0 ? (
-          <>
-            <h3 className="parent-card-subtitle mt-3">Derniers badges</h3>
-            <ul className="parent-stat-list">
-              {achievementSummary.recentBadges.map((badgeId) => (
-                <li key={badgeId} className="parent-stat-row">
-                  <span>
-                    {BADGE_BY_ID[badgeId]?.icon} {BADGE_BY_ID[badgeId]?.name ?? badgeId}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-
-        {achievementSummary.testHistory.length > 0 ? (
-          <>
-            <h3 className="parent-card-subtitle mt-3">Derniers tests</h3>
-            <ul className="parent-stat-list">
-              {achievementSummary.testHistory.map((test, index) => (
-                <li key={`${test.finishedAt}-${index}`} className="parent-stat-row">
-                  <span>
-                    {test.section ? `${test.section} · ` : ''}
-                    {test.subject}
-                  </span>
-                  <strong>
-                    {test.score}/{test.length}
-                  </strong>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-
-        <h3 className="parent-card-subtitle mt-3">Petite Section — réussites</h3>
-        <ul className="parent-stat-list">
-          {PETITE_LABELS.map(({ key, label }) => (
-            <li key={`ach-petite-${key}`} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{achievementSummary.successStats.maternelle.petite[key]?.totalSuccess ?? 0}</strong>
-            </li>
-          ))}
-        </ul>
-
-        <h3 className="parent-card-subtitle mt-3">Moyenne Section — réussites</h3>
-        <ul className="parent-stat-list">
-          {MOYENNE_LABELS.map(({ key, label }) => (
-            <li key={`ach-moyenne-${key}`} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{achievementSummary.successStats.maternelle.moyenne[key]?.totalSuccess ?? 0}</strong>
-            </li>
-          ))}
-        </ul>
-
-        <h3 className="parent-card-subtitle mt-3">Grande Section — réussites</h3>
-        <ul className="parent-stat-list">
-          {GRANDE_LABELS.map(({ key, label }) => (
-            <li key={`ach-grande-${key}`} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{achievementSummary.successStats.maternelle.grande[key]?.totalSuccess ?? 0}</strong>
-            </li>
-          ))}
-        </ul>
-
-        <h3 className="parent-card-subtitle mt-3">CP — réussites</h3>
-        <ul className="parent-stat-list">
-          {CP_LABELS.map(({ key, label }) => (
-            <li key={`ach-cp-${key}`} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{achievementSummary.successStats.cp[key]?.totalSuccess ?? 0}</strong>
-            </li>
-          ))}
-        </ul>
-
-        <button
-          type="button"
-          onClick={() => switchScreen(SCREENS.BADGES)}
-          className="parent-audio-test-btn mt-3 w-full"
-        >
-          Voir les badges (enfant)
+          Gérer les profils
         </button>
       </details>
 
+      {/* ── Progression ── */}
       <details className="parent-card parent-section">
-        <summary className="parent-card-title">Puzzles procéduraux</summary>
-        <ul className="parent-stat-list">
-          <li className="parent-stat-row">
-            <span>Puzzles procéduraux — Petite</span>
-            <strong>{puzzleStats.proceduralPetite}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Puzzles procéduraux — Moyenne</span>
-            <strong>{puzzleStats.proceduralMoyenne}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Puzzles procéduraux — Grande</span>
-            <strong>{puzzleStats.proceduralGrande}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Scènes procédurales uniques</span>
-            <strong>{puzzleStats.proceduralScenes}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Puzzles legacy (fallback)</span>
-            <strong>{puzzleStats.legacyAvailable}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Animaux</span>
-            <strong>{puzzleStats.animals}</strong>
-          </li>
-        </ul>
-        <p className="parent-tag-list">{puzzleStats.animalList.join(', ')}</p>
-        <p className="parent-card-hint mt-2">
-          Source : {puzzleStats.source} — Licence : {puzzleStats.license}
-        </p>
-        <p className="parent-card-hint">
-          Rotation principale : procédural uniquement. Legacy (Poussin, Fleur, Maison) si catalogue vide.
-        </p>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Progression CP</summary>
-        <ul className="parent-stat-list">
-          {CP_SUBJECTS.map((key) => {
-            const prog = getCpActivityProgress(gameState.learningProgress, key)
-            const atMax = prog.unlockedDifficulty >= MAX_CP_DIFFICULTY
-            const label = CP_SUBJECT_LABELS[key] ?? key
-            return (
-              <li key={`cp-prog-${key}`} className="parent-stat-row">
-                <span>{label}</span>
-                <strong>
-                  Niveau {prog.unlockedDifficulty}/{MAX_CP_DIFFICULTY}
-                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_CP}`}
-                </strong>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="parent-card-hint mt-2">
-          Prochain palier : {CORRECTS_TO_UNLOCK_CP} bonnes réponses pour monter de niveau (max niveau 3).
-          Les erreurs ne font pas reculer.
-        </p>
-
-        {cpTestHistory.length > 0 ? (
-          <>
-            <h3 className="parent-card-subtitle mt-3">Derniers tests CP</h3>
-            <ul className="parent-stat-list">
-              {cpTestHistory.map((test, index) => (
-                <li key={`cp-test-${test.finishedAt}-${index}`} className="parent-stat-row">
-                  <span>{formatCpTestHistoryEntry(test)}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Progression CE1</summary>
-        <ul className="parent-stat-list">
-          {CE1_SUBJECTS.map((key) => {
-            const prog = getCe1ActivityProgress(gameState.learningProgress, key)
-            const atMax = prog.unlockedDifficulty >= MAX_CE1_DIFFICULTY
-            const label = CE1_SUBJECT_LABELS[key] ?? key
-            return (
-              <li key={`ce1-prog-${key}`} className="parent-stat-row">
-                <span>{label}</span>
-                <strong>
-                  Niveau {prog.unlockedDifficulty}/{MAX_CE1_DIFFICULTY}
-                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_CE1}`}
-                </strong>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="parent-card-hint mt-2">
-          CE1 (7–8 ans) : additions/soustractions à 2 chiffres, tables ×2/×5/×10, lecture et dictée
-          de mots plus longs. {CORRECTS_TO_UNLOCK_CE1} bonnes réponses pour monter de niveau (max 3).
-        </p>
-
-        {ce1TestHistory.length > 0 ? (
-          <>
-            <h3 className="parent-card-subtitle mt-3">Derniers tests CE1</h3>
-            <ul className="parent-stat-list">
-              {ce1TestHistory.map((test, index) => (
-                <li key={`ce1-test-${test.finishedAt}-${index}`} className="parent-stat-row">
-                  <span>{formatCe1TestHistoryEntry(test)}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Progression CE2</summary>
-        <ul className="parent-stat-list">
-          {CE2_SUBJECTS.map((key) => {
-            const prog = getCe2ActivityProgress(gameState.learningProgress, key)
-            const atMax = prog.unlockedDifficulty >= MAX_CE2_DIFFICULTY
-            const label = CE2_SUBJECT_LABELS[key] ?? key
-            return (
-              <li key={`ce2-prog-${key}`} className="parent-stat-row">
-                <span>{label}</span>
-                <strong>
-                  Niveau {prog.unlockedDifficulty}/{MAX_CE2_DIFFICULTY}
-                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_CE2}`}
-                </strong>
-              </li>
-            )
-          })}
-        </ul>
-        <p className="parent-card-hint mt-2">
-          CE2 (8–9 ans) : additions/soustractions à 3 chiffres, tables ×3 à ×9, divisions simples,
-          lecture et dictée de mots difficiles. {CORRECTS_TO_UNLOCK_CE2} bonnes réponses pour monter (max 3).
-        </p>
-
-        {ce2TestHistory.length > 0 ? (
-          <>
-            <h3 className="parent-card-subtitle mt-3">Derniers tests CE2</h3>
-            <ul className="parent-stat-list">
-              {ce2TestHistory.map((test, index) => (
-                <li key={`ce2-test-${test.finishedAt}-${index}`} className="parent-stat-row">
-                  <span>{formatCe2TestHistoryEntry(test)}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-      </details>
-
-      {[['cm1', 'CM1', '9–10 ans'], ['cm2', 'CM2', '10–11 ans']].map(([lvl, label, age]) => {
-        const history = (gameState.achievements?.tests?.history ?? []).filter((t) => t.level === lvl).slice(-5).reverse()
-        return (
-          <details className="parent-card parent-section" key={`${lvl}-prog`}>
-            <summary className="parent-card-title">Progression {label}</summary>
-            <ul className="parent-stat-list">
-              {GRADE_SUBJECTS.map((key) => {
-                const prog = getGradeActivityProgress(gameState.learningProgress, lvl, key)
-                const atMax = prog.unlockedDifficulty >= MAX_GRADE_DIFFICULTY
-                return (
-                  <li key={`${lvl}-${key}`} className="parent-stat-row">
-                    <span>{GRADE_SUBJECT_LABELS[key] ?? key}</span>
-                    <strong>
-                      Niveau {prog.unlockedDifficulty}/{MAX_GRADE_DIFFICULTY}
-                      {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK_GRADE}`}
-                    </strong>
-                  </li>
-                )
-              })}
-            </ul>
-            <p className="parent-card-hint mt-2">{label} ({age}) — maths, lecture et dictée plus avancées.</p>
-            {history.length > 0 ? (
-              <>
-                <h3 className="parent-card-subtitle mt-3">Derniers tests {label}</h3>
-                <ul className="parent-stat-list">
-                  {history.map((test, i) => (
-                    <li key={`${lvl}-test-${test.finishedAt}-${i}`} className="parent-stat-row">
-                      <span>{formatGradeTestHistoryEntry(test, label)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
-          </details>
-        )
-      })}
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Contenu pédagogique — CP</summary>
-        <ul className="parent-stat-list">
-          {CP_LABELS.map(({ key, label }) => (
-            <li key={key} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{stats[key]}</strong>
-            </li>
-          ))}
-        </ul>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Maternelle — Petite Section</summary>
-        <ul className="parent-stat-list">
-          {PETITE_LABELS.map(({ key, label }) => (
-            <li key={key} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{petiteStats[key]}</strong>
-            </li>
-          ))}
-        </ul>
-        <h3 className="parent-card-subtitle mt-3">Progression enfant</h3>
-        <ul className="parent-stat-list">
-          {PETITE_LABELS.map(({ key, label }) => {
-            const prog = petiteProgress[key] ?? { unlockedDifficulty: 1, correctAnswers: 0 }
-            const atMax = prog.unlockedDifficulty >= MAX_MATERNELLE_DIFFICULTY
-            return (
-              <li key={`prog-${key}`} className="parent-stat-row">
-                <span>{label}</span>
-                <strong>
-                  Diff. {prog.unlockedDifficulty}/{MAX_MATERNELLE_DIFFICULTY}
-                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK}`}
-                </strong>
-              </li>
-            )
-          })}
-        </ul>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Maternelle — Moyenne Section</summary>
-        <ul className="parent-stat-list">
-          {MOYENNE_LABELS.map(({ key, label }) => (
-            <li key={key} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{moyenneStats[key]}</strong>
-            </li>
-          ))}
-        </ul>
-        <h3 className="parent-card-subtitle mt-3">Progression enfant</h3>
-        <ul className="parent-stat-list">
-          {MOYENNE_LABELS.map(({ key, label }) => {
-            const prog = moyenneProgress[key] ?? { unlockedDifficulty: 1, correctAnswers: 0 }
-            const atMax = prog.unlockedDifficulty >= MAX_MATERNELLE_DIFFICULTY
-            return (
-              <li key={`moy-prog-${key}`} className="parent-stat-row">
-                <span>{label}</span>
-                <strong>
-                  Diff. {prog.unlockedDifficulty}/{MAX_MATERNELLE_DIFFICULTY}
-                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK}`}
-                </strong>
-              </li>
-            )
-          })}
-        </ul>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Maternelle — Grande Section</summary>
-        <ul className="parent-stat-list">
-          {GRANDE_LABELS.map(({ key, label }) => (
-            <li key={key} className="parent-stat-row">
-              <span>{label}</span>
-              <strong>{grandeStats[key]}</strong>
-            </li>
-          ))}
-        </ul>
-        <h3 className="parent-card-subtitle mt-3">Progression enfant</h3>
-        <ul className="parent-stat-list">
-          {GRANDE_LABELS.map(({ key, label }) => {
-            const prog = grandeProgress[key] ?? { unlockedDifficulty: 1, correctAnswers: 0 }
-            const atMax = prog.unlockedDifficulty >= MAX_MATERNELLE_DIFFICULTY
-            return (
-              <li key={`grd-prog-${key}`} className="parent-stat-row">
-                <span>{label}</span>
-                <strong>
-                  Diff. {prog.unlockedDifficulty}/{MAX_MATERNELLE_DIFFICULTY}
-                  {!atMax && ` · ${prog.correctAnswers}/${CORRECTS_TO_UNLOCK}`}
-                </strong>
-              </li>
-            )
-          })}
-        </ul>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Animaux</summary>
-        <ul className="parent-stat-list">
-          <li className="parent-stat-row">
-            <span>Animaux affamés</span>
-            <strong>{hungryAnimals} / {unlockedCount}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Dernière mission nourrir</span>
-            <strong>{lastMissionAt}</strong>
-          </li>
-          <li className="parent-stat-row">
-            <span>Prochain cycle de faim</span>
-            <strong>{hungryAnimals > 0 ? 'maintenant' : nextHungerHours != null ? `dans ${nextHungerHours} h` : '—'}</strong>
-          </li>
-        </ul>
-        <p className="parent-card-hint mt-2">
-          Les animaux débloqués ont faim toutes les 24 h. Dans « Explorer la ferme », touche un
-          animal affamé pour le nourrir. Tout nourrir donne +{3} ⭐ (une fois par cycle).
-        </p>
-      </details>
-
-      <details className="parent-card parent-section">
-        <summary className="parent-card-title">Progression locale</summary>
+        <summary className="parent-card-title">📊 Progression</summary>
         <ul className="parent-stat-list">
           <li className="parent-stat-row">
             <span>Étoiles</span>
             <strong>{gameState.stars}</strong>
           </li>
           <li className="parent-stat-row">
-            <span>Animal actuel</span>
-            <strong>{currentAnimal?.name ?? gameState.currentAnimalKey}</strong>
+            <span>Exercices réussis</span>
+            <strong>{achievementSummary.totalSuccess}</strong>
           </li>
           <li className="parent-stat-row">
-            <span>Niveau ferme</span>
-            <strong>{farmLevel}</strong>
+            <span>Meilleur streak</span>
+            <strong>{achievementSummary.bestStreak}</strong>
           </li>
           <li className="parent-stat-row">
-            <span>Animaux débloqués</span>
-            <strong>
-              {unlockedCount} / {totalAnimals}
-            </strong>
+            <span>Badges</span>
+            <strong>{achievementSummary.badgesUnlocked} / {achievementSummary.badgesTotal}</strong>
           </li>
         </ul>
+        <button type="button" onClick={() => switchScreen(SCREENS.BADGES)} className="parent-audio-test-btn mt-3 w-full">
+          Voir les badges
+        </button>
+      </details>
 
-        <button type="button" onClick={handleReset} className="parent-danger-btn mt-3 w-full">
+      {/* ── Rapport de la semaine ── */}
+      <details className="parent-card parent-section" open>
+        <summary className="parent-card-title">📅 Cette semaine</summary>
+        <div className="week-stats">
+          <div className="week-stat">
+            <span className="week-stat__num">{week.totalSuccess}</span>
+            <span className="week-stat__lbl">réussis</span>
+          </div>
+          <div className="week-stat">
+            <span className="week-stat__num">{week.accuracy}%</span>
+            <span className="week-stat__lbl">de réussite</span>
+          </div>
+          <div className="week-stat">
+            <span className="week-stat__num">{week.activeDays}/7</span>
+            <span className="week-stat__lbl">jours actifs</span>
+          </div>
+        </div>
+        <div className="week-chart" aria-hidden="true">
+          {week.days.map((d) => {
+            const h = week.maxSuccess > 0 ? Math.round((d.success / week.maxSuccess) * 100) : 0
+            return (
+              <div key={d.key} className="week-bar-col">
+                <div className="week-bar-track">
+                  <div className="week-bar-fill" style={{ height: `${Math.max(h, d.success > 0 ? 12 : 0)}%` }} />
+                </div>
+                <span className="week-bar-label">{d.label}</span>
+              </div>
+            )
+          })}
+        </div>
+        <p className="parent-card-hint mt-1">
+          {week.totalAttempts === 0
+            ? "Pas encore d'activité cette semaine."
+            : `${week.totalSuccess} exercices réussis sur ${week.totalAttempts} essais.`}
+        </p>
+      </details>
+
+      {/* ── Audio ── */}
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">🔊 Son</summary>
+        <ul className="parent-setting-list">
+          <li className="parent-setting-row">
+            <span>Musique</span>
+            <button type="button" className={`parent-toggle-btn ${audioSettings.musicEnabled ? 'is-on' : ''}`}
+              onClick={() => { const next = !audioSettings.musicEnabled; updateAudioSettings({ musicEnabled: next }); if (next) startBackgroundMusic() }}>
+              {audioSettings.musicEnabled ? 'ON' : 'OFF'}
+            </button>
+          </li>
+          <li className="parent-setting-row">
+            <span>Voix</span>
+            <button type="button" className={`parent-toggle-btn ${audioSettings.voiceEnabled ? 'is-on' : ''}`}
+              onClick={() => updateAudioSettings({ voiceEnabled: !audioSettings.voiceEnabled })}>
+              {audioSettings.voiceEnabled ? 'ON' : 'OFF'}
+            </button>
+          </li>
+        </ul>
+      </details>
+
+      {/* ── Réglages ── */}
+      <details className="parent-card parent-section">
+        <summary className="parent-card-title">🔧 Réglages</summary>
+        <ul className="parent-setting-list">
+          <li className="parent-setting-row">
+            <span>Police lecture facile</span>
+            <button type="button" className={`parent-toggle-btn ${gameState.dyslexiaFont ? 'is-on' : ''}`} onClick={toggleDyslexiaFont}>
+              {gameState.dyslexiaFont ? 'ON' : 'OFF'}
+            </button>
+          </li>
+        </ul>
+        <button type="button" className="parent-audio-test-btn mt-3 w-full"
+          onClick={() => { setGameState((prev) => ({ ...prev, stars: (prev.stars || 0) + 1000 })); showToast('+1000 ⭐ ajoutées !', '#43a047') }}>
+          ⭐ +1000 étoiles
+        </button>
+        <button type="button" className="parent-audio-test-btn mt-2 w-full"
+          onClick={() => { setGameState((prev) => ({ ...prev, tutorialDone: false })); switchScreen(SCREENS.TAMAGOTCHI) }}>
+          🎓 Revoir le tutoriel
+        </button>
+        <button type="button" onClick={() => {
+          if (window.confirm('Réinitialiser toute la progression ?\n\nCette action est irréversible.')) resetProgress()
+        }} className="parent-danger-btn mt-3 w-full">
           Réinitialiser la progression
         </button>
-
-        <div className="parent-future-actions mt-3">
-          <button type="button" disabled className="parent-disabled-btn w-full">
-            Exporter la progression
-          </button>
-          <button type="button" disabled className="parent-disabled-btn mt-2 w-full">
-            Importer la progression
-          </button>
-          <p className="parent-coming-soon">À venir</p>
-        </div>
       </details>
     </MobileScreenLayout>
   )

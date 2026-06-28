@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import ScreenTitle from './ScreenTitle'
+import AppIcon from '../AppIcon'
 import { SCREENS, useGame } from '../../context/GameContext'
-import { speakFallback, stopAllAudio } from '../../utils/audio'
-import { getActiveAudioSettings } from '../../utils/audioSettings'
+import { playClip, stopAllAudio } from '../../utils/audio'
 
 const ANIMALS = ['🐤', '🐷', '🐮', '🐑', '🐰', '🦆', '🐴', '🐐', '🐱', '🐶', '🦊', '🐸']
 
@@ -134,16 +134,40 @@ function CountGame({ onScore }) {
   )
 }
 
+/* ════════ Les ombres ════════ */
+function ShadowGame({ onScore }) {
+  const [d, setD] = useState(() => build())
+  function build() {
+    const pick = shuffle(ANIMALS).slice(0, 3)
+    return { target: pick[0], opts: shuffle(pick) }
+  }
+  const click = (e) => { if (e === d.target) { onScore(3, 'Bravo !'); setD(build()) } }
+  return (
+    <>
+      <p className="cp-level-badge mx-3.5 mt-2 shrink-0 text-center">🌑 Trouve la bonne ombre</p>
+      <div className="shadow-target">{d.target}</div>
+      <div className="shadow-options">
+        {d.opts.map((e, i) => (
+          <button key={i} type="button" className="shadow-opt" onClick={() => click(e)}>
+            <span className="shadow-silhouette">{e}</span>
+          </button>
+        ))}
+      </div>
+    </>
+  )
+}
+
 const GAMES = [
-  { id: 'memory', icon: '🧠', tint: '#81d4fa', name: 'Mémoire', action: 'Retrouve les paires identiques.', benefit: 'Travaille la mémoire et la concentration.', badge: '+5 ⭐', Cmp: MemoryGame },
-  { id: 'whack', icon: '🔨', tint: '#ffb74d', name: 'Tape la taupe', action: 'Tape vite les animaux qui sortent.', benefit: "Développe les réflexes et l'attention.", badge: '⭐ score', Cmp: WhackGame },
-  { id: 'simon', icon: '🎵', tint: '#ce93d8', name: 'Simon', action: 'Répète la suite de couleurs.', benefit: 'Renforce la mémoire des séquences.', badge: '+1 ⭐ / niveau', Cmp: SimonGame },
-  { id: 'intrus', icon: '🔍', tint: '#a5d6a7', name: "Trouve l'intrus", action: "Touche l'animal différent.", benefit: "Aiguise l'observation et le tri.", badge: '+3 ⭐', Cmp: IntrusGame },
-  { id: 'count', icon: '🔢', tint: '#90caf9', name: 'Compte vite', action: 'Compte les animaux affichés.', benefit: 'Entraîne le calcul et le dénombrement.', badge: '+1 ⭐ / bonne', Cmp: CountGame },
+  { id: 'memory', icon: 'brain', tint: '#81d4fa', name: 'Mémoire', action: 'Retrouve les paires identiques.', benefit: 'Travaille la mémoire et la concentration.', badge: '+5 ⭐', Cmp: MemoryGame },
+  { id: 'shadow', icon: 'shadow', tint: '#b0bec5', name: 'Les ombres', action: "Associe l'animal à son ombre.", benefit: 'Travaille la reconnaissance des formes.', badge: '+3 ⭐', Cmp: ShadowGame },
+  { id: 'whack', icon: 'hammer', tint: '#ffb74d', name: 'Tape la taupe', action: 'Tape vite les animaux qui sortent.', benefit: "Développe les réflexes et l'attention.", badge: '⭐ score', Cmp: WhackGame },
+  { id: 'simon', icon: 'music', tint: '#ce93d8', name: 'Simon', action: 'Répète la suite de couleurs.', benefit: 'Renforce la mémoire des séquences.', badge: '+1 ⭐ / niveau', Cmp: SimonGame },
+  { id: 'intrus', icon: 'search', tint: '#a5d6a7', name: "Trouve l'intrus", action: "Touche l'animal différent.", benefit: "Aiguise l'observation et le tri.", badge: '+3 ⭐', Cmp: IntrusGame },
+  { id: 'count', icon: 'numbers', tint: '#90caf9', name: 'Compte vite', action: 'Compte les animaux affichés.', benefit: 'Entraîne le calcul et le dénombrement.', badge: '+1 ⭐ / bonne', Cmp: CountGame },
 ]
 
 export default function ScreenMiniGames() {
-  const { setGameState, switchScreen, showFeedback, showToast } = useGame()
+  const { setGameState, switchScreen, showFeedback, showToast, recordMission } = useGame()
   const [gameId, setGameId] = useState(null)
   const game = GAMES.find((g) => g.id === gameId)
 
@@ -153,11 +177,12 @@ export default function ScreenMiniGames() {
     showToast(`${msg} +${stars} ⭐`, '#7c4dff')
   }
 
-  const openGame = (g) => setGameId(g.id)
+  const openGame = (g) => { setGameId(g.id); recordMission('minigame') }
 
   const speakGame = (e, g) => {
     e.stopPropagation()
-    if (getActiveAudioSettings().voiceEnabled) speakFallback(`${g.name}. ${g.action} ${g.benefit}`)
+    // voix ElevenLabs (Perle), repli voix navigateur si indispo
+    playClip(`audio/minigames/${g.id}.mp3`, `${g.name}. ${g.action} ${g.benefit}`)
   }
 
   const back = () => {
@@ -175,7 +200,7 @@ export default function ScreenMiniGames() {
           <div className="mx-auto flex w-full max-w-[360px] flex-col gap-2.5">
             {GAMES.map((g) => (
               <div key={g.id} role="button" tabIndex={0} className="kid-card" onClick={() => openGame(g)} onKeyDown={(e) => e.key === 'Enter' && openGame(g)}>
-                <div className="kid-card__icon" style={{ background: `linear-gradient(135deg,#ffffff,${g.tint})` }}>{g.icon}</div>
+                <div className="kid-card__icon" style={{ background: `linear-gradient(135deg,#ffffff,${g.tint})` }}><AppIcon name={g.icon} size={38} /></div>
                 <div className="min-w-0 flex-1">
                   <div className="text-lg font-black text-[#3e2700]">{g.name}</div>
                   <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{g.action}</div>

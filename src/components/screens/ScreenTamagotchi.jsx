@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import AnimalIcon from '../AnimalIcon'
+import AppIcon from '../AppIcon'
+import { getSeasonalEvent } from '../../data/seasonalEvents'
 import MobileScreenLayout from '../layout/MobileScreenLayout'
 import ParentSettingsButton from '../ParentSettingsButton'
 import { SCREENS, NEW_ANIMAL_COST, useGame } from '../../context/GameContext'
@@ -8,8 +10,10 @@ import { playAnimalSound } from '../../utils/audio'
 import { getAnimalSound } from '../../data/animalSounds'
 
 export default function ScreenTamagotchi() {
-  const { gameState, feedAnimal, adoptNewAnimal, switchScreen } = useGame()
+  const { gameState, feedAnimal, adoptNewAnimal, switchScreen, renameAnimal } = useGame()
   const [isFeeding, setIsFeeding] = useState(false)
+  const [editingName, setEditingName] = useState(false)
+  const seasonal = getSeasonalEvent()
 
   const animal = gameState.collection[gameState.currentAnimalKey]
   const displayStage = animal.displayStage ?? animal.currentStage
@@ -18,7 +22,7 @@ export default function ScreenTamagotchi() {
 
   // Tant qu'il est dans l'œuf/la boîte : on ne révèle pas le nom de l'animal.
   const isEgg = animal.currentStage === 'egg'
-  const displayName = isEgg ? 'Œuf mystère' : (stageInfo?.name || animal.name)
+  const displayName = isEgg ? 'Œuf mystère' : (animal.customName || stageInfo?.name || animal.name)
 
   // Progression de croissance (œuf → bébé → adulte) à partir de l'âge réel.
   const eggMax = animal.stages.egg?.nextAge ?? 1
@@ -67,12 +71,26 @@ export default function ScreenTamagotchi() {
   const header = (
     <header className="screen-header shrink-0 border-b-[3px] border-[#c8902a] bg-gradient-to-br from-[#ffe082] to-[#ffcc02] px-[var(--screen-padding)] py-1.5">
       <div className="flex items-center justify-between gap-2">
-        <div className="status-chip status-chip--stars shrink-0">⭐ {gameState.stars}</div>
-        <h1 className="min-w-0 flex-1 truncate text-center text-sm font-black uppercase tracking-wide text-[#5d3a00]">
-          🐔 MA FERME
+        <div className="flex shrink-0 items-center gap-1.5">
+          <div className="status-chip status-chip--stars inline-flex items-center gap-1">
+            <AppIcon name="star" size={18} /> {gameState.stars}
+          </div>
+          {(gameState.dayStreak || 0) > 1 && (
+            <div className="status-chip status-chip--streak inline-flex items-center gap-1" title={`${gameState.dayStreak} jours d'affilée`}>
+              🔥 {gameState.dayStreak}
+            </div>
+          )}
+        </div>
+        <h1 className="min-w-0 flex-1 truncate text-center text-sm font-black uppercase tracking-wide text-[#5d3a00] inline-flex items-center justify-center gap-1.5">
+          <AppIcon name="henhead" size={20} /> MA FERME
         </h1>
         <ParentSettingsButton />
       </div>
+      {seasonal && (
+        <div className="seasonal-banner" style={{ background: seasonal.tint }}>
+          <span>{seasonal.emoji} {seasonal.greeting} {seasonal.emoji}</span>
+        </div>
+      )}
     </header>
   )
 
@@ -82,43 +100,43 @@ export default function ScreenTamagotchi() {
         <button
           type="button"
           onClick={adoptNewAnimal}
-          className={`kid-btn kid-btn--feed${gameState.stars < NEW_ANIMAL_COST ? ' kid-btn--locked' : ''}`}
+          className={`kid-btn kid-btn--feed inline-flex items-center justify-center gap-1.5${gameState.stars < NEW_ANIMAL_COST ? ' kid-btn--locked' : ''}`}
         >
-          🥚 Nouvel animal ({NEW_ANIMAL_COST}⭐)
+          <AppIcon name="egg" size={22} /> Nouvel animal ({NEW_ANIMAL_COST}<AppIcon name="star" size={16} />)
         </button>
       ) : (
-        <button type="button" onClick={handleFeed} className="kid-btn kid-btn--feed">
-          🍎 Nourrir (1⭐)
+        <button type="button" onClick={handleFeed} className="kid-btn kid-btn--feed inline-flex items-center justify-center gap-1.5">
+          <AppIcon name="apple" size={22} /> Nourrir (1<AppIcon name="star" size={16} />)
         </button>
       )}
       <button
         type="button"
         onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
-        className="kid-btn kid-btn--play"
+        className="kid-btn kid-btn--play inline-flex items-center justify-center gap-1.5"
       >
-        🎮 Jouer &amp; Apprendre
+        <AppIcon name="play" size={24} /> Jouer &amp; Apprendre
       </button>
       <div className="flex gap-2">
         <button
           type="button"
           onClick={() => switchScreen(SCREENS.COLLECTION)}
-          className="kid-btn kid-btn--ghost flex-1"
+          className="kid-btn kid-btn--ghost flex-1 inline-flex items-center justify-center gap-1"
         >
-          📖 Collection
+          <AppIcon name="book" size={20} /> Collection
         </button>
         <button
           type="button"
           onClick={() => switchScreen(SCREENS.FARM_EXPLORE)}
-          className="kid-btn kid-btn--ghost flex-1"
+          className="kid-btn kid-btn--ghost flex-1 inline-flex items-center justify-center gap-1"
         >
-          🌾 Explorer
+          <AppIcon name="wheat" size={20} /> Explorer
         </button>
         <button
           type="button"
           onClick={() => switchScreen(SCREENS.UPGRADE)}
-          className="kid-btn kid-btn--ghost flex-1"
+          className="kid-btn kid-btn--ghost flex-1 inline-flex items-center justify-center gap-1"
         >
-          ✨ Améliorer
+          <AppIcon name="sparkle" size={20} /> Améliorer
         </button>
       </div>
     </div>
@@ -154,11 +172,11 @@ export default function ScreenTamagotchi() {
 
         <div className="growth-tracker shrink-0">
           <div className="growth-steps" aria-hidden="true">
-            <span className={`growth-step${stageRank >= 0 ? ' growth-step--done' : ''}${stageRank === 0 ? ' growth-step--active' : ''}`}>🥚</span>
+            <span className={`growth-step${stageRank >= 0 ? ' growth-step--done' : ''}${stageRank === 0 ? ' growth-step--active' : ''}`}><AppIcon name="egg" size={20} /></span>
             <span className={`growth-link${stageRank >= 1 ? ' growth-link--done' : ''}`} />
-            <span className={`growth-step${stageRank >= 1 ? ' growth-step--done' : ''}${stageRank === 1 ? ' growth-step--active' : ''}`}>🐣</span>
+            <span className={`growth-step${stageRank >= 1 ? ' growth-step--done' : ''}${stageRank === 1 ? ' growth-step--active' : ''}`}><AppIcon name="hatch" size={20} /></span>
             <span className={`growth-link${stageRank >= 2 ? ' growth-link--done' : ''}`} />
-            <span className={`growth-step${stageRank >= 2 ? ' growth-step--done growth-step--active' : ''}`}>🏆</span>
+            <span className={`growth-step${stageRank >= 2 ? ' growth-step--done growth-step--active' : ''}`}><AppIcon name="trophy" size={20} /></span>
           </div>
           <div className="growth-bar" role="progressbar" aria-valuenow={growthPct} aria-valuemin={0} aria-valuemax={100}>
             <div className="growth-bar-fill" style={{ width: `${growthPct}%` }} />
@@ -167,7 +185,27 @@ export default function ScreenTamagotchi() {
         </div>
 
         <div className="tamagotchi-home-card shrink-0 px-3 py-2.5 text-center">
-          <h2 className="text-lg font-black text-[#5d3a00]">{displayName}</h2>
+          {editingName && !isEgg ? (
+            <input
+              autoFocus
+              defaultValue={animal.customName || (stageInfo?.name || animal.name)}
+              maxLength={14}
+              className="animal-name-input"
+              onBlur={(e) => { renameAnimal(e.target.value); setEditingName(false) }}
+              onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur() }}
+            />
+          ) : (
+            <button
+              type="button"
+              className="animal-name-btn"
+              onClick={() => !isEgg && setEditingName(true)}
+              disabled={isEgg}
+            >
+              <h2 className="text-lg font-black text-[#5d3a00]">
+                {displayName}{!isEgg && <span className="animal-name-edit"> ✏️</span>}
+              </h2>
+            </button>
+          )}
         </div>
       </div>
     </MobileScreenLayout>
