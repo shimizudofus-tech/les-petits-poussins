@@ -4,6 +4,7 @@ import SubjectTabs from '../minigames/SubjectTabs'
 import MathExercise from '../minigames/MathExercise'
 import DicteeExercise from '../minigames/DicteeExercise'
 import LectureExercise from '../minigames/LectureExercise'
+import ClockExercise from '../minigames/ClockExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
 import { SCREENS, useGame } from '../../context/GameContext'
@@ -19,6 +20,7 @@ const CP_TABS = [
   { id: 'math', label: '➕ Maths' },
   { id: 'dictee', label: '🔤 Dictée' },
   { id: 'lecture', label: '📖 Lecture' },
+  { id: 'heure', label: '⏰ Heure' },
 ]
 
 function countCpPool(subject, maxDifficulty) {
@@ -154,6 +156,9 @@ export default function ScreenMinigameCP() {
             )}
             {subject === 'lecture' && (
               <LectureExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+            )}
+            {subject === 'heure' && (
+              <ClockExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
             )}
           </>
         )}
