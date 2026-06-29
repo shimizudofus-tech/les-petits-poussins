@@ -4,6 +4,7 @@ import SubjectTabs from '../minigames/SubjectTabs'
 import MathExercise from '../minigames/MathExercise'
 import DicteeExercise from '../minigames/DicteeExercise'
 import LectureExercise from '../minigames/LectureExercise'
+import GeometryExercise from '../minigames/GeometryExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
 import { SCREENS, useGame } from '../../context/GameContext'
@@ -19,6 +20,7 @@ const TABS = [
   { id: 'math', label: '➕ Maths' },
   { id: 'dictee', label: '🔤 Dictée' },
   { id: 'lecture', label: '📖 Lecture' },
+  { id: 'geometrie', label: '📐 Formes' },
 ]
 
 function countPool(level, subject, maxDifficulty) {
@@ -132,6 +134,7 @@ export default function ScreenMinigameGrade({ level, levelLabel, title }) {
             {subject === 'math' && <MathExercise key={exerciseKey} exerciseKey={exerciseKey} level={level} onCorrect={handleCorrect} />}
             {subject === 'dictee' && <DicteeExercise key={exerciseKey} exerciseKey={exerciseKey} level={level} onCorrect={handleCorrect} />}
             {subject === 'lecture' && <LectureExercise key={exerciseKey} exerciseKey={exerciseKey} level={level} onCorrect={handleCorrect} />}
+            {subject === 'geometrie' && <GeometryExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />}
           </>
         )}
       </div>
