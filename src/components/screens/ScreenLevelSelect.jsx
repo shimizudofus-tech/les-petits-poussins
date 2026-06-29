@@ -77,6 +77,23 @@ export default function ScreenLevelSelect() {
       <div className="flex w-full max-w-full flex-col gap-3">
         <MissionsCard />
 
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => switchScreen(SCREENS.LESSON)}
+          onKeyDown={(e) => e.key === 'Enter' && switchScreen(SCREENS.LESSON)}
+          className="kid-card lesson-card"
+        >
+          <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg, #fff8e1, #ffca28)' }}>
+            📘
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-lg font-black text-[#3e2700]">Leçon du jour</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">5 exercices guidés</div>
+            <span className="kid-card__badge">+10 ⭐ à la fin</span>
+          </div>
+        </div>
+
         <p className="screen-section-label">Maternelle</p>
 
         {MATERNELLE_LEVELS.map(({ key, icon, title, subtitle, badge, tint }) => (

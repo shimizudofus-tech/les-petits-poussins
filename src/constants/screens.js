@@ -11,6 +11,7 @@ export const SCREENS = {
   MINIGAME_CM2: 'minigame-cm2',
   TRACING: 'tracing',
   MINIGAMES: 'minigames',
+  LESSON: 'lesson',
   PROFILES: 'profiles',
   UPGRADE: 'upgrade',
   COLLECTION: 'collection',

@@ -10,6 +10,7 @@ import ScreenMinigameGrade from './screens/ScreenMinigameGrade'
 import ScreenTracing from './screens/ScreenTracing'
 import ScreenProfiles from './screens/ScreenProfiles'
 import ScreenMiniGames from './screens/ScreenMiniGames'
+import ScreenLesson from './screens/ScreenLesson'
 import TutorialOverlay from './TutorialOverlay'
 import ScreenUpgrade from './screens/ScreenUpgrade'
 import ScreenCollection from './screens/ScreenCollection'
@@ -120,6 +121,7 @@ export default function GameContainer() {
                 {screen === SCREENS.TRACING && <ScreenTracing />}
                 {screen === SCREENS.PROFILES && <ScreenProfiles />}
                 {screen === SCREENS.MINIGAMES && <ScreenMiniGames />}
+                {screen === SCREENS.LESSON && <ScreenLesson />}
                 {screen === SCREENS.UPGRADE && <ScreenUpgrade />}
                 {screen === SCREENS.COLLECTION && <ScreenCollection />}
                 {screen === SCREENS.FARM_EXPLORE && <ScreenFarmExplore />}
