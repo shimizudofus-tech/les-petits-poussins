@@ -14,6 +14,7 @@ import GrandeLettersExercise from '../minigames/GrandeLettersExercise'
 import GrandeSoundsExercise from '../minigames/GrandeSoundsExercise'
 import GrandeCountExercise from '../minigames/GrandeCountExercise'
 import GrandeLogicExercise from '../minigames/GrandeLogicExercise'
+import AudioFindExercise from '../minigames/AudioFindExercise'
 import { TESTABLE_SUBJECTS } from '../../data/badges'
 import { SCREENS, useGame } from '../../context/GameContext'
 
@@ -33,6 +34,7 @@ const SECTION_META = {
       { id: 'shapes', label: '🔷 Formes' },
       { id: 'counting', label: '🔢 Compter' },
       { id: 'puzzles', label: '🧩 Puzzle' },
+      { id: 'ecoute', label: '👂 Écoute' },
     ],
   },
   moyenne: {
@@ -44,6 +46,7 @@ const SECTION_META = {
       { id: 'counting', label: '🔢 Compter' },
       { id: 'puzzles', label: '🧩 Puzzle' },
       { id: 'patterns', label: '🔁 Suites' },
+      { id: 'ecoute', label: '👂 Écoute' },
     ],
   },
   grande: {
@@ -55,6 +58,7 @@ const SECTION_META = {
       { id: 'counting', label: '🔢 Compter 10' },
       { id: 'puzzles', label: '🧩 Puzzle +' },
       { id: 'logic', label: '🧠 Logique' },
+      { id: 'ecoute', label: '👂 Écoute' },
     ],
   },
 }
@@ -110,6 +114,11 @@ export default function ScreenMaternelleSection() {
     section === 'petite' || section === 'moyenne' || section === 'grande' ? section : undefined
 
   const renderExercise = () => {
+    // « Écoute et trouve » : commun aux 3 sections.
+    if (subject === 'ecoute') {
+      return <AudioFindExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+    }
+
     if (section === 'petite') {
       if (subject === 'coloring') {
         return (
