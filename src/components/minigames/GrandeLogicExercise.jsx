@@ -34,6 +34,8 @@ export default function GrandeLogicExercise({ section = 'grande', onCorrect }) {
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'logic')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

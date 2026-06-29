@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { pickMaternelleExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
 import { getUnlockedDifficulty, recordMaternelleSuccess } from '../../utils/maternelleProgress'
@@ -24,6 +24,9 @@ export default function GrandeLettersExercise({ section = 'grande', onCorrect })
     [exercise],
   )
   const [answered, setAnswered] = useState(false)
+  const retryRef = useRef(null)
+
+  useEffect(() => () => { if (retryRef.current) clearTimeout(retryRef.current) }, [])
 
   if (!exercise) {
     return <ExerciseUnavailable />
@@ -37,6 +40,9 @@ export default function GrandeLettersExercise({ section = 'grande', onCorrect })
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'letters')
       onCorrect?.()
+    } else {
+      // Mauvaise réponse : on réactive les boutons pour réessayer.
+      retryRef.current = setTimeout(() => setAnswered(false), 1100)
     }
   }
 

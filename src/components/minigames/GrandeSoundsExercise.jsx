@@ -37,6 +37,8 @@ export default function GrandeSoundsExercise({ section = 'grande', onCorrect }) 
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'sounds')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

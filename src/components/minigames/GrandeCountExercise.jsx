@@ -59,6 +59,8 @@ export default function GrandeCountExercise({ section = 'grande', onCorrect }) {
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'counting')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

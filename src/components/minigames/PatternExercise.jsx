@@ -30,6 +30,8 @@ export default function PatternExercise({ section = 'moyenne', onCorrect }) {
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'patterns')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

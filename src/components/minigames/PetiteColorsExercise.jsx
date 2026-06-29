@@ -47,6 +47,8 @@ export default function PetiteColorsExercise({ section = 'petite', onCorrect }) 
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'colors')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

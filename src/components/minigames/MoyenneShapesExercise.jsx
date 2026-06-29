@@ -91,6 +91,8 @@ export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'shapes')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 
@@ -103,6 +105,8 @@ export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'shapes')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

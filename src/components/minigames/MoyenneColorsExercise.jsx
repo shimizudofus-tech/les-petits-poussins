@@ -41,6 +41,8 @@ export default function MoyenneColorsExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'colors')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 
@@ -52,6 +54,8 @@ export default function MoyenneColorsExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'colors')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

@@ -60,6 +60,8 @@ export default function MoyenneCountExercise({ section = 'moyenne', onCorrect })
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'counting')
       onCorrect?.()
+    } else {
+      setTimeout(() => setAnswered(false), 1100)
     }
   }
 

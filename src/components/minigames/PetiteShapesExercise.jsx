@@ -74,6 +74,8 @@ export default function PetiteShapesExercise({ section = 'petite', onCorrect }) 
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'shapes')
       onCorrect?.()
+    } else {
+      setTimeout(() => { setAnswered(false); setSelected(null) }, 1100)
     }
   }
 
