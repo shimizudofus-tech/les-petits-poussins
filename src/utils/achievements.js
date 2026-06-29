@@ -176,6 +176,9 @@ export function evaluateBadgeUnlocks(achievements) {
     { id: 'first_success', ready: total >= 1 },
     { id: 'five_success', ready: total >= 5 },
     { id: 'ten_success', ready: total >= 10 },
+    { id: 'twentyfive_success', ready: total >= 25 },
+    { id: 'fifty_success', ready: total >= 50 },
+    { id: 'hundred_success', ready: total >= 100 },
     { id: 'colors_friend', ready: colorsTotal >= 10 },
     { id: 'puzzle_builder', ready: puzzlesTotal >= 5 },
     { id: 'letter_explorer', ready: lettersTotal >= 10 },
@@ -298,6 +301,12 @@ export function getBadgeProgress(achievements, badgeId) {
       return { current: Math.min(total, 5), target: 5 }
     case 'ten_success':
       return { current: Math.min(total, 10), target: 10 }
+    case 'twentyfive_success':
+      return { current: Math.min(total, 25), target: 25 }
+    case 'fifty_success':
+      return { current: Math.min(total, 50), target: 50 }
+    case 'hundred_success':
+      return { current: Math.min(total, 100), target: 100 }
     case 'colors_friend':
       return { current: Math.min(colorsTotal, 10), target: 10 }
     case 'puzzle_builder':
