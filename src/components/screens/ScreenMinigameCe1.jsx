@@ -5,6 +5,7 @@ import MathExercise from '../minigames/MathExercise'
 import DicteeExercise from '../minigames/DicteeExercise'
 import LectureExercise from '../minigames/LectureExercise'
 import ClockExercise from '../minigames/ClockExercise'
+import MoneyExercise from '../minigames/MoneyExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
 import { SCREENS, useGame } from '../../context/GameContext'
@@ -21,6 +22,7 @@ const CE1_TABS = [
   { id: 'dictee', label: '🔤 Dictée' },
   { id: 'lecture', label: '📖 Lecture' },
   { id: 'heure', label: '⏰ Heure' },
+  { id: 'monnaie', label: '💶 Monnaie' },
 ]
 
 function countCe1Pool(subject, maxDifficulty) {
@@ -159,6 +161,9 @@ export default function ScreenMinigameCe1() {
             )}
             {subject === 'heure' && (
               <ClockExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+            )}
+            {subject === 'monnaie' && (
+              <MoneyExercise key={exerciseKey} exerciseKey={exerciseKey} level="ce1" onCorrect={handleCorrect} />
             )}
           </>
         )}

@@ -4,6 +4,7 @@ import SubjectTabs from '../minigames/SubjectTabs'
 import MathExercise from '../minigames/MathExercise'
 import DicteeExercise from '../minigames/DicteeExercise'
 import LectureExercise from '../minigames/LectureExercise'
+import MoneyExercise from '../minigames/MoneyExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
 import { SCREENS, useGame } from '../../context/GameContext'
@@ -19,6 +20,7 @@ const CE2_TABS = [
   { id: 'math', label: '➕ Maths' },
   { id: 'dictee', label: '🔤 Dictée' },
   { id: 'lecture', label: '📖 Lecture' },
+  { id: 'monnaie', label: '💶 Monnaie' },
 ]
 
 function countCe2Pool(subject, maxDifficulty) {
@@ -154,6 +156,9 @@ export default function ScreenMinigameCe2() {
             )}
             {subject === 'lecture' && (
               <LectureExercise key={exerciseKey} exerciseKey={exerciseKey} level="ce2" onCorrect={handleCorrect} />
+            )}
+            {subject === 'monnaie' && (
+              <MoneyExercise key={exerciseKey} exerciseKey={exerciseKey} level="ce2" onCorrect={handleCorrect} />
             )}
           </>
         )}

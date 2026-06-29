@@ -470,6 +470,67 @@ button,
   line-height: 1.2;
 }
 
+/* Exercice « La monnaie » */
+.money-card {
+  margin: 0 14px;
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  border: 2px solid #81c784;
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 16px rgba(20, 30, 60, 0.1);
+}
+.money-card-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+.money-question {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #2e5d28;
+  line-height: 1.4;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.money-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.money-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe082, #f4b400);
+  border: 2px solid #d49a00;
+  font-weight: 900;
+  font-size: 0.9rem;
+  color: #6d4c00;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+.money-bill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  height: 38px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: #2c2c2a;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
 /* Exercice « Lire l'heure » */
 .clock-card {
   display: flex;
