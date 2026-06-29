@@ -11,6 +11,7 @@ function shuffleOptions(items) {
 
 export default function GrandeLogicExercise({ section = 'grande', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'logic')
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'logic', maxDifficulty),
@@ -34,7 +35,7 @@ export default function GrandeLogicExercise({ section = 'grande', onCorrect }) {
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'logic')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

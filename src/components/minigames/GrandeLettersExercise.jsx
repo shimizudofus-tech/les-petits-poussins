@@ -11,6 +11,7 @@ function shuffleLetters(items) {
 
 export default function GrandeLettersExercise({ section = 'grande', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'letters')
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'letters', maxDifficulty),
@@ -40,8 +41,8 @@ export default function GrandeLettersExercise({ section = 'grande', onCorrect })
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'letters')
       onCorrect?.()
-    } else {
-      // Mauvaise réponse : on réactive les boutons pour réessayer.
+    } else if (!inTest) {
+      // Entraînement : on réactive les boutons pour réessayer. En test : définitif.
       retryRef.current = setTimeout(() => setAnswered(false), 1100)
     }
   }

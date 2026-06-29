@@ -53,6 +53,7 @@ function buildShapeQuiz(section, maxDifficulty) {
 
 export default function PetiteShapesExercise({ section = 'petite', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'shapes')
   const quiz = useMemo(() => buildShapeQuiz(section, maxDifficulty), [section, maxDifficulty])
   const [selected, setSelected] = useState(null)
@@ -74,7 +75,7 @@ export default function PetiteShapesExercise({ section = 'petite', onCorrect }) 
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'shapes')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => { setAnswered(false); setSelected(null) }, 1100)
     }
   }

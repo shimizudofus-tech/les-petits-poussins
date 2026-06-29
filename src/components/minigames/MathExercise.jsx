@@ -8,6 +8,7 @@ import ExerciseUnavailable from './ExerciseUnavailable'
 
 export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = gameState.learningProgress?.[level]?.maths?.unlockedDifficulty ?? 1
   const weakRef = useRef(new Set())
   weakRef.current = weakIdSet(gameState.reviewStats)
@@ -47,7 +48,8 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
 
     return {
       type: 'numeric',
-      question: `${source.question} = ?`,
+      // Pas de « = ? » en double si la question contient déjà un « ? » (compléments).
+      question: source.question.includes('?') ? source.question : `${source.question} = ?`,
       answer: source.answer,
       options: [...source.choices].sort(() => Math.random() - 0.5),
       columns: 4,
@@ -67,8 +69,8 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
       showFeedback(isCorrect, { exerciseId: source?.id })
       if (isCorrect) {
         onCorrect?.()
-      } else {
-        // Mauvaise réponse : on réactive les boutons pour réessayer.
+      } else if (!inTest) {
+        // Entraînement seulement : réessai. En test, réponse définitive.
         setTimeout(() => {
           setAnsweredIndex(null)
           setAnswerCorrect(null)

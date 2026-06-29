@@ -7,6 +7,7 @@ import PetiteExerciseHeader from './PetiteExerciseHeader'
 
 export default function PatternExercise({ section = 'moyenne', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'patterns')
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'patterns', maxDifficulty),
@@ -30,7 +31,7 @@ export default function PatternExercise({ section = 'moyenne', onCorrect }) {
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'patterns')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

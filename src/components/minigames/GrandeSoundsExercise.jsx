@@ -11,6 +11,7 @@ function shuffleOptions(items) {
 
 export default function GrandeSoundsExercise({ section = 'grande', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'sounds')
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'sounds', maxDifficulty),
@@ -37,7 +38,7 @@ export default function GrandeSoundsExercise({ section = 'grande', onCorrect }) 
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'sounds')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

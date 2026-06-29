@@ -11,6 +11,7 @@ function shuffleOptions(items) {
 
 export default function MoyenneColorsExercise({ section = 'moyenne', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'colors')
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'colors', maxDifficulty),
@@ -41,7 +42,7 @@ export default function MoyenneColorsExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'colors')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }
@@ -54,7 +55,7 @@ export default function MoyenneColorsExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'colors')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

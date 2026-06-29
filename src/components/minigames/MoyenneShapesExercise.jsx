@@ -51,6 +51,7 @@ function shuffleObjects(items) {
 
 export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'shapes')
   const exercise = useMemo(
     () => pickMaternelleExercise(section, 'shapes', maxDifficulty),
@@ -91,7 +92,7 @@ export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'shapes')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }
@@ -105,7 +106,7 @@ export default function MoyenneShapesExercise({ section = 'moyenne', onCorrect }
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'shapes')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

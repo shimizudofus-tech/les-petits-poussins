@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../../context/GameContext'
 
 export default function AnswerButtons({ options, correct, onCorrect, columns = 3, variant, feedbackMeta }) {
-  const { showFeedback } = useGame()
+  const { showFeedback, gameState } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const [answeredIndex, setAnsweredIndex] = useState(null)
   const [answerCorrect, setAnswerCorrect] = useState(null)
   const retryTimerRef = useRef(null)
@@ -21,8 +22,9 @@ export default function AnswerButtons({ options, correct, onCorrect, columns = 3
     showFeedback(isCorrect, feedbackMeta)
     if (isCorrect) {
       onCorrect?.()
-    } else {
-      // Mauvaise réponse : on remet les boutons cliquables pour réessayer.
+    } else if (!inTest) {
+      // Entraînement : on remet les boutons cliquables pour réessayer.
+      // En test : la réponse est définitive et on passe à la question suivante.
       retryTimerRef.current = setTimeout(() => {
         setAnsweredIndex(null)
         setAnswerCorrect(null)

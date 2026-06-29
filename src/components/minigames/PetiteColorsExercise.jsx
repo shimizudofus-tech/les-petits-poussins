@@ -29,6 +29,7 @@ function buildQuiz(section, maxDifficulty) {
 
 export default function PetiteColorsExercise({ section = 'petite', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'colors')
   const quiz = useMemo(() => buildQuiz(section, maxDifficulty), [section, maxDifficulty])
   const [answered, setAnswered] = useState(false)
@@ -47,7 +48,7 @@ export default function PetiteColorsExercise({ section = 'petite', onCorrect }) 
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'colors')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

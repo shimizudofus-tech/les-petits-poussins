@@ -9,6 +9,7 @@ import PetiteExerciseHeader from './PetiteExerciseHeader'
 
 export default function GrandeCountExercise({ section = 'grande', onCorrect }) {
   const { gameState, setGameState, showFeedback } = useGame()
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = getUnlockedDifficulty(gameState.learningProgress, section, 'counting')
   const [answered, setAnswered] = useState(false)
 
@@ -59,7 +60,7 @@ export default function GrandeCountExercise({ section = 'grande', onCorrect }) {
     if (isCorrect) {
       recordMaternelleSuccess(setGameState, section, 'counting')
       onCorrect?.()
-    } else {
+    } else if (!inTest) {
       setTimeout(() => setAnswered(false), 1100)
     }
   }

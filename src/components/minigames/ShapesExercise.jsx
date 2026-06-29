@@ -40,7 +40,9 @@ function buildShapeOptions() {
 
 export default function ShapesExercise({ onCorrect }) {
 
-  const { showFeedback } = useGame()
+  const { showFeedback, gameState } = useGame()
+
+  const inTest = Boolean(gameState.achievements?.tests?.activeTest)
 
   const shapeData = useMemo(buildShapeOptions, [])
 
@@ -75,7 +77,7 @@ export default function ShapesExercise({ onCorrect }) {
     showFeedback(isCorrect)
 
     if (isCorrect) onCorrect?.()
-    else setTimeout(() => { setAnswered(false); setSelected(null) }, 1100)
+    else if (!inTest) setTimeout(() => { setAnswered(false); setSelected(null) }, 1100)
 
   }
 
