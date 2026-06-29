@@ -6,6 +6,7 @@ import DicteeExercise from '../minigames/DicteeExercise'
 import LectureExercise from '../minigames/LectureExercise'
 import MoneyExercise from '../minigames/MoneyExercise'
 import GeometryExercise from '../minigames/GeometryExercise'
+import ScienceExercise from '../minigames/ScienceExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
 import { SCREENS, useGame } from '../../context/GameContext'
@@ -23,6 +24,7 @@ const CE2_TABS = [
   { id: 'lecture', label: '📖 Lecture' },
   { id: 'monnaie', label: '💶 Monnaie' },
   { id: 'geometrie', label: '📐 Formes' },
+  { id: 'sciences', label: '🔬 Sciences' },
 ]
 
 function countCe2Pool(subject, maxDifficulty) {
@@ -164,6 +166,9 @@ export default function ScreenMinigameCe2() {
             )}
             {subject === 'geometrie' && (
               <GeometryExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
+            )}
+            {subject === 'sciences' && (
+              <ScienceExercise key={exerciseKey} exerciseKey={exerciseKey} onCorrect={handleCorrect} />
             )}
           </>
         )}

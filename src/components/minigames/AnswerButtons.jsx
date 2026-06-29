@@ -10,7 +10,7 @@ export default function AnswerButtons({ options, correct, onCorrect, columns = 3
   useEffect(() => () => { if (retryTimerRef.current) clearTimeout(retryTimerRef.current) }, [])
 
   const colsClass =
-    columns === 4 ? 'cols-4' : columns === 2 ? 'cols-2' : 'cols-3'
+    columns === 1 ? 'cols-1' : columns === 4 ? 'cols-4' : columns === 2 ? 'cols-2' : 'cols-3'
   const gridClass = variant === 'petite' ? 'answers-grid--petite' : ''
 
   const handleClick = (index, value) => {
