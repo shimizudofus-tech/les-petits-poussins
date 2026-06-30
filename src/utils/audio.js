@@ -243,7 +243,7 @@ export function playError() {
 }
 
 // Cri de l'animal (son réel) joué au clic — accueil + explorer.
-const ANIMAL_VERSION = '1'
+const ANIMAL_VERSION = '2'
 
 export async function playAnimalSound(animalKey, fallbackText) {
   const settings = getActiveAudioSettings()

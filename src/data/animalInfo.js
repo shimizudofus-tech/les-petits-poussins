@@ -71,6 +71,37 @@ export const ANIMAL_INFO = {
     reactions: ['🧀', '🌾', '❤️', '✨', '🐭'],
     food: '🧀',
   },
+  // ── Légendaires ──
+  unicorn: {
+    eats: '🌈 Fleurs magiques et arcs-en-ciel',
+    fact: 'La licorne laisse des paillettes partout où elle passe !',
+    reactions: ['🌈', '✨', '❤️', '🌸', '🦄'],
+    food: '🌈',
+  },
+  dragon: {
+    eats: '🍖 Surtout de la viande',
+    fact: 'Le dragon peut souffler de petites flammes !',
+    reactions: ['🔥', '🍖', '❤️', '✨', '🐉'],
+    food: '🍖',
+  },
+  mermaid: {
+    eats: '🐚 Algues et coquillages',
+    fact: 'La sirène chante pour appeler les poissons !',
+    reactions: ['🐚', '🌊', '❤️', '✨', '🧜'],
+    food: '🐚',
+  },
+  yeti: {
+    eats: '🍓 Baies des montagnes et glace',
+    fact: 'Le yéti vit tout en haut des montagnes enneigées !',
+    reactions: ['❄️', '🍓', '❤️', '⛰️', '✨'],
+    food: '🍓',
+  },
+  nessie: {
+    eats: '🐟 Poissons du lac',
+    fact: "Personne n'a jamais vraiment photographié Nessie !",
+    reactions: ['🌊', '🐟', '❤️', '✨', '🦕'],
+    food: '🐟',
+  },
 }
 
 export function getAnimalInfo(animalKey) {
