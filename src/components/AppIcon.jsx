@@ -3,6 +3,13 @@
 // Remplace les emoji des boutons/écrans principaux.
 
 const ICONS = {
+  // 🔥 Série (streak)
+  flame: (
+    <>
+      <path d="M24 4c-2 8-10 11-10 22a10 10 0 0020 0c0-5-3-8-3-12-3 2-4 5-4 8 0-7-1-13 1-18Z" fill="#ff7043" />
+      <path d="M24 18c-1 6-6 7-6 13a6 6 0 0012 0c0-4-3-6-3-9-2 1-3 3-3 5z" fill="#ffca28" />
+    </>
+  ),
   // 🍎 Nourrir
   apple: (
     <>

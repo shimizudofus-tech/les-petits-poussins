@@ -77,7 +77,7 @@ export default function ScreenTamagotchi() {
           </div>
           {(gameState.dayStreak || 0) > 1 && (
             <div className="status-chip status-chip--streak inline-flex items-center gap-1" title={`${gameState.dayStreak} jours d'affilée`}>
-              🔥 {gameState.dayStreak}
+              <AppIcon name="flame" size={16} /> {gameState.dayStreak}
             </div>
           )}
         </div>
