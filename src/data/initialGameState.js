@@ -5,6 +5,7 @@ import { DEFAULT_FARM_UPGRADES } from './farmUpgrades'
 import { DEFAULT_AUDIO_SETTINGS } from '../utils/audioSettings'
 import { createDefaultLearningProgress } from '../utils/maternelleProgress'
 import { createDefaultAchievements } from '../utils/achievements'
+import { createLegendaryCollectionEntries } from './legendaries'
 
 export function createInitialGameState() {
   return {
@@ -39,6 +40,7 @@ export function createInitialGameState() {
     audioSettings: { ...DEFAULT_AUDIO_SETTINGS },
 
     collection: {
+      ...createLegendaryCollectionEntries(),
       chicken: {
         name: 'Poule',
         age: 0,

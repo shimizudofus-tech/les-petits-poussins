@@ -498,6 +498,32 @@ button,
 .audiofind-hint { font-size: 0.8rem; font-weight: 700; color: #8d6e3a; }
 .audiofind-choice { font-size: 2.6rem; }
 
+/* Calendrier de série 7 jours */
+.streak-cal { margin-top: 10px; }
+.streak-cal-row { display: flex; gap: 4px; justify-content: center; }
+.streak-cell {
+  flex: 1; max-width: 42px; aspect-ratio: 1/1.25;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border-radius: 10px; background: rgba(0,0,0,0.06); border: 2px solid transparent;
+}
+.streak-cell-icon { font-size: 1.05rem; line-height: 1; }
+.streak-cell-day { font-size: 0.58rem; font-weight: 800; color: #8d6e3a; }
+.streak-cell--done { background: #c8e6c9; }
+.streak-cell--done .streak-cell-icon { color: #2e7d32; }
+.streak-cell--today { background: #fff3c4; border-color: #ffca28; transform: scale(1.08); }
+.streak-cell--legend { background: linear-gradient(135deg,#e1bee7,#ce93d8); }
+.streak-cell--legend.streak-cell--done { background: linear-gradient(135deg,#ce93d8,#ab47bc); }
+.streak-cal-hint { font-size: 0.72rem; font-weight: 700; color: #8d6e3a; text-align: center; margin-top: 10px; }
+.streak-legend-win {
+  display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px;
+  border-radius: 14px; background: linear-gradient(135deg,#fff8e1,#ffe082);
+  border: 2px solid #ffca28;
+}
+.streak-legend-img { width: 56px; height: 56px; object-fit: contain; }
+.streak-legend-text { display: flex; flex-direction: column; text-align: left; }
+.streak-legend-text strong { color: #6a1b9a; font-size: 0.95rem; }
+.streak-legend-text span { color: #5d3a00; font-size: 0.8rem; font-weight: 700; }
+
 /* Leçon du jour */
 .lesson-card { border: 2px solid #ffca28; }
 .lesson-intro { text-align: center; font-weight: 800; color: #5d3a00; font-size: 0.9rem; margin-bottom: 4px; }

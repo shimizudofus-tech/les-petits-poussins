@@ -21,6 +21,8 @@ import { initBilling, checkPremium, getOfferings, purchasePackage, restorePurcha
 import { playWord } from '../utils/audioManager'
 import { hapticSuccess, hapticError } from '../utils/haptics'
 import { ensureTodayMissions, MISSION_BY_ID } from '../data/missions'
+import { isLegendary, nextLockedLegendary } from '../data/legendaries'
+import DailyStreakCalendar from '../components/DailyStreakCalendar'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
 import { setMusicVolume, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
 import { setSoftAudioEnabled, setSoftAudioVolume, initClickSfx } from '../utils/softAudio'
@@ -87,8 +89,8 @@ export function GameProvider({ children }) {
 
   const hideModal = useCallback(() => setModal(null), [])
 
-  const showModal = useCallback(({ icon = '🎉', title = '', body = '', buttons = [] }) => {
-    setModal({ icon, title, body, buttons })
+  const showModal = useCallback(({ icon = '🎉', title = '', body = '', buttons = [], content = null }) => {
+    setModal({ icon, title, body, buttons, content })
   }, [])
 
   const setPremium = useCallback((value) => {
@@ -535,7 +537,10 @@ export function GameProvider({ children }) {
         queueMicrotask(() => showToast("Fais d'abord grandir ton animal ! 🐣", '#ff8f00'))
         return prev
       }
-      const lockedKeys = Object.keys(prev.collection).filter((key) => !prev.collection[key].unlocked)
+      // Les légendaires ne s'obtiennent QUE via la série de 7 jours → exclus ici.
+      const lockedKeys = Object.keys(prev.collection).filter(
+        (key) => !prev.collection[key].unlocked && !isLegendary(key),
+      )
       if (lockedKeys.length === 0) {
         queueMicrotask(() => showToast('Tu as déjà tous les animaux ! 🎉', '#66bb6a'))
         return prev
@@ -683,15 +688,29 @@ export function GameProvider({ children }) {
       const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
       const streak = prev.lastRewardDate === yesterday ? (prev.dayStreak || 0) + 1 : 1
       const reward = Math.min(2 + streak, 10)
+      const dayInWeek = ((streak - 1) % 7) + 1
+
+      // Tous les 7 jours consécutifs : on débloque un animal légendaire.
+      let collection = prev.collection
+      let awarded = null
+      if (streak % 7 === 0) {
+        const leg = nextLockedLegendary(prev.collection)
+        if (leg) {
+          awarded = leg
+          collection = { ...prev.collection, [leg.key]: { ...prev.collection[leg.key], unlocked: true } }
+        }
+      }
+
       queueMicrotask(() =>
         showModal({
-          icon: '🎁',
-          title: `Cadeau du jour — Jour ${streak} !`,
-          body: `+${reward} ⭐ pour ta visite. Reviens demain pour plus !`,
-          buttons: [{ label: 'Merci !', type: 'primary' }],
+          icon: awarded ? '🌟' : '🎁',
+          title: awarded ? 'Récompense légendaire !' : `Cadeau du jour — Jour ${streak} !`,
+          body: `+${reward} ⭐ pour ta visite.`,
+          content: <DailyStreakCalendar dayInWeek={dayInWeek} awarded={awarded} />,
+          buttons: [{ label: 'Super !', type: 'primary' }],
         }),
       )
-      return { ...prev, stars: (prev.stars || 0) + reward, lastRewardDate: today, dayStreak: streak }
+      return { ...prev, stars: (prev.stars || 0) + reward, lastRewardDate: today, dayStreak: streak, collection }
     })
   }, [showModal])
 

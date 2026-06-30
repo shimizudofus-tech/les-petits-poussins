@@ -1,5 +1,6 @@
 import { resolveBuilderIcon } from '../data/builderAssets'
 import { CHICKEN_STAGE_ICONS } from '../data/chickenAssets'
+import { createLegendaryCollectionEntries } from '../data/legendaries'
 import { clampFarmUpgrades, DEFAULT_FARM_UPGRADES } from '../data/farmUpgrades'
 import { createInitialGameState } from '../data/initialGameState'
 import { mergeAudioSettings } from './audioSettings'
@@ -49,6 +50,16 @@ function mergeCollection(savedCollection = {}) {
       baby: { ...merged.chicken.stages.baby, icon: CHICKEN_STAGE_ICONS.baby },
       adult: { ...merged.chicken.stages.adult, icon: CHICKEN_STAGE_ICONS.adult },
     },
+  }
+
+  // Idem pour les légendaires : icônes Vite fraîches, en gardant l'état unlocked.
+  const freshLegendaries = createLegendaryCollectionEntries()
+  for (const key of Object.keys(freshLegendaries)) {
+    if (!merged[key]) continue
+    merged[key] = {
+      ...freshLegendaries[key],
+      unlocked: merged[key].unlocked ?? false,
+    }
   }
 
   return merged
