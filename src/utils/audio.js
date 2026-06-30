@@ -1,4 +1,10 @@
 import { AUDIO_SPEECH_MAP } from '../data/audioSpeechMap'
+import { AUDIO_SPEECH_MAP_EN } from '../data/audioSpeechMapEn'
+
+// Langue de l'app (fr/en) lue depuis les réglages audio.
+function getAppLang() {
+  return getActiveAudioSettings().lang === 'en' ? 'en' : 'fr'
+}
 import { resolvePromptSpeechText } from './audioPrompts'
 import { getActiveAudioSettings } from './audioSettings'
 import { duckMusic, restoreMusic } from './music'
@@ -37,7 +43,8 @@ function normalizeKey(audioKey) {
 const AUDIO_VERSION = '12'
 
 function getMp3Url(audioKey) {
-  return `${import.meta.env.BASE_URL}audio/voix/${normalizeKey(audioKey)}.mp3?v=${AUDIO_VERSION}`
+  const folder = getAppLang() === 'en' ? 'voix-en' : 'voix'
+  return `${import.meta.env.BASE_URL}audio/${folder}/${normalizeKey(audioKey)}.mp3?v=${AUDIO_VERSION}`
 }
 
 export function loadVoices() {
@@ -74,6 +81,9 @@ export function resolveSpeechText(audioKey) {
   const key = normalizeKey(audioKey)
   if (!key) return null
 
+  if (getAppLang() === 'en' && AUDIO_SPEECH_MAP_EN[key]) {
+    return AUDIO_SPEECH_MAP_EN[key]
+  }
   if (AUDIO_SPEECH_MAP[key]) {
     return AUDIO_SPEECH_MAP[key]
   }
@@ -227,7 +237,8 @@ export async function playWord(audioKey, options = {}) {
     devLog('[audio] mp3 failed, fallback TTS', key)
     if (!text) return false
     devLog('[audio] speaking', key)
-    return speakFallback(text, options)
+    const ttsOpts = getAppLang() === 'en' && !options.lang ? { ...options, lang: 'en-US' } : options
+    return speakFallback(text, ttsOpts)
   }
 }
 

@@ -3,6 +3,7 @@ export const DEFAULT_AUDIO_SETTINGS = {
   musicVolume: 0.25,
   voiceEnabled: true,
   voiceVolume: 1,
+  lang: 'fr', // langue de l'app : 'fr' | 'en'
 }
 
 function clamp(value, min, max) {
@@ -20,6 +21,7 @@ export function mergeAudioSettings(saved) {
     musicVolume: clamp(Number(saved.musicVolume ?? defaults.musicVolume), 0, 1),
     voiceEnabled: saved.voiceEnabled ?? defaults.voiceEnabled,
     voiceVolume: clamp(Number(saved.voiceVolume ?? defaults.voiceVolume), 0, 1),
+    lang: saved.lang === 'en' ? 'en' : 'fr',
   }
 }
 
