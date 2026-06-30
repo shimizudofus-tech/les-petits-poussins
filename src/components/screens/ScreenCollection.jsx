@@ -94,7 +94,8 @@ function BackHeader({ title, titleIcon, onBack }) {
         <button
           type="button"
           onClick={onBack}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/40 text-base font-black text-[#5d3a00] active:scale-90"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/40 text-xl font-black text-[#5d3a00] active:scale-90"
+          style={{ touchAction: 'manipulation' }}
           aria-label="Retour"
         >
           ←
@@ -102,7 +103,7 @@ function BackHeader({ title, titleIcon, onBack }) {
         <h1 className="min-w-0 flex-1 truncate text-center text-sm font-black uppercase tracking-wide text-[#5d3a00]">
           {titleIcon ? `${titleIcon} ` : ''}{title}
         </h1>
-        <div className="h-8 w-8 shrink-0" />
+        <div className="h-11 w-11 shrink-0" />
       </div>
     </header>
   )

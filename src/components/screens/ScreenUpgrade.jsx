@@ -27,7 +27,8 @@ export default function ScreenUpgrade() {
         <button
           type="button"
           onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/40 text-base font-black text-[#5d3a00] active:scale-90"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/40 text-xl font-black text-[#5d3a00] active:scale-90"
+          style={{ touchAction: 'manipulation' }}
           aria-label="Retour"
         >
           ←
