@@ -10,6 +10,7 @@ import GeometryExercise from '../minigames/GeometryExercise'
 import ScienceExercise from '../minigames/ScienceExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
+import { useT } from '../../i18n/useT'
 import { SCREENS, useGame } from '../../context/GameContext'
 import {
   CE1_SUBJECT_LABELS,
@@ -45,6 +46,7 @@ export default function ScreenMinigameCe1() {
     cancelTest,
     showToast,
   } = useGame()
+  const t = useT()
   const [exerciseKey, setExerciseKey] = useState(0)
   const [testResult, setTestResult] = useState(null)
   const historyLenRef = useRef(gameState.achievements?.tests?.history?.length ?? 0)
@@ -123,24 +125,24 @@ export default function ScreenMinigameCe1() {
 
   return (
     <main className="screen screen-minigame-cp flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden overflow-x-hidden pb-4">
-      <ScreenTitle>✏️ CE1 — École</ScreenTitle>
+      <ScreenTitle>✏️ CE1 — {t('ex.school')}</ScreenTitle>
 
-      <SubjectTabs tabs={CE1_TABS} active={subject} onSelect={handleSubject} />
+      <SubjectTabs tabs={CE1_TABS.map((x) => ({ ...x, label: t(`tab.${x.id}`) }))} active={subject} onSelect={handleSubject} />
 
       <p className="cp-level-badge mx-3.5 mt-2 shrink-0 text-center">
-        {levelLabel} — Niveau {level}
+        {levelLabel} — {t('ex.level')} {level}
       </p>
 
       {isCe1TestActive ? (
         <div className="test-banner mx-3.5 mt-2 shrink-0">
-          Petit test — Question {Math.min(activeTest.index + 1, activeTest.length)} /{' '}
+          {t('ex.testQ')} {Math.min(activeTest.index + 1, activeTest.length)} /{' '}
           {activeTest.length}
         </div>
       ) : null}
 
       {canStartTest ? (
         <button type="button" onClick={handleStartTest} className="test-start-btn mx-3.5 mt-2 shrink-0">
-          📝 Petit test (5 questions)
+          📝 {t('ex.test')}
         </button>
       ) : null}
 

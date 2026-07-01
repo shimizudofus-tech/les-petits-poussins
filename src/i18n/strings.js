@@ -95,6 +95,36 @@ export const STRINGS = {
   'mg.count.action': { fr: 'Compte les animaux affichés.', en: 'Count the animals shown.' },
   'mg.count.benefit': { fr: 'Entraîne le calcul et le dénombrement.', en: 'Practises counting and maths.' },
 
+  // Onglets d'exercices (primaire)
+  'tab.math': { fr: '➕ Maths', en: '➕ Maths' },
+  'tab.dictee': { fr: '🔤 Dictée', en: '🔤 French dictation' },
+  'tab.lecture': { fr: '📖 Lecture', en: '📖 French reading' },
+  'tab.heure': { fr: '⏰ Heure', en: '⏰ Time' },
+  'tab.monnaie': { fr: '💶 Monnaie', en: '💶 Money' },
+  'tab.geometrie': { fr: '📐 Formes', en: '📐 Shapes' },
+  'tab.sciences': { fr: '🔬 Sciences', en: '🔬 Science' },
+  // Onglets maternelle
+  'tab.coloring': { fr: '🖍️ Colorier', en: '🖍️ Colour in' },
+  'tab.colors': { fr: '🎨 Couleurs', en: '🎨 Colours' },
+  'tab.colorsPlus': { fr: '🎨 Couleurs +', en: '🎨 Colours +' },
+  'tab.shapes': { fr: '🔷 Formes', en: '🔷 Shapes' },
+  'tab.shapesPlus': { fr: '🔷 Formes +', en: '🔷 Shapes +' },
+  'tab.counting': { fr: '🔢 Compter', en: '🔢 Count' },
+  'tab.counting10': { fr: '🔢 Compter 10', en: '🔢 Count to 10' },
+  'tab.puzzles': { fr: '🧩 Puzzle', en: '🧩 Puzzle' },
+  'tab.puzzlesPlus': { fr: '🧩 Puzzle +', en: '🧩 Puzzle +' },
+  'tab.patterns': { fr: '🔁 Suites', en: '🔁 Patterns' },
+  'tab.letters': { fr: '🔤 Lettres', en: '🔤 Letters' },
+  'tab.sounds': { fr: '👂 Sons', en: '👂 Sounds' },
+  'tab.logic': { fr: '🧠 Logique', en: '🧠 Logic' },
+  'tab.ecoute': { fr: '👂 Écoute', en: '👂 Listen' },
+
+  // Titres écrans exercices
+  'ex.school': { fr: 'École', en: 'School' },
+  'ex.level': { fr: 'Niveau', en: 'Level' },
+  'ex.test': { fr: 'Petit test (5 questions)', en: 'Quick test (5 questions)' },
+  'ex.testQ': { fr: 'Petit test — Question', en: 'Quick test — Question' },
+
   // Saisonnier
   'season.halloween': { fr: 'Joyeux Halloween !', en: 'Happy Halloween!' },
   'season.noel': { fr: 'Joyeux Noël !', en: 'Merry Christmas!' },

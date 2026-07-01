@@ -8,6 +8,7 @@ import GeometryExercise from '../minigames/GeometryExercise'
 import ScienceExercise from '../minigames/ScienceExercise'
 import CpTestResult from '../minigames/CpTestResult'
 import { getExercises } from '../../data/exercises'
+import { useT } from '../../i18n/useT'
 import { SCREENS, useGame } from '../../context/GameContext'
 import {
   GRADE_SUBJECT_LABELS,
@@ -30,7 +31,7 @@ function countPool(level, subject, maxDifficulty) {
 }
 
 // Écran d'exercices générique pour un niveau primaire (level: 'cm1' | 'cm2' | …).
-export default function ScreenMinigameGrade({ level, levelLabel, title }) {
+export default function ScreenMinigameGrade({ level, levelLabel }) {
   const {
     gameState,
     setSubject,
@@ -42,6 +43,7 @@ export default function ScreenMinigameGrade({ level, levelLabel, title }) {
     cancelTest,
     showToast,
   } = useGame()
+  const t = useT()
   const [exerciseKey, setExerciseKey] = useState(0)
   const [testResult, setTestResult] = useState(null)
   const historyLenRef = useRef(gameState.achievements?.tests?.history?.length ?? 0)
@@ -108,23 +110,23 @@ export default function ScreenMinigameGrade({ level, levelLabel, title }) {
 
   return (
     <main className="screen screen-minigame-cp flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden overflow-x-hidden pb-4">
-      <ScreenTitle>{title}</ScreenTitle>
+      <ScreenTitle>✏️ {levelLabel} — {t('ex.school')}</ScreenTitle>
 
-      <SubjectTabs tabs={TABS} active={subject} onSelect={handleSubject} />
+      <SubjectTabs tabs={TABS.map((x) => ({ ...x, label: t(`tab.${x.id}`) }))} active={subject} onSelect={handleSubject} />
 
       <p className="cp-level-badge mx-3.5 mt-2 shrink-0 text-center">
-        {subjectLabel} — Niveau {difficulty}
+        {subjectLabel} — {t('ex.level')} {difficulty}
       </p>
 
       {isTestActive ? (
         <div className="test-banner mx-3.5 mt-2 shrink-0">
-          Petit test — Question {Math.min(activeTest.index + 1, activeTest.length)} / {activeTest.length}
+          {t('ex.testQ')} {Math.min(activeTest.index + 1, activeTest.length)} / {activeTest.length}
         </div>
       ) : null}
 
       {canStartTest ? (
         <button type="button" onClick={handleStartTest} className="test-start-btn mx-3.5 mt-2 shrink-0">
-          📝 Petit test (5 questions)
+          📝 {t('ex.test')}
         </button>
       ) : null}
 
