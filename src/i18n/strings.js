@@ -124,6 +124,8 @@ export const STRINGS = {
   'ex.level': { fr: 'Niveau', en: 'Level' },
   'ex.test': { fr: 'Petit test (5 questions)', en: 'Quick test (5 questions)' },
   'ex.testQ': { fr: 'Petit test — Question', en: 'Quick test — Question' },
+  'ex.mental': { fr: 'Calcul mental', en: 'Mental maths' },
+  'ex.problem': { fr: 'Petit problème', en: 'Word problem' },
 
   // Saisonnier
   'season.halloween': { fr: 'Joyeux Halloween !', en: 'Happy Halloween!' },

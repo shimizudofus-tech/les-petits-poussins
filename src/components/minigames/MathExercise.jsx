@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { pickGradeExercise } from '../../data/exercises'
 import { useGame } from '../../context/GameContext'
+import { useT } from '../../i18n/useT'
 import { playWord } from '../../utils/audio'
 import { weakIdSet } from '../../utils/review'
 import AnswerButtons from './AnswerButtons'
@@ -8,6 +9,7 @@ import ExerciseUnavailable from './ExerciseUnavailable'
 
 export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' }) {
   const { gameState, showFeedback } = useGame()
+  const t = useT()
   const inTest = Boolean(gameState.achievements?.tests?.activeTest)
   const maxDifficulty = gameState.learningProgress?.[level]?.maths?.unlockedDifficulty ?? 1
   const weakRef = useRef(new Set())
@@ -82,7 +84,7 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
       <>
         <div className="chalkboard">
           <div className="chalkboard-label">
-            ➕ Calcul mental
+            ➕ {t('ex.mental')}
             <button type="button" className="chalk-listen" onClick={() => playWord('choisis_bonne_reponse')} aria-label="Écouter la consigne">🔊</button>
           </div>
           <div className="chalk-question">{exercise.question}</div>
@@ -113,7 +115,7 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
       <>
         <div className="problem-card">
           <div className="problem-card-label">
-            🧩 Petit problème
+            🧩 {t('ex.problem')}
             <button type="button" className="chalk-listen" onClick={() => playWord('choisis_bonne_reponse')} aria-label="Écouter la consigne">🔊</button>
           </div>
           <p className="problem-card-text">{exercise.question}</p>
@@ -133,7 +135,7 @@ export default function MathExercise({ onCorrect, exerciseKey = 0, level = 'cp' 
     <>
       <div className="chalkboard">
         <div className="chalkboard-label">
-          ➕ Calcul mental
+          ➕ {t('ex.mental')}
           <button type="button" className="chalk-listen" onClick={() => playWord('choisis_bonne_reponse')} aria-label="Écouter la consigne">🔊</button>
         </div>
         <div className="chalk-question">{exercise.question}</div>
