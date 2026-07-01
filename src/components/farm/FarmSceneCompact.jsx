@@ -23,10 +23,10 @@ const CATEGORY_ORDER = FARM_CATEGORIES.map((c) => c.key).filter((k) => k !== 'te
    ════════════════════════════════════════════════════════════════════ */
 
 const MARGIN = 70
-const MIN_WORLD = 900
-const MAX_WORLD = 2400
-const SPACING = 82            // px moyen par objet visible (largeur du monde)
-const MAX_VISIBLE = 40        // au-delà → rangé en inventaire (perf + lisibilité)
+const MIN_WORLD = 800
+const MAX_WORLD = 1600        // ~4 écrans de téléphone max : exploration courte
+const SPACING = 95            // px moyen par objet visible (largeur du monde)
+const MAX_VISIBLE = 14        // au-delà → rangé en inventaire (lisibilité enfant)
 const rand = (min, max) => min + Math.random() * (max - min)
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 

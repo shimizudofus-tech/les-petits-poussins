@@ -3727,9 +3727,16 @@ button,
   background: transparent;
   font-size: 1.5rem;
   line-height: 1;
+  /* Zone tactile ≥ 44px (guideline enfant) sans grossir l'icône */
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 4px 6px;
   opacity: 0.6;
   cursor: pointer;
+  touch-action: manipulation;
   transition: opacity 0.15s, transform 0.1s;
 }
 
@@ -4509,7 +4516,7 @@ button,
 }
 
 /* Nom d'animal éditable */
-.animal-name-btn { border: none; background: transparent; cursor: pointer; padding: 0; }
+.animal-name-btn { border: none; background: transparent; cursor: pointer; padding: 6px 12px; min-height: 40px; touch-action: manipulation; }
 .animal-name-btn:disabled { cursor: default; }
 .animal-name-edit { font-size: 0.78rem; opacity: 0.55; }
 .animal-name-input {
