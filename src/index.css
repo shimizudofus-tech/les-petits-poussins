@@ -124,6 +124,14 @@ html.native #root {
 html.native .game-container {
   border-radius: 0;
 }
+/* Zone sûre Android (encoche, barre de statut, barre de navigation gestuelle) :
+   on marge le contenu, pas #root, pour garder le fond dégradé plein écran. */
+html.native .game-shell-content {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
 
 .game-container::before {
   content: '🌾 🐣 🌾 🐣 🌾';
