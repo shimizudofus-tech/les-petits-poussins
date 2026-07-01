@@ -90,7 +90,7 @@ export default function ScreenTamagotchi() {
       </div>
       {seasonal && (
         <div className="seasonal-banner" style={{ background: seasonal.tint }}>
-          <span>{seasonal.emoji} {seasonal.greeting} {seasonal.emoji}</span>
+          <span>{seasonal.emoji} {t(`season.${seasonal.id}`)} {seasonal.emoji}</span>
         </div>
       )}
     </header>

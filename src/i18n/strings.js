@@ -53,6 +53,54 @@ export const STRINGS = {
   'daily.legendWin': { fr: 'Animal légendaire !', en: 'Legendary animal!' },
   'daily.youWon': { fr: 'Tu as gagné :', en: 'You earned:' },
   'daily.comeBack': { fr: 'Reviens chaque jour. Au 7ᵉ jour : un animal légendaire ! 🦄', en: 'Come back every day. On day 7: a legendary animal! 🦄' },
+
+  // Sous-titres / badges niveaux
+  'level.petite.sub': { fr: 'Petits · 3–4 ans', en: 'Little ones · 3–4 yrs' },
+  'level.moyenne.sub': { fr: 'Moyens · 4–5 ans', en: 'Middle · 4–5 yrs' },
+  'level.grande.sub': { fr: 'Grands · 5–6 ans', en: 'Big · 5–6 yrs' },
+  'level.petite.badge': { fr: 'Toucher & reconnaître', en: 'Touch & recognise' },
+  'level.moyenne.badge': { fr: 'Associer & comparer', en: 'Match & compare' },
+  'level.grande.badge': { fr: 'Préparer le CP', en: 'Get ready for school' },
+  'level.write.sub': { fr: 'Lettres & chiffres', en: 'Letters & numbers' },
+  'level.write.badge': { fr: 'Tracé au doigt', en: 'Trace with your finger' },
+  'level.minigames.sub': { fr: 'Mémoire, réflexes…', en: 'Memory, reflexes…' },
+  'level.minigames.badge': { fr: 'Gagne des étoiles', en: 'Earn stars' },
+  'level.lesson.badge': { fr: '+10 ⭐ à la fin', en: '+10 ⭐ at the end' },
+
+  // Missions
+  'missions.title': { fr: '🎯 Missions du jour', en: '🎯 Daily missions' },
+  'missions.allDone': { fr: 'Toutes réussies ! 🎉', en: 'All done! 🎉' },
+  'missions.exercises': { fr: 'Réussis 5 exercices', en: 'Complete 5 exercises' },
+  'missions.feed': { fr: 'Nourris ton animal 3 fois', en: 'Feed your animal 3 times' },
+  'missions.minigame': { fr: 'Joue à 1 mini-jeu', en: 'Play 1 mini-game' },
+
+  // Mini-jeux
+  'mg.title': { fr: '🎲 Mini-jeux', en: '🎲 Mini-games' },
+  'mg.memory.name': { fr: 'Mémoire', en: 'Memory' },
+  'mg.memory.action': { fr: 'Retrouve les paires identiques.', en: 'Find the matching pairs.' },
+  'mg.memory.benefit': { fr: 'Travaille la mémoire et la concentration.', en: 'Builds memory and focus.' },
+  'mg.shadow.name': { fr: 'Les ombres', en: 'Shadows' },
+  'mg.shadow.action': { fr: "Associe l'animal à son ombre.", en: 'Match the animal to its shadow.' },
+  'mg.shadow.benefit': { fr: 'Travaille la reconnaissance des formes.', en: 'Builds shape recognition.' },
+  'mg.whack.name': { fr: 'Tape la taupe', en: 'Whack-a-mole' },
+  'mg.whack.action': { fr: 'Tape vite les animaux qui sortent.', en: 'Quickly tap the animals that pop up.' },
+  'mg.whack.benefit': { fr: "Développe les réflexes et l'attention.", en: 'Builds reflexes and attention.' },
+  'mg.simon.name': { fr: 'Simon', en: 'Simon' },
+  'mg.simon.action': { fr: 'Répète la suite de couleurs.', en: 'Repeat the colour sequence.' },
+  'mg.simon.benefit': { fr: 'Renforce la mémoire des séquences.', en: 'Strengthens sequence memory.' },
+  'mg.intrus.name': { fr: "Trouve l'intrus", en: 'Odd one out' },
+  'mg.intrus.action': { fr: "Touche l'animal différent.", en: 'Tap the different animal.' },
+  'mg.intrus.benefit': { fr: "Aiguise l'observation et le tri.", en: 'Sharpens observation and sorting.' },
+  'mg.count.name': { fr: 'Compte vite', en: 'Quick count' },
+  'mg.count.action': { fr: 'Compte les animaux affichés.', en: 'Count the animals shown.' },
+  'mg.count.benefit': { fr: 'Entraîne le calcul et le dénombrement.', en: 'Practises counting and maths.' },
+
+  // Saisonnier
+  'season.halloween': { fr: 'Joyeux Halloween !', en: 'Happy Halloween!' },
+  'season.noel': { fr: 'Joyeux Noël !', en: 'Merry Christmas!' },
+  'season.nouvelan': { fr: 'Bonne année !', en: 'Happy New Year!' },
+  'season.paques': { fr: 'Joyeuses Pâques !', en: 'Happy Easter!' },
+  'season.ete': { fr: 'Bonnes vacances !', en: 'Happy holidays!' },
 }
 
 export function translate(lang, key) {

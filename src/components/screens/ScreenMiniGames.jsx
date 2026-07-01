@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import ScreenTitle from './ScreenTitle'
 import AppIcon from '../AppIcon'
+import { useT } from '../../i18n/useT'
 import { SCREENS, useGame } from '../../context/GameContext'
 import { playClip, stopAllAudio } from '../../utils/audio'
 
@@ -168,6 +169,7 @@ const GAMES = [
 
 export default function ScreenMiniGames() {
   const { setGameState, switchScreen, showFeedback, showToast, recordMission } = useGame()
+  const t = useT()
   const [gameId, setGameId] = useState(null)
   const game = GAMES.find((g) => g.id === gameId)
 
@@ -193,7 +195,7 @@ export default function ScreenMiniGames() {
 
   return (
     <main className="screen flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden overflow-x-hidden pb-4">
-      <ScreenTitle>🎲 Mini-jeux</ScreenTitle>
+      <ScreenTitle>{t('mg.title')}</ScreenTitle>
 
       <div className="exercise-area flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5">
         {!game && (
@@ -202,9 +204,9 @@ export default function ScreenMiniGames() {
               <div key={g.id} role="button" tabIndex={0} className="kid-card" onClick={() => openGame(g)} onKeyDown={(e) => e.key === 'Enter' && openGame(g)}>
                 <div className="kid-card__icon" style={{ background: `linear-gradient(135deg,#ffffff,${g.tint})` }}><AppIcon name={g.icon} size={38} /></div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-lg font-black text-[#3e2700]">{g.name}</div>
-                  <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{g.action}</div>
-                  <div className="text-[0.68rem] font-semibold text-[#8d6e3a]">💡 {g.benefit}</div>
+                  <div className="text-lg font-black text-[#3e2700]">{t(`mg.${g.id}.name`)}</div>
+                  <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{t(`mg.${g.id}.action`)}</div>
+                  <div className="text-[0.68rem] font-semibold text-[#8d6e3a]">💡 {t(`mg.${g.id}.benefit`)}</div>
                   <span className="kid-card__badge">{g.badge}</span>
                 </div>
                 <button

@@ -92,7 +92,7 @@ export default function ScreenLevelSelect() {
           <div className="min-w-0 flex-1">
             <div className="text-lg font-black text-[#3e2700]">{t('level.lesson')}</div>
             <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{t('level.lessonSub')}</div>
-            <span className="kid-card__badge">+10 ⭐ à la fin</span>
+            <span className="kid-card__badge">{t('level.lesson.badge')}</span>
           </div>
         </div>
 
@@ -112,8 +112,8 @@ export default function ScreenLevelSelect() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-lg font-black text-[#3e2700]">{t(`level.${key}`)}</div>
-              <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{subtitle}</div>
-              <span className="kid-card__badge">{badge}</span>
+              <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{t(`level.${key}.sub`)}</div>
+              <span className="kid-card__badge">{t(`level.${key}.badge`)}</span>
             </div>
           </div>
         ))}
@@ -130,8 +130,8 @@ export default function ScreenLevelSelect() {
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xl font-black text-[#3e2700]">{t('level.write')}</div>
-            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">Lettres &amp; chiffres</div>
-            <span className="kid-card__badge">Tracé au doigt</span>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{t('level.write.sub')}</div>
+            <span className="kid-card__badge">{t('level.write.badge')}</span>
           </div>
         </div>
 
@@ -147,8 +147,8 @@ export default function ScreenLevelSelect() {
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xl font-black text-[#3e2700]">{t('level.minigames')}</div>
-            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">Mémoire, réflexes…</div>
-            <span className="kid-card__badge">Gagne des étoiles</span>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{t('level.minigames.sub')}</div>
+            <span className="kid-card__badge">{t('level.minigames.badge')}</span>
           </div>
         </div>
 

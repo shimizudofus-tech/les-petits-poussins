@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ScreenTitle from './ScreenTitle'
 import MathExercise from '../minigames/MathExercise'
 import AppIcon from '../AppIcon'
+import { useT } from '../../i18n/useT'
 import { SCREENS, useGame } from '../../context/GameContext'
 
 const LEVELS = [
@@ -16,6 +17,7 @@ const REWARD = 10
 
 export default function ScreenLesson() {
   const { switchScreen, setGameState, showToast } = useGame()
+  const t = useT()
   const [level, setLevel] = useState(null)
   const [step, setStep] = useState(0)
   const [done, setDone] = useState(false)
@@ -34,12 +36,12 @@ export default function ScreenLesson() {
 
   return (
     <main className="screen flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden overflow-x-hidden pb-4">
-      <ScreenTitle>📘 Leçon du jour</ScreenTitle>
+      <ScreenTitle>📘 {t('lesson.title')}</ScreenTitle>
 
       <div className="exercise-area flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto px-3.5 pb-1 pt-3.5">
         {!level && (
           <div className="mx-auto flex w-full max-w-[360px] flex-col gap-2.5">
-            <p className="lesson-intro">Choisis ton niveau pour 5 exercices.</p>
+            <p className="lesson-intro">{t('lesson.pick')}</p>
             {LEVELS.map(([id, label, age]) => (
               <button key={id} type="button" className="kid-card lesson-level-btn" onClick={() => setLevel(id)}>
                 <div className="kid-card__icon" style={{ background: 'linear-gradient(135deg,#e3f2fd,#90caf9)' }}>
@@ -60,7 +62,7 @@ export default function ScreenLesson() {
               <div className="lesson-progress-bar">
                 <div className="lesson-progress-fill" style={{ width: `${(step / TOTAL) * 100}%` }} />
               </div>
-              <span className="lesson-progress-label">Question {step + 1} / {TOTAL}</span>
+              <span className="lesson-progress-label">{t('lesson.question')} {step + 1} / {TOTAL}</span>
             </div>
             <MathExercise key={step} exerciseKey={step} level={level} onCorrect={handleCorrect} />
           </>
@@ -69,10 +71,10 @@ export default function ScreenLesson() {
         {done && (
           <div className="lesson-done">
             <div className="lesson-done-emoji">🏆</div>
-            <h2 className="lesson-done-title">Bravo ! Leçon terminée</h2>
-            <p className="lesson-done-text">Tu as gagné {REWARD} ⭐</p>
+            <h2 className="lesson-done-title">{t('lesson.done')}</h2>
+            <p className="lesson-done-text">{t('lesson.won')} {REWARD} ⭐</p>
             <button type="button" className="kid-btn kid-btn--play" onClick={restart}>
-              Refaire une leçon
+              {t('lesson.again')}
             </button>
           </div>
         )}
@@ -83,7 +85,7 @@ export default function ScreenLesson() {
         onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
         className="close-btn mx-4 mb-3 mt-2 shrink-0 cursor-pointer rounded-[18px] border-none px-6 py-3 font-sans text-[0.95rem] font-extrabold text-white"
       >
-        🏡 Retour à la ferme
+        🏡 {t('common.backFarm')}
       </button>
     </main>
   )
