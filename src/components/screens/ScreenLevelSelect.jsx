@@ -1,6 +1,7 @@
 import MobileScreenLayout from '../layout/MobileScreenLayout'
 import AppIcon from '../AppIcon'
 import MissionsCard from '../MissionsCard'
+import { useT } from '../../i18n/useT'
 import { SCREENS, useGame } from '../../context/GameContext'
 
 const MATERNELLE_LEVELS = [
@@ -32,6 +33,7 @@ const MATERNELLE_LEVELS = [
 
 export default function ScreenLevelSelect() {
   const { gameState, switchScreen, setGameState } = useGame()
+  const t = useT()
 
   // Tous les exercices (maternelle + primaire) sont gratuits.
   const goPrimaire = (screen) => switchScreen(screen)
@@ -61,7 +63,7 @@ export default function ScreenLevelSelect() {
         onClick={() => switchScreen(SCREENS.TAMAGOTCHI)}
         className="close-btn mx-auto flex w-[90%] max-w-full cursor-pointer items-center justify-center gap-1.5 rounded-[18px] border-none px-6 py-3 font-sans text-sm font-extrabold text-white transition-transform duration-100 active:translate-y-[3px]"
       >
-        <AppIcon name="house" size={20} /> Retour à la ferme
+        <AppIcon name="house" size={20} /> {t('level.backToFarm')}
       </button>
     </div>
   )
@@ -69,7 +71,7 @@ export default function ScreenLevelSelect() {
   return (
     <MobileScreenLayout
       className="screen-level-select screen-veil"
-      title="Choisis ton niveau"
+      title={t('level.title')}
       titleIcon="🎒"
       footer={footer}
       mainClassName="px-4 py-3"
@@ -88,13 +90,13 @@ export default function ScreenLevelSelect() {
             📘
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-lg font-black text-[#3e2700]">Leçon du jour</div>
-            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">5 exercices guidés</div>
+            <div className="text-lg font-black text-[#3e2700]">{t('level.lesson')}</div>
+            <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{t('level.lessonSub')}</div>
             <span className="kid-card__badge">+10 ⭐ à la fin</span>
           </div>
         </div>
 
-        <p className="screen-section-label">Maternelle</p>
+        <p className="screen-section-label">{t('level.maternelle')}</p>
 
         {MATERNELLE_LEVELS.map(({ key, icon, title, subtitle, badge, tint }) => (
           <div
@@ -109,7 +111,7 @@ export default function ScreenLevelSelect() {
               <AppIcon name={icon} size={40} />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-lg font-black text-[#3e2700]">{title}</div>
+              <div className="text-lg font-black text-[#3e2700]">{t(`level.${key}`)}</div>
               <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">{subtitle}</div>
               <span className="kid-card__badge">{badge}</span>
             </div>
@@ -127,7 +129,7 @@ export default function ScreenLevelSelect() {
             <AppIcon name="pencil" size={40} />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-xl font-black text-[#3e2700]">J'écris</div>
+            <div className="text-xl font-black text-[#3e2700]">{t('level.write')}</div>
             <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">Lettres &amp; chiffres</div>
             <span className="kid-card__badge">Tracé au doigt</span>
           </div>
@@ -144,13 +146,13 @@ export default function ScreenLevelSelect() {
             <AppIcon name="dice" size={40} />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-xl font-black text-[#3e2700]">Mini-jeux</div>
+            <div className="text-xl font-black text-[#3e2700]">{t('level.minigames')}</div>
             <div className="mt-0.5 text-[0.72rem] font-bold text-[#6d4c41]">Mémoire, réflexes…</div>
             <span className="kid-card__badge">Gagne des étoiles</span>
           </div>
         </div>
 
-        <p className="screen-section-label mt-1">Primaire</p>
+        <p className="screen-section-label mt-1">{t('level.primaire')}</p>
 
         <div
           role="button"

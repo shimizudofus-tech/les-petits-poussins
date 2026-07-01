@@ -166,6 +166,17 @@ export default function ScreenParent() {
         <summary className="parent-card-title">🔧 Réglages</summary>
         <ul className="parent-setting-list">
           <li className="parent-setting-row">
+            <span>🌍 Langue / Language</span>
+            <div className="inline-flex gap-1">
+              <button type="button" className={`parent-toggle-btn ${(audioSettings.lang ?? 'fr') === 'fr' ? 'is-on' : ''}`} onClick={() => updateAudioSettings({ lang: 'fr' })}>
+                FR
+              </button>
+              <button type="button" className={`parent-toggle-btn ${audioSettings.lang === 'en' ? 'is-on' : ''}`} onClick={() => updateAudioSettings({ lang: 'en' })}>
+                EN
+              </button>
+            </div>
+          </li>
+          <li className="parent-setting-row">
             <span>Police lecture facile</span>
             <button type="button" className={`parent-toggle-btn ${gameState.dyslexiaFont ? 'is-on' : ''}`} onClick={toggleDyslexiaFont}>
               {gameState.dyslexiaFont ? 'ON' : 'OFF'}

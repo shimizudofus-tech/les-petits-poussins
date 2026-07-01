@@ -23,6 +23,7 @@ import { hapticSuccess, hapticError } from '../utils/haptics'
 import { ensureTodayMissions, MISSION_BY_ID } from '../data/missions'
 import { isLegendary, nextLockedLegendary } from '../data/legendaries'
 import DailyStreakCalendar from '../components/DailyStreakCalendar'
+import { translate } from '../i18n/strings'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
 import { setMusicVolume, stopBackgroundMusic, unlockAudioOnFirstInteraction } from '../utils/music'
 import { setSoftAudioEnabled, setSoftAudioVolume, initClickSfx } from '../utils/softAudio'
@@ -701,13 +702,16 @@ export function GameProvider({ children }) {
         }
       }
 
+      const lang = getActiveAudioSettings().lang === 'en' ? 'en' : 'fr'
       queueMicrotask(() =>
         showModal({
           icon: awarded ? '🌟' : '🎁',
-          title: awarded ? 'Récompense légendaire !' : `Cadeau du jour — Jour ${streak} !`,
-          body: `+${reward} ⭐ pour ta visite.`,
+          title: awarded
+            ? translate(lang, 'daily.legendReward')
+            : `${translate(lang, 'daily.dailyGift')} — ${translate(lang, 'daily.day')} ${streak} !`,
+          body: `+${reward} ⭐ ${translate(lang, 'daily.forVisit')}`,
           content: <DailyStreakCalendar dayInWeek={dayInWeek} awarded={awarded} />,
-          buttons: [{ label: 'Super !', type: 'primary' }],
+          buttons: [{ label: translate(lang, 'daily.thanks'), type: 'primary' }],
         }),
       )
       return { ...prev, stars: (prev.stars || 0) + reward, lastRewardDate: today, dayStreak: streak, collection }

@@ -1,6 +1,9 @@
+import { useT } from '../i18n/useT'
+
 // Calendrier de série : 7 cases. Case 7 = animal légendaire.
 // dayInWeek (1..7) = jour atteint dans le cycle courant.
 export default function DailyStreakCalendar({ dayInWeek = 1, awarded = null }) {
+  const t = useT()
   return (
     <div className="streak-cal">
       <div className="streak-cal-row">
@@ -24,12 +27,12 @@ export default function DailyStreakCalendar({ dayInWeek = 1, awarded = null }) {
         <div className="streak-legend-win">
           <img src={awarded.icon} alt={awarded.name} className="streak-legend-img" />
           <div className="streak-legend-text">
-            <strong>Animal légendaire&nbsp;!</strong>
-            <span>Tu as gagné : {awarded.name}</span>
+            <strong>{t('daily.legendWin')}</strong>
+            <span>{t('daily.youWon')} {awarded.name}</span>
           </div>
         </div>
       ) : (
-        <p className="streak-cal-hint">Reviens chaque jour. Au 7ᵉ jour : un animal légendaire&nbsp;! 🦄</p>
+        <p className="streak-cal-hint">{t('daily.comeBack')}</p>
       )}
     </div>
   )

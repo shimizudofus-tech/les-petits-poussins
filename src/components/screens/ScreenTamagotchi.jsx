@@ -2,6 +2,7 @@ import { useState } from 'react'
 import AnimalIcon from '../AnimalIcon'
 import AppIcon from '../AppIcon'
 import { getSeasonalEvent } from '../../data/seasonalEvents'
+import { useT } from '../../i18n/useT'
 import MobileScreenLayout from '../layout/MobileScreenLayout'
 import ParentSettingsButton from '../ParentSettingsButton'
 import { SCREENS, NEW_ANIMAL_COST, useGame } from '../../context/GameContext'
@@ -11,6 +12,7 @@ import { getAnimalSound } from '../../data/animalSounds'
 
 export default function ScreenTamagotchi() {
   const { gameState, feedAnimal, adoptNewAnimal, switchScreen, renameAnimal } = useGame()
+  const t = useT()
   const [isFeeding, setIsFeeding] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const seasonal = getSeasonalEvent()
@@ -22,20 +24,20 @@ export default function ScreenTamagotchi() {
 
   // Tant qu'il est dans l'œuf/la boîte : on ne révèle pas le nom de l'animal.
   const isEgg = animal.currentStage === 'egg'
-  const displayName = isEgg ? 'Œuf mystère' : (animal.customName || stageInfo?.name || animal.name)
+  const displayName = isEgg ? t('home.eggMystery') : (animal.customName || stageInfo?.name || animal.name)
 
   // Progression de croissance (œuf → bébé → adulte) à partir de l'âge réel.
   const eggMax = animal.stages.egg?.nextAge ?? 1
   const babyMax = animal.stages.baby?.nextAge ?? eggMax + 1
   let growthPct = 100
-  let growthCaption = '✨ Adulte !'
+  let growthCaption = `✨ ${t('home.adult')}`
   if (animal.currentStage === 'egg') {
     growthPct = Math.max(0, Math.min(100, Math.round((animal.age / eggMax) * 100)))
-    growthCaption = "🥚 Avant l'éclosion"
+    growthCaption = `🥚 ${t('home.beforeHatch')}`
   } else if (animal.currentStage === 'baby') {
     const span = Math.max(1, babyMax - eggMax)
     growthPct = Math.max(0, Math.min(100, Math.round(((animal.age - eggMax) / span) * 100)))
-    growthCaption = '🐣 Devient grand'
+    growthCaption = `🐣 ${t('home.growing')}`
   }
   const stageRank = animal.currentStage === 'egg' ? 0 : animal.currentStage === 'baby' ? 1 : 2
 
@@ -82,7 +84,7 @@ export default function ScreenTamagotchi() {
           )}
         </div>
         <h1 className="min-w-0 flex-1 truncate text-center text-sm font-black uppercase tracking-wide text-[#5d3a00] inline-flex items-center justify-center gap-1.5">
-          <AppIcon name="henhead" size={20} /> MA FERME
+          <AppIcon name="henhead" size={20} /> {t('home.farm')}
         </h1>
         <ParentSettingsButton />
       </div>
@@ -102,11 +104,11 @@ export default function ScreenTamagotchi() {
           onClick={adoptNewAnimal}
           className={`kid-btn kid-btn--feed inline-flex items-center justify-center gap-1.5${gameState.stars < NEW_ANIMAL_COST ? ' kid-btn--locked' : ''}`}
         >
-          <AppIcon name="egg" size={22} /> Nouvel animal ({NEW_ANIMAL_COST}<AppIcon name="star" size={16} />)
+          <AppIcon name="egg" size={22} /> {t('home.newAnimal')} ({NEW_ANIMAL_COST}<AppIcon name="star" size={16} />)
         </button>
       ) : (
         <button type="button" onClick={handleFeed} className="kid-btn kid-btn--feed inline-flex items-center justify-center gap-1.5">
-          <AppIcon name="apple" size={22} /> Nourrir (1<AppIcon name="star" size={16} />)
+          <AppIcon name="apple" size={22} /> {t('home.feed')} (1<AppIcon name="star" size={16} />)
         </button>
       )}
       <button
@@ -114,7 +116,7 @@ export default function ScreenTamagotchi() {
         onClick={() => switchScreen(SCREENS.LEVEL_SELECT)}
         className="kid-btn kid-btn--play inline-flex items-center justify-center gap-1.5"
       >
-        <AppIcon name="play" size={24} /> Jouer &amp; Apprendre
+        <AppIcon name="play" size={24} /> {t('home.play')}
       </button>
       <div className="flex gap-2">
         <button
@@ -122,21 +124,21 @@ export default function ScreenTamagotchi() {
           onClick={() => switchScreen(SCREENS.COLLECTION)}
           className="kid-btn kid-btn--ghost flex-1 inline-flex items-center justify-center gap-1"
         >
-          <AppIcon name="book" size={20} /> Collection
+          <AppIcon name="book" size={20} /> {t('home.collection')}
         </button>
         <button
           type="button"
           onClick={() => switchScreen(SCREENS.FARM_EXPLORE)}
           className="kid-btn kid-btn--ghost flex-1 inline-flex items-center justify-center gap-1"
         >
-          <AppIcon name="wheat" size={20} /> Explorer
+          <AppIcon name="wheat" size={20} /> {t('home.explore')}
         </button>
         <button
           type="button"
           onClick={() => switchScreen(SCREENS.UPGRADE)}
           className="kid-btn kid-btn--ghost flex-1 inline-flex items-center justify-center gap-1"
         >
-          <AppIcon name="sparkle" size={20} /> Améliorer
+          <AppIcon name="sparkle" size={20} /> {t('home.upgrade')}
         </button>
       </div>
     </div>
@@ -181,7 +183,7 @@ export default function ScreenTamagotchi() {
           <div className="growth-bar" role="progressbar" aria-valuenow={growthPct} aria-valuemin={0} aria-valuemax={100}>
             <div className="growth-bar-fill" style={{ width: `${growthPct}%` }} />
           </div>
-          <span className="growth-caption">{isFullyGrown ? '✨ Adulte !' : `${growthCaption} · ${growthPct}%`}</span>
+          <span className="growth-caption">{isFullyGrown ? `✨ ${t('home.adult')}` : `${growthCaption} · ${growthPct}%`}</span>
         </div>
 
         <div className="tamagotchi-home-card shrink-0 px-3 py-2.5 text-center">
