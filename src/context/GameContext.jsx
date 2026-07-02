@@ -16,7 +16,7 @@ import {
   unlockBadgeInState,
   cancelTestInState,
 } from '../utils/achievements'
-import { setVoiceDisabledHandler } from '../utils/audio'
+import { setVoiceDisabledHandler, resolveSpeechText } from '../utils/audio'
 import { initBilling, checkPremium, getOfferings, purchasePackage, restorePurchases, isBillingAvailable } from '../utils/billing'
 import { playWord } from '../utils/audioManager'
 import { hapticSuccess, hapticError } from '../utils/haptics'
@@ -48,10 +48,15 @@ const SUCCESS_CHEERS = [
   { key: 'bien_joue', text: 'Bien joué !' },
   { key: 'continue_comme_ca', text: 'Continue comme ça !' },
 ]
-const FAIL_CHEER = { key: 'oups', text: 'Essaie encore !' }
+// Échecs doux et variés (jamais punitifs) — chaque entrée a son MP3 de voix.
+const FAIL_CHEERS = [
+  { key: 'oups', text: 'Essaie encore !' },
+  { key: 'presque', text: 'Presque ! Regarde bien.' },
+  { key: 'pas_celle_ci', text: "Ce n'est pas celle-ci. Essaie encore !" },
+]
 
 function pickCheer(correct) {
-  if (!correct) return FAIL_CHEER
+  if (!correct) return FAIL_CHEERS[Math.floor(Math.random() * FAIL_CHEERS.length)]
   return SUCCESS_CHEERS[Math.floor(Math.random() * SUCCESS_CHEERS.length)]
 }
 
@@ -76,6 +81,7 @@ export function GameProvider({ children }) {
   const achievementNotifyRef = useRef(null)
   const activeTestRef = useRef(null)
   const recordMissionRef = useRef(null)
+  const sessionCorrectRef = useRef(0)   // bonnes réponses de la session (coffre surprise)
 
   function normalizeSubject(level, subject) {
     if (level === 'cp' && subject === 'math') return 'maths'
@@ -352,7 +358,8 @@ export function GameProvider({ children }) {
     (correct, meta) => {
       if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
       const cheer = pickCheer(correct)
-      setFeedback({ correct, message: cheer.text })
+      // Texte affiché = voix jouée (bilingue : resolveSpeechText suit la langue).
+      setFeedback({ correct, message: resolveSpeechText(cheer.key) ?? cheer.text })
       const inTest = Boolean(activeTestRef.current)
       playWord(cheer.key) // voix = texte affiché
       if (correct) hapticSuccess()
@@ -360,6 +367,21 @@ export function GameProvider({ children }) {
       if (correct && !inTest) {
         setGameState((prev) => ({ ...prev, stars: prev.stars + 2 }))
         recordMissionRef.current?.('exercises')
+
+        // Coffre surprise : toutes les 5 bonnes réponses de la session → +5 ⭐.
+        sessionCorrectRef.current += 1
+        if (sessionCorrectRef.current % 5 === 0) {
+          const lang = getActiveAudioSettings().lang === 'en' ? 'en' : 'fr'
+          setGameState((prev) => ({ ...prev, stars: prev.stars + 5 }))
+          setTimeout(() => {
+            showModal({
+              icon: '🎁',
+              title: translate(lang, 'chest.title'),
+              body: `${translate(lang, 'chest.body')}\n${translate(lang, 'chest.won')}`,
+              buttons: [{ label: translate(lang, 'chest.btn'), type: 'primary' }],
+            })
+          }, 1500)
+        }
       }
       if (meta?.skipAchievement !== true) {
         recordExerciseResult({
@@ -373,7 +395,7 @@ export function GameProvider({ children }) {
       }
       feedbackTimerRef.current = setTimeout(() => setFeedback(null), 1400)
     },
-    [recordExerciseResult],
+    [recordExerciseResult, showModal],
   )
 
   const setSubject = useCallback((level, subject) => {

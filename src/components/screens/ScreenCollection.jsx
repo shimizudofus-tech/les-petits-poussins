@@ -2,7 +2,8 @@ import { useState } from 'react'
 import AnimalIcon from '../AnimalIcon'
 import MobileScreenLayout from '../layout/MobileScreenLayout'
 import { CHICKEN_STAGE_ICONS } from '../../data/chickenAssets'
-import { SCREENS, useGame } from '../../context/GameContext'
+import { SCREENS, NEW_ANIMAL_COST, useGame } from '../../context/GameContext'
+import { isLegendary } from '../../data/legendaries'
 import { isImageIcon, resolveStageIcon } from '../../utils/animalIcon'
 
 // EGG_ANIMALS kept in sync with animalIcon.js
@@ -116,11 +117,17 @@ export default function ScreenCollection() {
   const unlockedCount = animals.filter(([, animal]) => animal.unlocked).length
   const totalCount = animals.length
 
+  // Indice de déblocage selon le type d'animal (objectif clair pour l'enfant).
+  const unlockHint = (key) =>
+    isLegendary(key)
+      ? 'Reviens 7 jours de suite ! 🔥'
+      : `Fais grandir ton animal, puis prends-en un nouveau (${NEW_ANIMAL_COST} ⭐)`
+
   const handleCardClick = (key, animal) => {
     if (animal.unlocked) {
       setPickerKey(key)
     } else {
-      showToast('🔒 Verrouillé !', '#9e9e9e')
+      showToast(`🔒 ${unlockHint(key)}`, '#8d6e3a')
     }
   }
 
@@ -185,6 +192,11 @@ export default function ScreenCollection() {
                   <span className="collection-label mt-2 block text-[0.72rem] font-extrabold text-[#5d3a00]">
                     {animal.unlocked ? animal.name : '???'}
                   </span>
+                  {!animal.unlocked && (
+                    <span className="collection-hint">
+                      {isLegendary(key) ? '🔥 7 jours de suite' : `🥚 Nouvel animal (${NEW_ANIMAL_COST}⭐)`}
+                    </span>
+                  )}
 
                   {animal.unlocked && (
                     <>

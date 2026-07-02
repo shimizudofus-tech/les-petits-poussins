@@ -3652,6 +3652,38 @@ button,
   background: #36b56b;
   animation: farmCarePop 0.3s ease;
 }
+/* Indice après 2 erreurs : mauvaise réponse grisée (élimination douce) */
+.ans-btn--dimmed {
+  opacity: 0.3;
+  filter: grayscale(0.6);
+  transform: scale(0.94);
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+/* Indice de déblocage sur les cartes verrouillées de la collection */
+.collection-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #8d6e3a;
+  opacity: 0.85;
+  line-height: 1.25;
+}
+
+/* Sieste : bulle 💤 visible uniquement quand l'agent dort (data-state posé par le rAF) */
+.farm-care-bubble--sleep {
+  display: none;
+  background: #90a4de;
+}
+.fsc-animal[data-state="sleep"] .farm-care-bubble--sleep {
+  display: flex;
+  animation: farmSleepFloat 2.2s ease-in-out infinite;
+}
+@keyframes farmSleepFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.85; }
+  50% { transform: translateX(-50%) translateY(-5px); opacity: 1; }
+}
 @keyframes farmCarePulse {
   0%, 100% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.18); }
@@ -4761,6 +4793,27 @@ button,
   max-width: 320px;
   margin: 8px auto 0;
 }
+
+/* Jeu grand ou petit */
+.size-game-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 26px;
+  min-height: 130px;
+}
+.size-game-item {
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  padding: 12px 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(20, 30, 60, 0.12);
+  transition: transform 0.1s;
+  touch-action: manipulation;
+}
+.size-game-item:active { transform: scale(0.92); }
 
 /* Jeu des ombres */
 .shadow-target {

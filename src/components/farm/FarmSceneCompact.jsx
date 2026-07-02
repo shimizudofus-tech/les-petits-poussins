@@ -138,7 +138,7 @@ function buildScene(shop, placements) {
 function zOf(bottom) { return Math.round(120 - bottom) }
 
 /* ─── Agents animaux : marche / idle / mange ─── */
-const STATES = ['walk', 'idle', 'walk', 'eat', 'walk', 'idle']
+const STATES = ['walk', 'idle', 'walk', 'eat', 'walk', 'idle', 'sleep']
 function newAgent(x, lane) {
   return { x, lane, vx: 0, facing: pick([-1, 1]), state: 'idle', timer: rand(0.3, 1.4), bobPhase: rand(0, Math.PI * 2) }
 }
@@ -147,6 +147,7 @@ function nextState(a) {
   a.state = s
   if (s === 'walk') { a.facing = pick([-1, 1]); a.vx = a.facing * rand(16, 34); a.timer = rand(2.4, 5.2) }
   else if (s === 'eat') { a.vx = 0; a.timer = rand(2.2, 3.8) }
+  else if (s === 'sleep') { a.vx = 0; a.timer = rand(5, 9) }   // petite sieste 💤
   else { a.vx = 0; a.timer = rand(1.2, 2.8) }
 }
 
@@ -222,9 +223,12 @@ export default function FarmSceneCompact({
           if (a.x > max) { a.x = max; a.facing = -1; a.vx = -Math.abs(a.vx) }
         }
         a.bobPhase += dt * (a.state === 'walk' ? 8 : 3)
-        const bob = a.state === 'eat' ? 0 : Math.abs(Math.sin(a.bobPhase)) * (a.state === 'walk' ? 4 : 1.8)
+        const bob = (a.state === 'eat' || a.state === 'sleep') ? 0 : Math.abs(Math.sin(a.bobPhase)) * (a.state === 'walk' ? 4 : 1.8)
         const node = nodeRefs.current[key]
-        if (node) node.style.transform = `translate3d(${a.x}px, ${-bob}px, 0)`
+        if (node) {
+          node.style.transform = `translate3d(${a.x}px, ${-bob}px, 0)`
+          if (node.dataset.state !== a.state) node.dataset.state = a.state
+        }
         const sprite = spriteRefs.current[key]
         if (sprite) {
           const eatTilt = a.state === 'eat' ? `rotate(${10 + Math.sin(a.bobPhase * 2) * 7}deg)` : 'rotate(0deg)'
@@ -403,6 +407,9 @@ export default function FarmSceneCompact({
               )}
               {care === 'happy' && (
                 <span className="farm-care-bubble farm-care-bubble--happy" aria-hidden="true">❤️</span>
+              )}
+              {!care && (
+                <span className="farm-care-bubble farm-care-bubble--sleep" aria-hidden="true">💤</span>
               )}
               {tappedKey === key && tappedReaction && (
                 <span className="farm-animal-reaction" aria-hidden="true">{tappedReaction}</span>

@@ -255,6 +255,14 @@ const ICONS = {
       <path d="M37 22v6" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
     </>
   ),
+  // 📏 Grand ou petit
+  size: (
+    <>
+      <circle cx="16" cy="32" r="10" fill="#ffca28" stroke="#f9a825" strokeWidth="2" />
+      <circle cx="35" cy="25" r="17" fill="#4fc3f7" stroke="#0288d1" strokeWidth="2" />
+      <circle cx="30" cy="20" r="4" fill="#b3e5fc" opacity="0.7" />
+    </>
+  ),
   // 🌑 Les ombres
   shadow: (
     <>

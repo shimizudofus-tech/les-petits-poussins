@@ -79,6 +79,9 @@ export const STRINGS = {
   'mg.memory.name': { fr: 'Mémoire', en: 'Memory' },
   'mg.memory.action': { fr: 'Retrouve les paires identiques.', en: 'Find the matching pairs.' },
   'mg.memory.benefit': { fr: 'Travaille la mémoire et la concentration.', en: 'Builds memory and focus.' },
+  'mg.size.name': { fr: 'Grand ou petit', en: 'Big or small' },
+  'mg.size.action': { fr: 'Touche le plus grand ou le plus petit.', en: 'Tap the biggest or the smallest.' },
+  'mg.size.benefit': { fr: 'Travaille la comparaison des tailles.', en: 'Builds size comparison.' },
   'mg.shadow.name': { fr: 'Les ombres', en: 'Shadows' },
   'mg.shadow.action': { fr: "Associe l'animal à son ombre.", en: 'Match the animal to its shadow.' },
   'mg.shadow.benefit': { fr: 'Travaille la reconnaissance des formes.', en: 'Builds shape recognition.' },
@@ -126,6 +129,12 @@ export const STRINGS = {
   'ex.testQ': { fr: 'Petit test — Question', en: 'Quick test — Question' },
   'ex.mental': { fr: 'Calcul mental', en: 'Mental maths' },
   'ex.problem': { fr: 'Petit problème', en: 'Word problem' },
+
+  // Coffre surprise (toutes les 5 bonnes réponses)
+  'chest.title': { fr: 'Coffre surprise !', en: 'Surprise chest!' },
+  'chest.body': { fr: '5 bonnes réponses d\'affilée dans ta besace… Bravo !', en: '5 correct answers in your bag… Well done!' },
+  'chest.won': { fr: 'Tu as gagné : +5 ⭐', en: 'You earned: +5 ⭐' },
+  'chest.btn': { fr: 'Ouvrir !', en: 'Open!' },
 
   // Saisonnier
   'season.halloween': { fr: 'Joyeux Halloween !', en: 'Happy Halloween!' },

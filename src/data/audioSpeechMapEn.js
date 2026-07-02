@@ -95,4 +95,5 @@ export const AUDIO_SPEECH_MAP_EN = {
   // Feedback
   bravo: 'Well done!', excellent: 'Excellent!', bien_joue: 'Great job!',
   continue_comme_ca: 'Keep it up!', oups: 'Try again!',
+  presque: 'Almost! Look carefully.', pas_celle_ci: 'Not that one. Try again!',
 }

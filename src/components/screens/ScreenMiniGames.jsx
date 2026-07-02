@@ -158,8 +158,41 @@ function ShadowGame({ onScore }) {
   )
 }
 
+/* ════════ Grand ou petit ════════ */
+function SizeGame({ onScore }) {
+  const [d, setD] = useState(() => build())
+  const [score, setScore] = useState(0)
+  function build() {
+    const emoji = ANIMALS[rnd(ANIMALS.length)]
+    const n = 3
+    // tailles bien distinctes (px) mélangées
+    const sizes = shuffle([44, 66, 92]).slice(0, n)
+    const wantBig = Math.random() < 0.5
+    const target = wantBig ? Math.max(...sizes) : Math.min(...sizes)
+    return { emoji, sizes, wantBig, target }
+  }
+  const click = (s) => {
+    if (s === d.target) { const ns = score + 1; setScore(ns); onScore(1, 'Trouvé !'); setD(build()) }
+  }
+  return (
+    <>
+      <p className="cp-level-badge mx-3.5 mt-2 shrink-0 text-center">
+        📏 Touche le {d.wantBig ? 'PLUS GRAND' : 'PLUS PETIT'} · ⭐ {score}
+      </p>
+      <div className="size-game-row">
+        {d.sizes.map((s, i) => (
+          <button key={i} type="button" className="size-game-item" onClick={() => click(s)}>
+            <span style={{ fontSize: `${s}px`, lineHeight: 1 }}>{d.emoji}</span>
+          </button>
+        ))}
+      </div>
+    </>
+  )
+}
+
 const GAMES = [
   { id: 'memory', icon: 'brain', tint: '#81d4fa', name: 'Mémoire', action: 'Retrouve les paires identiques.', benefit: 'Travaille la mémoire et la concentration.', badge: '+5 ⭐', Cmp: MemoryGame },
+  { id: 'size', icon: 'size', tint: '#ffe082', name: 'Grand ou petit', action: 'Touche le plus grand ou le plus petit.', benefit: 'Travaille la comparaison des tailles.', badge: '+1 ⭐ / bonne', Cmp: SizeGame },
   { id: 'shadow', icon: 'shadow', tint: '#b0bec5', name: 'Les ombres', action: "Associe l'animal à son ombre.", benefit: 'Travaille la reconnaissance des formes.', badge: '+3 ⭐', Cmp: ShadowGame },
   { id: 'whack', icon: 'hammer', tint: '#ffb74d', name: 'Tape la taupe', action: 'Tape vite les animaux qui sortent.', benefit: "Développe les réflexes et l'attention.", badge: '⭐ score', Cmp: WhackGame },
   { id: 'simon', icon: 'music', tint: '#ce93d8', name: 'Simon', action: 'Répète la suite de couleurs.', benefit: 'Renforce la mémoire des séquences.', badge: '+1 ⭐ / niveau', Cmp: SimonGame },

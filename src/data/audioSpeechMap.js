@@ -232,6 +232,8 @@ export const AUDIO_SPEECH_MAP = {
   bien_joue: 'Bien joué !',
   continue_comme_ca: 'Continue comme ça !',
   oups: 'Essaie encore !',
+  presque: 'Presque ! Regarde bien.',
+  pas_celle_ci: "Ce n'est pas celle-ci. Essaie encore !",
 }
 
 export function getAudioSpeechMapCount() {
