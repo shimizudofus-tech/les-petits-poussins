@@ -506,6 +506,90 @@ button,
 .audiofind-hint { font-size: 0.8rem; font-weight: 700; color: #8d6e3a; }
 .audiofind-choice { font-size: 2.6rem; }
 
+/* ── Barre de progression série (accueil, repliable) ── */
+.streak-bar {
+  margin: 6px 0 4px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1.5px solid rgba(255, 202, 40, 0.55);
+  border-radius: 14px;
+  padding: 6px 10px;
+}
+.streak-bar-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+  min-height: 30px;
+  touch-action: manipulation;
+}
+.streak-bar-summary::-webkit-details-marker { display: none; }
+.streak-bar-title {
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: #5d3a00;
+  white-space: nowrap;
+}
+.streak-bar-progress {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.streak-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffca28, #ff8f00);
+  transition: width 0.4s ease;
+}
+.streak-bar-count { font-size: 0.7rem; font-weight: 900; color: #8d6e3a; }
+.streak-bar-rewards {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 8px;
+}
+.streak-reward {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0 5px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px solid transparent;
+}
+.streak-reward--done { background: #c8e6c9; opacity: 0.9; }
+.streak-reward--today { background: #fff3c4; border-color: #ffca28; transform: scale(1.06); }
+.streak-reward-day { font-size: 0.56rem; font-weight: 800; color: #8d6e3a; }
+.streak-reward-img { width: 26px; height: 26px; object-fit: contain; }
+.streak-reward-emoji { font-size: 1.25rem; line-height: 26px; }
+.streak-reward-check {
+  position: absolute;
+  top: -5px;
+  right: -3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #43a047;
+  color: #fff;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.streak-bar-hint {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #8d6e3a;
+}
+
 /* Calendrier de série 7 jours */
 .streak-cal { margin-top: 10px; }
 .streak-cal-row { display: flex; gap: 4px; justify-content: center; }
@@ -3496,6 +3580,24 @@ button.upgrade-row-icon--treasure:active { transform: scale(0.92); }
   position: absolute;
   pointer-events: none;
   filter: drop-shadow(0 4px 3px rgba(40,70,30,0.18));
+}
+
+/* Arbre magique : cliquable dans la ferme → feu d'artifice */
+.fsc-decor--magic {
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.fsc-decor--magic:active { transform: scale(0.96); }
+.fw-burst--big .fw-particle {
+  width: 9px;
+  height: 9px;
+  animation-name: fwPopBig;
+  animation-duration: 0.9s;
+}
+@keyframes fwPopBig {
+  0% { transform: rotate(calc(var(--fw-i) * 45deg)) translateY(0) scale(1); opacity: 1; }
+  100% { transform: rotate(calc(var(--fw-i) * 45deg)) translateY(-64px) scale(0.25); opacity: 0; }
 }
 
 /* ── Mode déplacement des bâtiments ── */

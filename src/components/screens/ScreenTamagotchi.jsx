@@ -2,6 +2,7 @@ import { useState } from 'react'
 import AnimalIcon from '../AnimalIcon'
 import AppIcon from '../AppIcon'
 import { getSeasonalEvent } from '../../data/seasonalEvents'
+import StreakRewardsBar from '../StreakRewardsBar'
 import { useT } from '../../i18n/useT'
 import MobileScreenLayout from '../layout/MobileScreenLayout'
 import ParentSettingsButton from '../ParentSettingsButton'
@@ -185,6 +186,8 @@ export default function ScreenTamagotchi() {
           </div>
           <span className="growth-caption">{isFullyGrown ? `✨ ${t('home.adult')}` : `${growthCaption} · ${growthPct}%`}</span>
         </div>
+
+        <StreakRewardsBar />
 
         <div className="tamagotchi-home-card shrink-0 px-3 py-2.5 text-center">
           {editingName && !isEgg ? (

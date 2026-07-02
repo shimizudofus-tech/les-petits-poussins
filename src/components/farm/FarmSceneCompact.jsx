@@ -182,6 +182,16 @@ export default function FarmSceneCompact({
   const [drag, setDrag] = useState(null)   // {key, kind, size, x, bottom, removing}
   const [invTab, setInvTab] = useState('all')
   const [invSort, setInvSort] = useState('count')   // 'count' | 'name'
+  const [fw, setFw] = useState(null)                // { key, n } — décor en feu d'artifice 🎆
+  const fwTimerRef = useRef(null)
+
+  const launchFirework = (key) => {
+    if (fwTimerRef.current) clearTimeout(fwTimerRef.current)
+    // n incrémenté → le span est remonté (key React) → l'animation CSS redémarre
+    setFw((f) => ({ key, n: (f?.n ?? 0) + 1 }))
+    fwTimerRef.current = setTimeout(() => setFw(null), 950)
+  }
+  useEffect(() => () => { if (fwTimerRef.current) clearTimeout(fwTimerRef.current) }, [])
 
   // sections présentes (catégories ayant ≥1 objet) + filtre + tri
   const presentCats = CATEGORY_ORDER.filter((c) => inventory.some((it) => it.category === c))
@@ -371,15 +381,27 @@ export default function FarmSceneCompact({
         {visible.map((p) => {
           const dragging = drag?.key === p.key
           const pos = dragging ? { x: drag.x, bottom: drag.bottom } : { x: p.x, bottom: p.bottom }
+          // L'arbre magique est interactif hors aménagement : clic → feu d'artifice 🎆
+          const magic = p.kind === 'magic_tree' && !moveMode
           return (
             <div
               key={p.key}
-              className={`fsc-decor${moveMode ? ' fsc-decor--movable' : ''}${dragging ? ' fsc-decor--dragging' : ''}`}
+              className={`fsc-decor${moveMode ? ' fsc-decor--movable' : ''}${dragging ? ' fsc-decor--dragging' : ''}${magic ? ' fsc-decor--magic' : ''}`}
               style={{ left: `${pos.x}px`, bottom: `${pos.bottom}%`, zIndex: dragging ? 999 : p.z }}
-              aria-hidden={!moveMode}
+              aria-hidden={!moveMode && !magic}
+              role={magic ? 'button' : undefined}
+              aria-label={magic ? 'Arbre magique' : undefined}
               onPointerDown={moveMode ? (e) => startDecorDrag(p.key, p.kind, p.size, e) : undefined}
+              onClick={magic ? () => { if (!dragMoved.current) launchFirework(p.key) } : undefined}
             >
               <FarmArt kind={p.kind} width={p.size} />
+              {fw?.key === p.key && (
+                <span key={fw.n} className="fw-burst fw-burst--big" aria-hidden="true">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <span key={i} className="fw-particle" style={{ '--fw-i': i }} />
+                  ))}
+                </span>
+              )}
             </div>
           )
         })}

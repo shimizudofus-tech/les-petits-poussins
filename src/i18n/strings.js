@@ -130,6 +130,10 @@ export const STRINGS = {
   'ex.mental': { fr: 'Calcul mental', en: 'Mental maths' },
   'ex.problem': { fr: 'Petit problème', en: 'Word problem' },
 
+  // Barre de progression série (accueil)
+  'streakbar.title': { fr: 'Récompenses de la semaine', en: 'Weekly rewards' },
+  'streakbar.hint': { fr: 'Reviens chaque jour pour tout débloquer !', en: 'Come back every day to unlock everything!' },
+
   // Coffre surprise (toutes les 5 bonnes réponses)
   'chest.title': { fr: 'Coffre surprise !', en: 'Surprise chest!' },
   'chest.body': { fr: '5 bonnes réponses d\'affilée dans ta besace… Bravo !', en: '5 correct answers in your bag… Well done!' },
