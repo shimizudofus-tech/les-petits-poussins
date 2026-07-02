@@ -211,6 +211,28 @@ function Campfire() {
     <path d="M60,60 Q53,72 58,84 Q66,76 60,60 Z" fill="#FFD23B" /></g>)
 }
 
+function MagicTree() {
+  return (<g><Shadow /><rect x="52" y="66" width="16" height="46" rx="6" fill="#8A5A9C" stroke="#6B3E80" strokeWidth="2.5" />
+    <circle cx="60" cy="44" r="32" fill="#B388FF" /><circle cx="36" cy="54" r="20" fill="#C9A0FF" />
+    <circle cx="84" cy="54" r="20" fill="#9D6FE0" /><circle cx="60" cy="30" r="24" fill="#C9A0FF" />
+    <circle cx="46" cy="34" r="4" fill="#FFD23B" /><circle cx="76" cy="42" r="3.5" fill="#FFF3B0" />
+    <circle cx="60" cy="24" r="3" fill="#7FD6F0" /><circle cx="34" cy="56" r="3" fill="#FFF3B0" />
+    <circle cx="86" cy="58" r="3.5" fill="#FFD23B" /><circle cx="60" cy="50" r="3" fill="#7FD6F0" /></g>)
+}
+function Castle() {
+  return (<g><ellipse cx="60" cy="112" rx="46" ry="8" fill="#000" opacity="0.1" />
+    <rect x="26" y="56" width="68" height="54" rx="3" fill="#D9D2E0" stroke="#9A90A8" strokeWidth="3" />
+    <rect x="22" y="40" width="16" height="20" fill="#D9D2E0" stroke="#9A90A8" strokeWidth="2.5" />
+    <rect x="82" y="40" width="16" height="20" fill="#D9D2E0" stroke="#9A90A8" strokeWidth="2.5" />
+    <path d="M22,40 h6 v-8 h4 v8 h6 v-8 h4 v8 h-20 Z" fill="#D9D2E0" stroke="#9A90A8" strokeWidth="1.5" />
+    <path d="M82,40 h6 v-8 h4 v8 h6 v-8 h4 v8 h-20 Z" fill="#D9D2E0" stroke="#9A90A8" strokeWidth="1.5" />
+    <path d="M46,56 L60,34 L74,56 Z" fill="#B8472E" stroke="#8F3322" strokeWidth="2.5" />
+    <rect x="50" y="80" width="20" height="30" rx="8" fill="#5A3318" stroke="#3E230F" strokeWidth="2" />
+    <rect x="34" y="70" width="12" height="12" rx="2" fill="#7FD6F0" stroke="#3FA7CC" strokeWidth="2" />
+    <rect x="74" y="70" width="12" height="12" rx="2" fill="#7FD6F0" stroke="#3FA7CC" strokeWidth="2" />
+    <circle cx="30" cy="34" r="3" fill="#FFD23B" /><circle cx="90" cy="34" r="3" fill="#FFD23B" /></g>)
+}
+
 function Cloud() {
   return (<g><ellipse cx="40" cy="62" rx="26" ry="18" fill="#fff" /><ellipse cx="62" cy="50" rx="22" ry="18" fill="#fff" />
     <ellipse cx="82" cy="62" rx="24" ry="17" fill="#fff" /><ellipse cx="60" cy="68" rx="40" ry="14" fill="#fff" />
@@ -231,6 +253,7 @@ const ART = {
   lighthouse: Lighthouse, windpump: Windpump, fountain: Fountain, scarecrow: Scarecrow,
   rainbow: Rainbow, balloon: Balloon, statue: Statue, bench: Bench, signpost: Signpost,
   flag: Flag, mailbox: Mailbox, barrel: Barrel, kite: Kite, campfire: Campfire,
+  magic_tree: MagicTree, castle: Castle,
 }
 
 export function hasFarmArt(kind) {

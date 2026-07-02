@@ -514,20 +514,28 @@ button,
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   border-radius: 10px; background: rgba(0,0,0,0.06); border: 2px solid transparent;
 }
-.streak-cell-icon { font-size: 1.05rem; line-height: 1; }
+.streak-cell-icon { position: relative; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.streak-reward-img { width: 22px; height: 22px; object-fit: contain; }
+.streak-reward-emoji { font-size: 1.05rem; }
+.streak-cell-check {
+  position: absolute; bottom: -4px; right: -6px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #2e7d32; color: #fff; font-size: 0.5rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid #fff;
+}
 .streak-cell-day { font-size: 0.58rem; font-weight: 800; color: #8d6e3a; }
 .streak-cell--done { background: #c8e6c9; }
-.streak-cell--done .streak-cell-icon { color: #2e7d32; }
 .streak-cell--today { background: #fff3c4; border-color: #ffca28; transform: scale(1.08); }
-.streak-cell--legend { background: linear-gradient(135deg,#e1bee7,#ce93d8); }
-.streak-cell--legend.streak-cell--done { background: linear-gradient(135deg,#ce93d8,#ab47bc); }
+.streak-cell--upcoming { opacity: 0.45; filter: grayscale(0.5); }
 .streak-cal-hint { font-size: 0.72rem; font-weight: 700; color: #8d6e3a; text-align: center; margin-top: 10px; }
 .streak-legend-win {
   display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px;
   border-radius: 14px; background: linear-gradient(135deg,#fff8e1,#ffe082);
   border: 2px solid #ffca28;
 }
-.streak-legend-img { width: 56px; height: 56px; object-fit: contain; }
+.streak-legend-img.streak-reward-img { width: 56px; height: 56px; }
+.streak-legend-img.streak-reward-emoji { font-size: 2.6rem; }
 .streak-legend-text { display: flex; flex-direction: column; text-align: left; }
 .streak-legend-text strong { color: #6a1b9a; font-size: 0.95rem; }
 .streak-legend-text span { color: #5d3a00; font-size: 0.8rem; font-weight: 700; }
@@ -1580,6 +1588,54 @@ button,
   box-shadow: 0 2px 0 #ffb74d;
   color: #b8860b;
   font-size: 1rem;
+}
+
+/* Trésors exclusifs (série de connexion) : arbre magique, château */
+.upgrade-row--treasure {
+  border-color: #ce93d8;
+  background: linear-gradient(135deg, rgba(243, 229, 245, 0.9), rgba(225, 190, 231, 0.6));
+}
+.upgrade-row--treasure-owned { border-color: #ffca28; background: rgba(255, 248, 225, 0.9); }
+.upgrade-row-icon--treasure {
+  position: relative;
+  overflow: visible;
+  border: none;
+  padding: 0;
+  cursor: default;
+}
+button.upgrade-row-icon--treasure { cursor: pointer; }
+button.upgrade-row-icon--treasure:active { transform: scale(0.92); }
+.upgrade-row-treasure-hint {
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: #8d6e3a;
+}
+.upgrade-row--treasure-owned .upgrade-row-treasure-hint { color: #ab47bc; }
+
+/* Feu d'artifice au tap sur l'arbre magique */
+.fw-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.fw-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(calc(var(--fw-i) * 45deg), 85%, 60%);
+  animation: fwBurst 0.85s ease-out forwards;
+  transform: rotate(calc(var(--fw-i) * 45deg));
+}
+@keyframes fwBurst {
+  0% { transform: rotate(calc(var(--fw-i) * 45deg)) translateY(0) scale(1); opacity: 1; }
+  100% { transform: rotate(calc(var(--fw-i) * 45deg)) translateY(-34px) scale(0.3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fw-particle { animation: none; display: none; }
 }
 
 .upgrade-grid {

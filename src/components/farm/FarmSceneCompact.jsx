@@ -50,7 +50,7 @@ function rngFrom(seedStr) {
 }
 
 const BUILDING_SET = new Set(['house', 'barn', 'henhouse', 'stable', 'silo', 'mill', 'well',
-  'greenhouse', 'bakery', 'dairy', 'beehouse', 'windpump', 'market', 'lighthouse'])
+  'greenhouse', 'bakery', 'dairy', 'beehouse', 'windpump', 'market', 'lighthouse', 'castle'])
 const SKY_SET = new Set(['cloud', 'bird', 'rainbow'])
 
 // taille d'affichage par type (px)
@@ -61,6 +61,7 @@ const SIZE = {
   rock: 40, mushroom: 40, crops: 56, cart: 60, fountain: 80, scarecrow: 56, balloon: 60,
   statue: 60, bench: 50, signpost: 46, flag: 46, mailbox: 46, barrel: 44, kite: 54, campfire: 50,
   cloud: 90, bird: 54, rainbow: 200,
+  magic_tree: 88, castle: 104,
 }
 const sizeOf = (kind) => SIZE[kind] ?? 60
 
@@ -68,13 +69,13 @@ const sizeOf = (kind) => SIZE[kind] ?? 60
 function bandBottom(kind, r) {
   if (kind === 'cloud' || kind === 'bird') return 64 + r() * 18
   if (kind === 'rainbow') return 56
-  if (BUILDING_SET.has(kind) || kind === 'tree' || kind === 'pine') return 24 + r() * 9
+  if (BUILDING_SET.has(kind) || kind === 'tree' || kind === 'pine' || kind === 'magic_tree') return 24 + r() * 9
   return 12 + r() * 8
 }
 function centerBottom(kind) {
   if (kind === 'cloud' || kind === 'bird') return 72
   if (kind === 'rainbow') return 56
-  if (BUILDING_SET.has(kind) || kind === 'tree' || kind === 'pine') return 28
+  if (BUILDING_SET.has(kind) || kind === 'tree' || kind === 'pine' || kind === 'magic_tree') return 28
   return 16
 }
 

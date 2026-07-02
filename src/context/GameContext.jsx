@@ -21,7 +21,8 @@ import { initBilling, checkPremium, getOfferings, purchasePackage, restorePurcha
 import { playWord } from '../utils/audioManager'
 import { hapticSuccess, hapticError } from '../utils/haptics'
 import { ensureTodayMissions, MISSION_BY_ID } from '../data/missions'
-import { isLegendary, nextLockedLegendary } from '../data/legendaries'
+import { isLegendary } from '../data/legendaries'
+import { getStreakReward } from '../data/streakRewards'
 import DailyStreakCalendar from '../components/DailyStreakCalendar'
 import { translate } from '../i18n/strings'
 import { getActiveAudioSettings, mergeAudioSettings, setActiveAudioSettings } from '../utils/audioSettings'
@@ -713,15 +714,19 @@ export function GameProvider({ children }) {
       const reward = Math.min(2 + streak, 10)
       const dayInWeek = ((streak - 1) % 7) + 1
 
-      // Tous les 7 jours consécutifs : on débloque un animal légendaire.
+      // 1 nouveauté par jour d'affilée (1 à 7) : jours 1-5 = animal légendaire,
+      // jour 6 = Arbre magique, jour 7 = Château. Le cycle reprend ensuite,
+      // mais un jour déjà obtenu ne redonne que des étoiles (pas de doublon).
       let collection = prev.collection
+      let farmShop = prev.farmShop
       let awarded = null
-      if (streak % 7 === 0) {
-        const leg = nextLockedLegendary(prev.collection)
-        if (leg) {
-          awarded = leg
-          collection = { ...prev.collection, [leg.key]: { ...prev.collection[leg.key], unlocked: true } }
-        }
+      const dayReward = getStreakReward(dayInWeek)
+      if (dayReward.type === 'legendary' && !prev.collection[dayReward.key]?.unlocked) {
+        awarded = dayReward
+        collection = { ...prev.collection, [dayReward.key]: { ...prev.collection[dayReward.key], unlocked: true } }
+      } else if (dayReward.type === 'item' && !(prev.farmShop?.[dayReward.key] > 0)) {
+        awarded = dayReward
+        farmShop = { ...(prev.farmShop ?? {}), [dayReward.key]: 1 }
       }
 
       const lang = getActiveAudioSettings().lang === 'en' ? 'en' : 'fr'
@@ -736,7 +741,7 @@ export function GameProvider({ children }) {
           buttons: [{ label: translate(lang, 'daily.thanks'), type: 'primary' }],
         }),
       )
-      return { ...prev, stars: (prev.stars || 0) + reward, lastRewardDate: today, dayStreak: streak, collection }
+      return { ...prev, stars: (prev.stars || 0) + reward, lastRewardDate: today, dayStreak: streak, collection, farmShop }
     })
   }, [showModal])
 

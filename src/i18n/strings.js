@@ -49,10 +49,10 @@ export const STRINGS = {
   'daily.day': { fr: 'Jour', en: 'Day' },
   'daily.forVisit': { fr: 'pour ta visite.', en: 'for your visit.' },
   'daily.thanks': { fr: 'Super !', en: 'Great!' },
-  'daily.legendReward': { fr: 'Récompense légendaire !', en: 'Legendary reward!' },
-  'daily.legendWin': { fr: 'Animal légendaire !', en: 'Legendary animal!' },
+  'daily.legendReward': { fr: 'Nouvelle récompense !', en: 'New reward!' },
+  'daily.legendWin': { fr: 'Débloqué !', en: 'Unlocked!' },
   'daily.youWon': { fr: 'Tu as gagné :', en: 'You earned:' },
-  'daily.comeBack': { fr: 'Reviens chaque jour. Au 7ᵉ jour : un animal légendaire ! 🦄', en: 'Come back every day. On day 7: a legendary animal! 🦄' },
+  'daily.comeBack': { fr: 'Reviens chaque jour : une nouvelle récompense t\'attend ! 🎁', en: 'Come back every day: a new reward is waiting! 🎁' },
 
   // Sous-titres / badges niveaux
   'level.petite.sub': { fr: 'Petits · 3–4 ans', en: 'Little ones · 3–4 yrs' },

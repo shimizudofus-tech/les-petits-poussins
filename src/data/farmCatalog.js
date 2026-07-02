@@ -59,7 +59,16 @@ const SPECIALS = [
   { id: 'barrel', name: 'Tonneau', icon: '🛢️', baseCost: 4, growth: 1.15, max: 12 },
   { id: 'kite', name: 'Cerf-volant', icon: '🪁', baseCost: 9, growth: 1.3, max: 4 },
   { id: 'campfire', name: 'Feu de camp', icon: '🔥', baseCost: 7, growth: 1.25, max: 4 },
+  // Trésors exclusifs : jamais achetables aux étoiles, uniquement via la série
+  // de connexion (voir streakRewards.js — jour 6 et jour 7).
+  { id: 'magic_tree', name: 'Arbre magique', icon: '🌳', baseCost: 0, growth: 1, max: 1 },
+  { id: 'castle', name: 'Château', icon: '🏰', baseCost: 0, growth: 1, max: 1 },
 ]
+
+export const STREAK_LOCKED_ITEM_IDS = new Set(['magic_tree', 'castle'])
+export function isStreakLocked(id) {
+  return STREAK_LOCKED_ITEM_IDS.has(id)
+}
 
 // ─── Ciel : nuages, oiseaux, arc-en-ciel ───
 const SKY = [
